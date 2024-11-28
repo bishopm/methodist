@@ -1,0 +1,49 @@
+{
+    "name": "bishopm/methodist",
+    "description": "Laravel based Methodist preaching plan software",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Bishop",
+            "email": "michael@westvillemethodist.co.za",
+            "homepage": "http://learningchurch.org"
+        }
+    ],
+    "homepage": "https://github.com/bishopm/methodist",
+    "keywords": ["Laravel", "Church"],
+    "require": {
+        "illuminate/support": "~11",
+	    "livewire/livewire": "~3",
+    	"filament/filament": "~3",
+        "outerweb/filament-settings": "~1",
+        "codedge/laravel-fpdf": "~1",
+        "joaopaulolndev/filament-pdf-viewer": "~1",
+        "dotswan/filament-map-picker": "~1",
+        "stechstudio/filament-impersonate": "~3",
+        "althinect/filament-spatie-roles-permissions": "~2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~9.0",
+        "orchestra/testbench": "~7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bishopm\\Methodist\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bishopm\\Methodist\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bishopm\\Methodist\\Providers\\MethodistServiceProvider"
+            ],
+            "aliases": {
+                "Methodist": "Bishopm\\Methodist\\Facades\\Methodist"
+            }
+        }
+    }
+}
