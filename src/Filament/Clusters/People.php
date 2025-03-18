@@ -4,9 +4,9 @@ namespace Bishopm\Methodist\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
 
-class Structures extends Cluster
+class People extends Cluster
 {
-    protected static ?string $navigationIcon = 'heroicon-o-arrows-pointing-out';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     public static function shouldRegisterNavigation(): bool
     {
