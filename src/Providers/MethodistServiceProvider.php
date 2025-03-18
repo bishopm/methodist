@@ -1,24 +1,10 @@
 <?php namespace Bishopm\Methodist\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Config;
 use Bishopm\Methodist\Methodist;
-use Bishopm\Methodist\Livewire\BarcodeScanner;
-use Bishopm\Methodist\Livewire\BookReview;
-use Bishopm\Methodist\Livewire\LoginForm;
-use Bishopm\Methodist\Models\Individual;
-use Bishopm\Methodist\Models\Pastor;
-use Bishopm\Methodist\Models\User;
-use Illuminate\Console\Scheduling\Schedule;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\View;
-use Livewire\Livewire;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class MethodistServiceProvider extends ServiceProvider
 {

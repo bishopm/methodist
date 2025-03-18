@@ -1,10 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Livewire\Livewire;
+use Spatie\Honeypot\ProtectAgainstSpam;
 
-Livewire::setUpdateRoute(function ($handle) {
-    return Route::post('/custom/livewire/update', $handle)->middleware(['web']);
+// Website routes
+Route::middleware(['web'])->controller('\Bishopm\Church\Http\Controllers\HomeController')->group(function () {
+    Route::get('/', 'home')->name('home');
+    if (substr(url()->current(), strrpos(url()->current(), '/' )+1)<>"admin"){
+        Route::get('/{page}', 'page')->name('web.page');
+    }
 });
 
 
