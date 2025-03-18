@@ -1,13 +1,14 @@
 <?php
 
-namespace Bishopm\Church\Http\Controllers;
+namespace Bishopm\Methodist\Http\Controllers;
 
 class HomeController extends Controller
 {
 
-    public function home(FormRequest $request)
+    public function home()
     {
-        return view('church::home',$data);
+        $data=array();
+        return view('methodist::home',$data);
     }
 
 
