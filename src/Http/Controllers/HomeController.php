@@ -8,7 +8,7 @@ class HomeController extends Controller
     public function home()
     {
         $data=array();
-        return view('methodist::home',$data);
+        return view('methodist::web.home',$data);
     }
 
 
