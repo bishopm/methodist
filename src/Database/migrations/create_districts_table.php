@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('secretary', 199)->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
     

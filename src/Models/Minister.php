@@ -11,7 +11,7 @@ class Minister extends Model
     public $table = 'ministers';
     protected $guarded = ['id'];
 
-    public function district(): BelongsTo
+    public function circuit(): BelongsTo
     {
         return $this->belongsTo(Circuit::class);
     }

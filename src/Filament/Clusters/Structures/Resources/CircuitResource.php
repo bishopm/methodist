@@ -57,31 +57,17 @@ class CircuitResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('circuit')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('district.id')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('district.district')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('reference')
+                    ->searchable()
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('plan_month')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('contact')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('showphone')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('activated')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\IconColumn::make('activated')->label('Active')
+                    ->icon(fn (string $state): string => match ($state) {
+                        'no' => 'heroicon-o-x-circle',
+                        'yes' => 'heroicon-o-check-circle'
+                    })
             ])
             ->filters([
                 //
