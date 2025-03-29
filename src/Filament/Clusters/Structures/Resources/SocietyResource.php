@@ -6,6 +6,7 @@ use Bishopm\Methodist\Filament\Clusters\Structures;
 use Bishopm\Methodist\Filament\Clusters\Structures\Resources\SocietyResource\Pages;
 use Bishopm\Methodist\Filament\Clusters\Structures\Resources\SocietyResource\RelationManagers;
 use Bishopm\Methodist\Models\Society;
+use Dotswan\MapPicker\Fields\Map;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -42,8 +43,7 @@ class SocietyResource extends Resource
                     ->maxLength(199),
                 Forms\Components\TextInput::make('website')
                     ->maxLength(199),
-                Forms\Components\TextInput::make('location')
-                    ->maxLength(199),
+                Map::make('location'),
             ]);
     }
 
