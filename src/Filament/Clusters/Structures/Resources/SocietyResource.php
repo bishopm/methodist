@@ -9,6 +9,7 @@ use Bishopm\Methodist\Models\Society;
 use Dotswan\MapPicker\Fields\Map;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -43,7 +44,16 @@ class SocietyResource extends Resource
                     ->maxLength(199),
                 Forms\Components\TextInput::make('website')
                     ->maxLength(199),
-                Map::make('location'),
+                Forms\Components\TextInput::make('latitude')
+                    ->hiddenLabel()
+                    ->hidden(), 
+                Forms\Components\TextInput::make('longitude')
+                    ->hiddenLabel()
+                    ->hidden(),
+                Map::make('locate')
+                    ->afterStateHydrated(function ($state, $record, Set $set): void {
+                        $set('locate', ['lat' => $record?->latitude, 'lng' => $record?->longitude]);
+                    })
             ]);
     }
 

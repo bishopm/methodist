@@ -60,7 +60,11 @@ class PersonResource extends Resource
                                     'society_id' => $data['leader_society_id']
                                 ]);
                                 $record->save();
-                                $livewire->form->fill();
+                                $record->refresh();
+                                $livewire->refreshFormData([
+                                    'roles',
+                                    'society_id'
+                                ]);
                             }),
                         Action::make('Add as preacher')
                             ->visible(function ($record){
@@ -93,15 +97,22 @@ class PersonResource extends Resource
                                         }
                                     })
                             ])
-                            ->action(function (array $data, Person $record): void {
+                            ->action(function (array $data, Person $record, $livewire): void {
                                 $record->preacher()->create([
                                     'person_id' => $record->id,
+                                    'number' => $data['number'],
                                     'status' => $data['status'],
                                     'society_id' => $data['society_id'],
                                     'induction' => $data['induction']
                                 ]);
                                 $record->save();
                                 $record->refresh();
+                                $livewire->refreshFormData([
+                                    'status',
+                                    'number',
+                                    'society_id',
+                                    'induction'
+                                ]);
                             }),
                         Action::make('Add as minister / deacon')
                             ->visible(function ($record){
@@ -160,6 +171,8 @@ class PersonResource extends Resource
                             ->label('Society')
                             ->searchable()
                             ->required(),
+                        Forms\Components\TextInput::make('number')->label('Preacher number (optional)')
+                            ->numeric(),
                         Forms\Components\TextInput::make('induction')->label('Year of induction')
                     ])
                     ->columns(2),
