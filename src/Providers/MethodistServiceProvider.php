@@ -24,6 +24,9 @@ class MethodistServiceProvider extends ServiceProvider
         Paginator::useBootstrapFive();
         $this->loadMigrationsFrom(__DIR__.'/../Database/migrations');
         $this->loadRoutesFrom(__DIR__.'/../Http/routes.php');
+        if (Schema::hasTable('settings')) {
+            Config::set('app.name',setting('general.site_name')); 
+        }
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }

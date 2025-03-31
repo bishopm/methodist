@@ -4,15 +4,12 @@ namespace Bishopm\Methodist\Filament\Clusters\People\Resources;
 
 use Bishopm\Methodist\Filament\Clusters\People;
 use Bishopm\Methodist\Filament\Clusters\People\Resources\MinisterResource\Pages;
-use Bishopm\Methodist\Filament\Clusters\People\Resources\MinisterResource\RelationManagers;
 use Bishopm\Methodist\Models\Minister;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MinisterResource extends Resource
 {
@@ -55,13 +52,13 @@ class MinisterResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('firstname')
+                Tables\Columns\TextColumn::make('person.firstname')->label('First name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('surname')
+                Tables\Columns\TextColumn::make('person.surname')->label('Surname')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('circuit.circuit')
+                Tables\Columns\TextColumn::make('person.circuit.circuit')
                     ->sortable(),
                 Tables\Columns\IconColumn::make('active')
                     ->icon(fn (string $state): string => match ($state) {
@@ -87,7 +84,6 @@ class MinisterResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
         ];
     }
 

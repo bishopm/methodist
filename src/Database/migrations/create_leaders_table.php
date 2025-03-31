@@ -7,14 +7,13 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('ministers', function($table)
+        Schema::create('leaders', function($table)
         {
             $table->engine = 'InnoDB';
             $table->increments('id')->unsigned();
             $table->integer('person_id');
-            $table->string('status', 199);
-            $table->tinyinteger('active');
-            $table->string('role', 199)->nullable();
+            $table->integer('society_id');
+            $table->json('roles');
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->timestamp('deleted_at')->nullable();
@@ -23,6 +22,6 @@ return new class extends Migration
     
     public function down()
     {
-        Schema::dropIfExists('ministers');
+        Schema::dropIfExists('leaders');
     }
 };

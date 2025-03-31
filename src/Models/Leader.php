@@ -4,16 +4,21 @@ namespace Bishopm\Methodist\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Minister extends Model
+class Leader extends Model
 {
-    public $table = 'ministers';
+    public $table = 'leaders';
     protected $guarded = ['id'];
+    protected $casts = [ 'roles' => 'array' ];
 
     public function person(): BelongsTo
     {
         return $this->belongsTo(Person::class);
+    }
+
+    public function society(): BelongsTo
+    {
+        return $this->belongsTo(Society::class);
     }
 
 }

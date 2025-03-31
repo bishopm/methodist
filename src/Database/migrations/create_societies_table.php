@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('address', 199)->nullable();
             $table->string('email', 199)->nullable();
             $table->string('website', 199)->nullable();
-            $table->string('location', 199)->nullable();
+            $table->json('location', 199)->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->timestamp('deleted_at')->nullable();

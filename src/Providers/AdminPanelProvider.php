@@ -3,6 +3,7 @@
 namespace Bishopm\Methodist\Providers;
 
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
+use Bishopm\Methodist\Filament\Pages\Dashboard;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -35,7 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: base_path('vendor/bishopm/methodist/src/Filament/Pages'), for: 'Bishopm\\Methodist\\Filament\\Pages')
             ->discoverClusters(in: base_path('vendor/bishopm/methodist/src/Filament/Clusters'), for: 'Bishopm\\Methodist\\Filament\\Clusters')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->plugins([
                 FilamentSpatieRolesPermissionsPlugin::make(),
