@@ -44,16 +44,7 @@ class SocietyResource extends Resource
                     ->maxLength(199),
                 Forms\Components\TextInput::make('website')
                     ->maxLength(199),
-                Forms\Components\TextInput::make('latitude')
-                    ->hiddenLabel()
-                    ->hidden(), 
-                Forms\Components\TextInput::make('longitude')
-                    ->hiddenLabel()
-                    ->hidden(),
-                Map::make('locate')
-                    ->afterStateHydrated(function ($state, $record, Set $set): void {
-                        $set('locate', ['lat' => $record?->latitude, 'lng' => $record?->longitude]);
-                    })
+                Map::make('location')
             ]);
     }
 
