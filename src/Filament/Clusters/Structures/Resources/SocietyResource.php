@@ -20,7 +20,7 @@ class SocietyResource extends Resource
 {
     protected static ?string $model = Society::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-home-modern';
 
     protected static ?string $cluster = Structures::class;
 
@@ -108,7 +108,7 @@ class SocietyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ServicesRelationManager::class
         ];
     }
 

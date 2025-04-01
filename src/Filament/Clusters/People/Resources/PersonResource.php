@@ -23,7 +23,7 @@ class PersonResource extends Resource
 {
     protected static ?string $model = Person::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     protected static ?string $cluster = People::class;
 
@@ -244,6 +244,14 @@ class PersonResource extends Resource
                 Tables\Columns\TextColumn::make('circuit.circuit')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\IconColumn::make('clergy')
+                    ->icon(function ($record){
+                        if ($record->minister){
+                            return 'heroicon-o-x-circle';
+                        } else {
+                            return 'heroicon-o-check-circle';
+                        }
+                    })
             ])
             ->filters([
                 //

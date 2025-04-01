@@ -18,7 +18,7 @@ class CircuitResource extends Resource
 {
     protected static ?string $model = Circuit::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     protected static ?string $cluster = Structures::class;
 
@@ -85,7 +85,7 @@ class CircuitResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\SocietyRelationManager::class
         ];
     }
 

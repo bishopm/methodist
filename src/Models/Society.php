@@ -4,6 +4,7 @@ namespace Bishopm\Methodist\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Society extends Model
 {
@@ -16,5 +17,10 @@ class Society extends Model
     public function circuit(): BelongsTo
     {
         return $this->belongsTo(Circuit::class);
+    }
+
+    public function services(): HasMany
+    {
+        return $this->hasMany(Service::class);
     }
 }

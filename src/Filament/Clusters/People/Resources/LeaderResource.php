@@ -21,6 +21,8 @@ class LeaderResource extends Resource
 
     protected static ?string $cluster = People::class;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function form(Form $form): Form
     {
         return $form
