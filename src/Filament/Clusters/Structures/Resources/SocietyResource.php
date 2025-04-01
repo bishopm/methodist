@@ -44,7 +44,23 @@ class SocietyResource extends Resource
                     ->maxLength(199),
                 Forms\Components\TextInput::make('website')
                     ->maxLength(199),
+                Forms\Components\TextInput::make('latitude')
+                    ->hiddenLabel(),
+                Forms\Components\TextInput::make('longitude')
+                    ->hiddenLabel(),
                 Map::make('location')
+                    ->afterStateUpdated(function (Set $set, ?array $state): void {
+                        $set('latitude', $state['lat']);
+                        $set('longitude', $state['lng']);
+                        $set('geojson', json_encode($state['geojson']));
+                    })
+                    ->afterStateHydrated(function ($state, $record, Set $set): void {
+                        $set('location', [
+                            'lat' => $record->latitude,
+                            'lng' => $record->longitude,
+                            'geojson' => json_decode(strip_tags($record->description))
+                        ]);
+                    })
             ]);
     }
 
