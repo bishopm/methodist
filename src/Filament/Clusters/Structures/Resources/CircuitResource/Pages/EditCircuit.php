@@ -4,6 +4,7 @@ namespace Bishopm\Methodist\Filament\Clusters\Structures\Resources\CircuitResour
 
 use Bishopm\Methodist\Filament\Clusters\Structures\Resources\CircuitResource;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\EditRecord;
 
 class EditCircuit extends EditRecord
@@ -13,6 +14,8 @@ class EditCircuit extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('Preaching plan')
+                ->url(fn (): string => route('filament.admin.structures.resources.circuits.plan', ['record' => $this->record])),
             Actions\DeleteAction::make(),
         ];
     }

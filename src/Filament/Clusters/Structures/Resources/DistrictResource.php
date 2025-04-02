@@ -6,13 +6,13 @@ use Bishopm\Methodist\Filament\Clusters\Structures;
 use Bishopm\Methodist\Filament\Clusters\Structures\Resources\DistrictResource\Pages;
 use Bishopm\Methodist\Filament\Clusters\Structures\Resources\DistrictResource\RelationManagers;
 use Bishopm\Methodist\Models\District;
+use Dotswan\MapPicker\Fields\Map;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class DistrictResource extends Resource
 {
@@ -38,6 +38,21 @@ class DistrictResource extends Resource
                     ->maxLength(199),
                 Forms\Components\TextInput::make('secretary')
                     ->maxLength(199),
+                Forms\Components\TextInput::make('latitude')
+                    ->hiddenLabel(),
+                Forms\Components\TextInput::make('longitude')
+                    ->hiddenLabel(),
+                Map::make('location')
+                    ->afterStateUpdated(function (Set $set, ?array $state): void {
+                        $set('latitude', $state['lat']);
+                        $set('longitude', $state['lng']);
+                    })
+                    ->afterStateHydrated(function ($state, $record, Set $set): void {
+                        $set('location', [
+                            'lat' => $record->latitude,
+                            'lng' => $record->longitude
+                        ]);
+                    })
             ]);
     }
 

@@ -31,6 +31,7 @@ class SocietyRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('society'),
             ])
+            ->defaultSort('society','asc')
             ->filters([
                 //
             ])

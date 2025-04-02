@@ -29,8 +29,15 @@ class CircuitsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('circuit')
             ->columns([
-                Tables\Columns\TextColumn::make('circuit'),
+                Tables\Columns\TextColumn::make('reference')
+                    ->label('No.')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('circuit')
+                    ->sortable()
+                    ->searchable(),
             ])
+            ->defaultSort('reference', 'asc')
             ->filters([
                 //
             ])

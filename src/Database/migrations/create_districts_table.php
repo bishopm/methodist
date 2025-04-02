@@ -14,6 +14,8 @@ return new class extends Migration
             $table->string('district', 199);
             $table->string('slug', 199);
             $table->string('location', 199)->nullable();
+            $table->double('latitude')->nullable();
+            $table->double('longitude')->nullable();
             $table->string('bishop', 199)->nullable();
             $table->string('secretary', 199)->nullable();
             $table->timestamp('created_at')->nullable();

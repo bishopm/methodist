@@ -52,13 +52,11 @@ class SocietyResource extends Resource
                     ->afterStateUpdated(function (Set $set, ?array $state): void {
                         $set('latitude', $state['lat']);
                         $set('longitude', $state['lng']);
-                        $set('geojson', json_encode($state['geojson']));
                     })
                     ->afterStateHydrated(function ($state, $record, Set $set): void {
                         $set('location', [
                             'lat' => $record->latitude,
-                            'lng' => $record->longitude,
-                            'geojson' => json_decode(strip_tags($record->description))
+                            'lng' => $record->longitude
                         ]);
                     })
             ]);
@@ -69,28 +67,14 @@ class SocietyResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('society')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('circuit.id')
-                    ->numeric()
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('address')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('website')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('location')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                Tables\Columns\TextColumn::make('circuit.reference')
+                    ->label('No.')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('circuit.circuit')
+                    ->sortable(),
             ])
             ->filters([
                 //

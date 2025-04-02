@@ -33,7 +33,7 @@ class CircuitResource extends Resource
                     ->required()
                     ->maxLength(199),
                 Forms\Components\Select::make('district_id')
-                    ->relationship('district', 'id')
+                    ->relationship('district', 'district')
                     ->required(),
                 Forms\Components\TextInput::make('reference')
                     ->required()
@@ -44,7 +44,6 @@ class CircuitResource extends Resource
                 Forms\Components\TextInput::make('contact')
                     ->maxLength(199),
                 Forms\Components\TextInput::make('showphone')
-                    ->tel()
                     ->maxLength(10),
                 Forms\Components\TextInput::make('activated')
                     ->maxLength(10),
@@ -55,20 +54,20 @@ class CircuitResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('reference')->label('No.')
+                    ->searchable()
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('circuit')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('district.district')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('reference')
-                    ->searchable()
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('activated')->label('Active')
                     ->icon(fn (string $state): string => match ($state) {
                         'no' => 'heroicon-o-x-circle',
                         'yes' => 'heroicon-o-check-circle'
                     })
-            ])
+            ])->defaultSort('reference','asc')
             ->filters([
                 //
             ])
@@ -95,6 +94,7 @@ class CircuitResource extends Resource
             'index' => Pages\ListCircuits::route('/'),
             'create' => Pages\CreateCircuit::route('/create'),
             'edit' => Pages\EditCircuit::route('/{record}/edit'),
+            'plan' => Pages\EditPlan::route('/{record}/plan'),
         ];
     }
 }

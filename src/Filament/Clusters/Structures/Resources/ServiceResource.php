@@ -22,6 +22,8 @@ class ServiceResource extends Resource
 
     protected static ?string $cluster = Structures::class;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function form(Form $form): Form
     {
         return $form
