@@ -3,6 +3,7 @@
 namespace Bishopm\Methodist\Filament\Clusters\Structures\Resources\CircuitResource\Pages;
 
 use Bishopm\Methodist\Filament\Clusters\Structures\Resources\CircuitResource;
+use Bishopm\Methodist\Models\District;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
@@ -16,16 +17,20 @@ use Filament\Resources\Pages\Page;
 use Illuminate\Support\HtmlString;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\Hidden;
+use Filament\Tables\Actions\Contracts\HasTable;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Livewire;
 
 class EditPlan extends Page implements HasForms
 {
-    use InteractsWithRecord, InteractsWithForms;
+    use InteractsWithRecord, InteractsWithForms, InteractsWithTable;
 
     protected static string $resource = CircuitResource::class;
 
-    protected static string $view = 'church::manage-roster';
+    protected static string $view = 'methodist::edit-plan';
 
     protected ?string $subheading = 'Subtitle';
 
@@ -62,16 +67,8 @@ class EditPlan extends Page implements HasForms
                 ->action(fn () => self::changeMonth('next'))
                 ->icon('heroicon-m-forward')
                 ->iconButton(),
-            Action::make('emails')->label('Email ' . $rosterlabel . ' rosters')
-                ->requiresConfirmation()
-                ->action(fn () => self::sendRosterEmails($firstdate)),
-            Action::make('Preview messages')->label('Preview messages (' . date('j M',strtotime('next ' . $this->record->dayofweek)) . ')')
-                ->modalHeading($this->record->roster . ": Preview messages")
-                ->form($schema)
-                ->modalSubmitActionLabel('Send messages')
-                ->action(fn () => self::sendMessages()),
-            Action::make('report')->label('View Roster')
-                ->url(fn (): string => route('reports.roster', [
+            Action::make('report')->label('View Plan')
+                ->url(fn (): string => route('reports.plan', [
                     'id' => $this->record,
                     'year' => date('Y',strtotime($this->data['firstofmonth'])), 
                     'month' => date('m',strtotime($this->data['firstofmonth']))
@@ -119,71 +116,6 @@ class EditPlan extends Page implements HasForms
         });
         $schema[] = Placeholder::make('Preview')->content(new HtmlString($messages))->label('');
         return $schema;*/
-    }
-
-    public function sendMessages() {
-        if ($this->credits >= count($this->data['allmessages'])) {
-            //SendSMS::dispatch($this->data['allmessages']);
-            if (count($this->data['allmessages']) > 1){
-                Notification::make('SMS sent')->title('SMSes sent to ' . $this->count . ' individuals')->send();
-            } elseif (count($this->data['allmessages'])==1) {
-                Notification::make('SMS sent')->title('SMS sent to 1 individual')->send();
-            }
-        } else {
-            Notification::make('failurenote')->title('Insufficient credits - please top up your BulkSMS account')->send();
-        }
-    }
-    
-    public function sendRosterEmails($firstday)
-    {
-        $firstday = date('Y-m-d', strtotime($firstday));
-        $nextmonth = date('Y-m-t', strtotime($firstday. ' + 1 month'));
-        /*$repcontroller=new ReportsController();
-        $makepdf=$repcontroller->roster($this->record->id,date('Y',strtotime($firstday)),date('n',strtotime($firstday)),2,'F');
-        $groups = Rostergroup::with('group.individuals')->where('roster_id',$this->record->id)->get();
-        $rost = Roster::find($this->record->id);
-        $indivs = array();
-        foreach ($groups as $group){
-            if (isset($group->group)){
-                foreach ($group->group->individuals as $member){
-                    if (!isset($indivs[$member->id])){
-                        $indivs[$member->id]=array();
-                    }
-                    $indivs[$member->id][]=['group_id'=>$group->group->id,'groupname'=>$group->group->groupname,'video'=>$group->video];
-                }
-            }
-        }
-        $emailcount=0;
-        $rostertitle=date('F',strtotime($firstday)) . " and " . date('F Y',strtotime($nextmonth));
-        foreach ($indivs as $id=>$indiv){
-            $person = Individual::find($id);
-            $message = "Thank you so much for your willingness to serve at WMC. Attached is the service roster for " . $rostertitle . ".\n";
-            foreach ($indiv as $group){
-                $message.="\n**" . $group['groupname'] . "**\n\n";
-                $message.="If you are not able to serve on any given day, please contact one of the other members of the team below and arrange to swap duties:\n\n";
-                $team = Group::with('individuals')->where('id',$group['group_id'])->first();
-                foreach ($team->individuals as $tm){
-                    if ($tm->id <> $id){
-                        $message.=$tm->firstname . " " . $tm->surname . " (" . $tm->cellphone . ")\n\n";
-                    }
-                }
-                if ($group['video']) {
-                    $message.="\nIf you are new to the team, or have not seen it yet, have a look at the **<a href=\"" . $group['video'] . "\">training video</a>** we have prepared for this team. We hope it is helpful - please share any feedback you may have to help us improve!\n";
-                }
-            }
-            $message.="\nMay God bless you as you serve him here. Thank you!";
-            $data=array();
-            $data['body'] = $message;
-            $data['subject'] = $rost->roster . ": " . $rostertitle . " Roster";
-            $data['firstname'] = $person->firstname;
-            $data['url'] = "https://westvillemethodist.co.za";
-            $data['firstname'] = $person->firstname;
-            $data['attachment'] = storage_path('public/attachments/WMCrosters.pdf');
-            $emailcount++;
-            Mail::to($person->email)->queue(new ReportMail($data));
-            Notification::make('Email sent')->title('Emails sent: ' . $emailcount)->send();
-        }
-        return "Emails sent: " . $emailcount;*/
     }
 
     protected function changeMonth($start){
@@ -257,6 +189,24 @@ class EditPlan extends Page implements HasForms
             }
         }
         return $ridat;*/
+    }
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->query(District::query())
+            ->columns([
+                TextColumn::make('district'),
+            ])
+            ->filters([
+                // ...
+            ])
+            ->actions([
+                // ...
+            ])
+            ->bulkActions([
+                // ...
+            ]);
     }
 
     public function form(Form $form): Form

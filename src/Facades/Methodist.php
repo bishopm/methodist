@@ -13,6 +13,6 @@ class Methodist extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return 'church';
+        return 'methodist';
     }
 }
