@@ -9,6 +9,7 @@ Route::middleware(['web'])->controller('\Bishopm\Methodist\Http\Controllers\Home
     if (substr(url()->current(), strrpos(url()->current(), '/' )+1)<>"admin"){
         Route::get('/{page}', 'page')->name('web.page');
     }
+    Route::get('/admin/reports/plan/edit/{id}', ['uses'=>'\Bishopm\Methodist\Http\Controllers\HomeController@editplan','as' => 'admin.plan.edit']);
     Route::get('/admin/reports/plan/{id}/{year}/{month}', ['uses'=>'\Bishopm\Methodist\Http\Controllers\HomeController@plan','as' => 'reports.plan']);
 });
 

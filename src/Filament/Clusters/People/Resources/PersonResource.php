@@ -18,6 +18,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Livewire\Livewire;
+use Outerweb\FilamentImageLibrary\Filament\Forms\Components\ImageLibraryPicker;
 
 class PersonResource extends Resource
 {
@@ -138,7 +139,8 @@ class PersonResource extends Resource
                             ->label('Circuit')
                             ->options(Circuit::orderBy('circuit')->get()->pluck('circuit', 'id'))
                             ->searchable()
-                            ->required()
+                            ->required(),
+                        ImageLibraryPicker::make('image')
                     ])
                     ->columns(2),
                 Section::make('Preacher details')

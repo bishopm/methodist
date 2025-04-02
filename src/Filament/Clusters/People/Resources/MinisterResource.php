@@ -46,7 +46,7 @@ class MinisterResource extends Resource
                     ->required()
                     ->numeric(),
                 Forms\Components\TextInput::make('role')
-                    ->maxLength(199),
+                    ->maxLength(199)
             ]);
     }
 

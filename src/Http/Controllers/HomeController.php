@@ -11,5 +11,10 @@ class HomeController extends Controller
         return view('methodist::web.home',$data);
     }
 
+    public function editplan()
+    {
+        return view('methodist::edit-plan');
+    }
+
 
 }

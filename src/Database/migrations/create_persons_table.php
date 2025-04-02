@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('surname', 199);
             $table->string('title', 199)->nullable();
             $table->string('phone', 199)->nullable();
+            $table->string('image', 199)->nullable();
             $table->integer('circuit_id');
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();

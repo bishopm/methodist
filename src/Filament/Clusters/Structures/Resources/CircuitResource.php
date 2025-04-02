@@ -93,8 +93,7 @@ class CircuitResource extends Resource
         return [
             'index' => Pages\ListCircuits::route('/'),
             'create' => Pages\CreateCircuit::route('/create'),
-            'edit' => Pages\EditCircuit::route('/{record}/edit'),
-            'plan' => Pages\EditPlan::route('/{record}/plan'),
+            'edit' => Pages\EditCircuit::route('/{record}/edit')
         ];
     }
 }
