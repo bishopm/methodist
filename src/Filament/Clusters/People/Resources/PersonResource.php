@@ -12,6 +12,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -140,7 +141,6 @@ class PersonResource extends Resource
                             ->options(Circuit::orderBy('circuit')->get()->pluck('circuit', 'id'))
                             ->searchable()
                             ->required(),
-                        Forms\Components\TextInput::make('image')
                     ])
                     ->columns(2),
                 Section::make('Preacher details')

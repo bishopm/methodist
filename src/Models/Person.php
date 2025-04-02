@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Person extends Model
 {
+
     public $table = 'persons';
     protected $guarded = ['id'];
 
