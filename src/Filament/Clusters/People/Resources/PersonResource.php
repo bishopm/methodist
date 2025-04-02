@@ -140,7 +140,7 @@ class PersonResource extends Resource
                             ->options(Circuit::orderBy('circuit')->get()->pluck('circuit', 'id'))
                             ->searchable()
                             ->required(),
-                        ImageLibraryPicker::make('image')
+                        Forms\Components\TextInput::make('image')
                     ])
                     ->columns(2),
                 Section::make('Preacher details')

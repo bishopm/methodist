@@ -21,7 +21,7 @@
         "dotswan/filament-map-picker": "~1",
         "stechstudio/filament-impersonate": "~3",
         "althinect/filament-spatie-roles-permissions": "~2",
-        "outerweb/filament-image-library": "~2"
+        "filament/spatie-laravel-media-library-plugin":"^3.2"
     },
     "require-dev": {
         "phpunit/phpunit": "~9.0",
