@@ -30,8 +30,10 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Teal
+                'primary' => Color::Rose
             ])
+            ->brandLogo(asset('methodist/images/mcsa.png'))
+            ->brandLogoHeight('2rem')
             ->discoverResources(in: base_path('vendor/bishopm/methodist/src/Filament/Resources'), for: 'Bishopm\\Methodist\\Filament\\Resources')
             ->discoverPages(in: base_path('vendor/bishopm/methodist/src/Filament/Pages'), for: 'Bishopm\\Methodist\\Filament\\Pages')
             ->discoverClusters(in: base_path('vendor/bishopm/methodist/src/Filament/Clusters'), for: 'Bishopm\\Methodist\\Filament\\Clusters')

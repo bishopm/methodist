@@ -35,7 +35,7 @@ class SocietyResource extends Resource
                     ->required()
                     ->maxLength(199),
                 Forms\Components\Select::make('circuit_id')
-                    ->relationship('circuit', 'id')
+                    ->relationship('circuit', 'circuit')
                     ->required(),
                 Forms\Components\TextInput::make('address')
                     ->maxLength(199),
@@ -44,9 +44,9 @@ class SocietyResource extends Resource
                     ->maxLength(199),
                 Forms\Components\TextInput::make('website')
                     ->maxLength(199),
-                Forms\Components\TextInput::make('latitude')
+                Forms\Components\Hidden::make('latitude')
                     ->hiddenLabel(),
-                Forms\Components\TextInput::make('longitude')
+                Forms\Components\Hidden::make('longitude')
                     ->hiddenLabel(),
                 Map::make('location')
                     ->afterStateUpdated(function (Set $set, ?array $state): void {
