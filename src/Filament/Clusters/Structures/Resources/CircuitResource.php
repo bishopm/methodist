@@ -8,11 +8,12 @@ use Bishopm\Methodist\Filament\Clusters\Structures\Resources\CircuitResource\Rel
 use Bishopm\Methodist\Models\Circuit;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class CircuitResource extends Resource
 {
@@ -28,6 +29,8 @@ class CircuitResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('circuit')
                     ->required()
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))   
                     ->maxLength(199),
                 Forms\Components\TextInput::make('slug')
                     ->required()
@@ -35,18 +38,19 @@ class CircuitResource extends Resource
                 Forms\Components\Select::make('district_id')
                     ->relationship('district', 'district')
                     ->required(),
-                Forms\Components\TextInput::make('reference')
+                Forms\Components\TextInput::make('reference')->label('Circuit number')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('plan_month')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('contact')
-                    ->maxLength(199),
-                Forms\Components\TextInput::make('showphone')
-                    ->maxLength(10),
-                Forms\Components\TextInput::make('activated')
-                    ->maxLength(10),
+                Forms\Components\Select::make('plan_month')->label('First plan starts in this month')
+                    ->options([
+                        '1' => 'January',
+                        '2' => 'February',
+                        '3' => 'March'
+                    ]),
+                Forms\Components\TagsInput::make('servicetypes')->label('Service types')
+                    ->suggestions(setting('general.servicetypes')),
+                Forms\Components\Toggle::make('showphone')->label('Show phone numbers on plan'),
+                Forms\Components\Toggle::make('activated'),
             ]);
     }
 
@@ -64,8 +68,8 @@ class CircuitResource extends Resource
                     ->sortable(),
                 Tables\Columns\IconColumn::make('activated')->label('Active')
                     ->icon(fn (string $state): string => match ($state) {
-                        'no' => 'heroicon-o-x-circle',
-                        'yes' => 'heroicon-o-check-circle'
+                        '0' => 'heroicon-o-x-circle',
+                        '1' => 'heroicon-o-check-circle'
                     })
             ])->defaultSort('reference','asc')
             ->filters([

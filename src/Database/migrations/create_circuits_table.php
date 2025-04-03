@@ -16,9 +16,9 @@ return new class extends Migration
             $table->integer('district_id');
             $table->integer('reference');
             $table->integer('plan_month');
-            $table->string('contact', 199)->nullable();
-            $table->string('showphone', 10)->nullable();
-            $table->string('activated', 10)->nullable();
+            $table->json('servicetypes')->nullable();
+            $table->integer('showphone', 10)->nullable();
+            $table->integer('activated', 10)->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->timestamp('deleted_at')->nullable();

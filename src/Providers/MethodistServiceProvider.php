@@ -1,12 +1,14 @@
 <?php namespace Bishopm\Methodist\Providers;
 
 use Bishopm\Methodist\Http\Middleware\AdminRoute;
+use Bishopm\Methodist\Livewire\Plan;
 use Illuminate\Support\ServiceProvider;
 use Bishopm\Methodist\Methodist;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
+use Livewire\Livewire;
 
 class MethodistServiceProvider extends ServiceProvider
 {
@@ -45,6 +47,7 @@ class MethodistServiceProvider extends ServiceProvider
         Config::set('filament-spatie-roles-permissions.generator.model_directories',[base_path('vendor/bishopm/methodist/src/Models')]);
         Config::set('filament-spatie-roles-permissions.generator.user_model', \Bishopm\Methodist\Models\User::class);
         Config::set('filament-spatie-roles-permissions.generator.policies_namespace','Bishopm\Methodist\Filament\Policies');
+        Livewire::component('plan', Plan::class); 
     }
 
     /**

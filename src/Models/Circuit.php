@@ -10,6 +10,9 @@ class Circuit extends Model
 {
     public $table = 'circuits';
     protected $guarded = ['id'];
+    protected $casts = [
+        'servicetypes' => 'array',
+    ];
 
     public function district(): BelongsTo
     {

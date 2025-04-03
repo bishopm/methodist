@@ -6,7 +6,7 @@ use Closure;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Bishopm\Methodist\Filament\Clusters\Settings as SettingsCluster;
-use Dotswan\MapPicker\Fields\Map;
+use Filament\Forms\Components\TagsInput;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 
 class Settings extends BaseSettings
@@ -24,7 +24,7 @@ class Settings extends BaseSettings
                         ->columns(2)
                         ->schema([
                             TextInput::make('general.site_name')->required(),
-                            Map::make('general.map_location')->label('Location')
+                            TagsInput::make('general.servicetypes')->label('Default service types')
                         ])
                 ]),
         ];
