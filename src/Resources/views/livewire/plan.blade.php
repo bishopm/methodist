@@ -3,17 +3,17 @@
         <select class="form-select form-select-sm">
             <option></option>
             @foreach ($servicetypes as $type)
-                @if ($week['servicetype']==$type)
+                @if ($servicetype==$type)
                     <option selected>{{$type}}</option>
                 @else
                     <option>{{$type}}</option>
                 @endif
             @endforeach
         </select>
-        <select class="form-select form-select-sm" wire:change="updatePlan($event.target.value, {{$servicedate}}, {{$week['service_id']}}, 'preacher')">
+        <select class="form-select form-select-sm" wire:model="selectedPreacher" wire:changed="preacherChanged">
             <option></option>
             @foreach ($preachers as $preacher)
-                @if ($week['preacher']==$preacher['id'])
+                @if ($selectedPreacher==$preacher['id'])
                     <option selected value="{{$preacher['id']}}">{{$preacher['name']}}</option>
                 @else 
                     <option value="{{$preacher['id']}}">{{$preacher['name']}}</option>
