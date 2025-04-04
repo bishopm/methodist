@@ -2,6 +2,7 @@
 
 use Bishopm\Methodist\Http\Middleware\AdminRoute;
 use Bishopm\Methodist\Livewire\Plan;
+use Bishopm\Methodist\Livewire\PreachingPlan;
 use Illuminate\Support\ServiceProvider;
 use Bishopm\Methodist\Methodist;
 use Illuminate\Pagination\Paginator;
@@ -47,7 +48,7 @@ class MethodistServiceProvider extends ServiceProvider
         Config::set('filament-spatie-roles-permissions.generator.model_directories',[base_path('vendor/bishopm/methodist/src/Models')]);
         Config::set('filament-spatie-roles-permissions.generator.user_model', \Bishopm\Methodist\Models\User::class);
         Config::set('filament-spatie-roles-permissions.generator.policies_namespace','Bishopm\Methodist\Filament\Policies');
-        Livewire::component('plan', Plan::class); 
+        Livewire::component('preaching-plan', PreachingPlan::class); 
     }
 
     /**

@@ -15,7 +15,7 @@ class EditCircuit extends EditRecord
     {
         return [
             Action::make('Preaching plan')
-                ->url(fn (): string => route('admin.plan.edit', ['id' => $this->record])),
+                ->url(fn (): string => route('filament.admin.structures.resources.circuits.plan', ['record' => $this->record])),
             Actions\DeleteAction::make(),
         ];
     }
