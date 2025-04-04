@@ -15,7 +15,7 @@
             vertical-align: middle;
         }
     </style>
-    @livewireStyles
+    @filamentStyles
 </head>
 <body class="bg-gray-100">
     <div class="bg-dark py-2 text-center">
@@ -33,11 +33,8 @@
         @foreach ($rows as $society=>$service)
             @foreach ($service as $ttt=>$row)
                 <tr>
-                    @if ($loop->first)
+                    
                         <th>{{$society}}</th><td><small>{{$ttt}}</small></td>
-                    @else
-                        <th></th><td><small>{{$ttt}}</small></td>
-                    @endif
                     @foreach ($row as $key=>$week)
                         @livewire('plan',[
                             'preachers'=>$preachers,
@@ -53,6 +50,7 @@
             @endforeach
         @endforeach
     </table>
-    @livewireScripts
+    <script defer src="https://cdn.jsdelivr.net/npm/@imacrayon/alpine-ajax@0.12.0/dist/cdn.min.js"></script>
+    @filamentScripts
 </body>
 </html>
