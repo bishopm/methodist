@@ -45,7 +45,8 @@ class PersonResource extends Resource
                                     ->options([
                                         'Circuit Steward' => 'Circuit Steward',
                                         'Circuit Treasurer' => 'Circuit Treasurer',
-                                        'Circuit Secretary' => 'Circuit Secretary'
+                                        'Circuit Secretary' => 'Circuit Secretary',
+                                        'Supervisor of Studies' => 'Supervisor of Studies'
                                     ]),
                                 Select::make('leader_society_id')
                                     ->options(function ($record){

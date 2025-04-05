@@ -12,6 +12,7 @@ class Circuit extends Model
     protected $guarded = ['id'];
     protected $casts = [
         'servicetypes' => 'array',
+        'midweeks' => 'array'
     ];
 
     public function district(): BelongsTo
@@ -22,6 +23,11 @@ class Circuit extends Model
     public function societies(): HasMany
     {
         return $this->hasMany(Society::class);
+    }
+
+    public function meetings(): HasMany
+    {
+        return $this->hasMany(Meeting::class);
     }
 
     public function ministers(): HasMany

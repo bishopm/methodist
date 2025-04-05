@@ -24,7 +24,9 @@ class Settings extends BaseSettings
                         ->columns(2)
                         ->schema([
                             TextInput::make('general.site_name')->required(),
-                            TagsInput::make('general.servicetypes')->label('Default service types')
+                            TagsInput::make('general.servicetypes')->label('Default service types'),
+                            TextInput::make('general.presiding_bishop')->label('Presiding Bishop'),
+                            TextInput::make('general.general_secretary')->label('General Secretary')
                         ])
                 ]),
         ];
