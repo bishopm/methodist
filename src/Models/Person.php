@@ -32,4 +32,9 @@ class Person extends Model
         return $this->belongsTo(Circuit::class);
     }
 
+    public function society(): BelongsTo
+    {
+        return $this->belongsTo(Society::class);
+    }
+
 }

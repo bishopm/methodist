@@ -48,13 +48,6 @@ class PersonResource extends Resource
                                         'Circuit Secretary' => 'Circuit Secretary',
                                         'Supervisor of Studies' => 'Supervisor of Studies'
                                     ]),
-                                Select::make('leader_society_id')
-                                    ->options(function ($record){
-                                        return Society::where('circuit_id',$record->circuit_id)->orderBy('society')->get()->pluck('society', 'id');
-                                    })                                        
-                                    ->label('Society')
-                                    ->searchable()
-                                    ->required()
                             ])
                             ->action(function (array $data, Person $record, $livewire): void {
                                 $record->leader()->create([
@@ -84,13 +77,6 @@ class PersonResource extends Resource
                                     ]),
                                 Forms\Components\TextInput::make('number')->label('Preacher number (optional)')
                                     ->numeric(),
-                                Select::make('society_id')
-                                    ->options(function ($record){
-                                        return Society::where('circuit_id',$record->circuit_id)->orderBy('society')->get()->pluck('society', 'id');
-                                    })                                        
-                                    ->label('Society')
-                                    ->searchable()
-                                    ->required(),
                                 Forms\Components\TextInput::make('induction')->label('Year of induction')
                                     ->readonly(function (Get $get){
                                         if (($get('status')=="preacher") or ($get('status')=="emeritus")){
@@ -137,6 +123,10 @@ class PersonResource extends Resource
                         Forms\Components\TextInput::make('phone')
                             ->tel()
                             ->maxLength(199),
+                        Forms\Components\Select::make('society_id')
+                            ->label('Society')
+                            ->options(Society::orderBy('society')->get()->pluck('society', 'id'))
+                            ->searchable(),
                         Forms\Components\Select::make('circuit_id')
                             ->label('Circuit')
                             ->options(Circuit::orderBy('circuit')->get()->pluck('circuit', 'id'))
@@ -166,13 +156,6 @@ class PersonResource extends Resource
                                 'note' => 'Preacher on note',
                                 'emeritus' => 'Emeritus preacher'
                             ])
-                            ->required(),
-                        Forms\Components\Select::make('society_id')
-                            ->options(function ($record){
-                                return Society::where('circuit_id',$record->society->circuit_id)->orderBy('society')->get()->pluck('society','id');
-                            })
-                            ->label('Society')
-                            ->searchable()
                             ->required(),
                         Forms\Components\TextInput::make('number')->label('Preacher number (optional)')
                             ->numeric(),
@@ -223,13 +206,6 @@ class PersonResource extends Resource
                                 'Circuit Treasurer' => 'Circuit Treasurer'
                             ])
                             ->multiple(),
-                        Forms\Components\Select::make('society_id')
-                            ->options(function ($record){
-                                return Society::where('circuit_id',$record->society->circuit_id)->orderBy('society')->get()->pluck('society','id');
-                            })
-                            ->label('Society')
-                            ->searchable()
-                            ->required()
                     ])
                     ->columns(2),
             ]);

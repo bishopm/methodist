@@ -14,10 +14,4 @@ class Preacher extends Model
     {
         return $this->belongsTo(Person::class);
     }
-
-    public function society(): BelongsTo
-    {
-        return $this->belongsTo(Society::class);
-    }
-
 }

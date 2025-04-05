@@ -12,7 +12,6 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id')->unsigned();
             $table->integer('person_id');
-            $table->integer('society_id');
             $table->json('roles');
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();

@@ -31,8 +31,6 @@ class LeaderResource extends Resource
                     ->relationship('person', 'title')
                     ->required(),
                 Forms\Components\TextInput::make('roles'),
-                Forms\Components\Select::make('society_id')
-                    ->relationship('society', 'id'),
             ]);
     }
 
