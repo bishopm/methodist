@@ -59,7 +59,7 @@ class HomeController extends Controller
         $stypes=$this->circuit->servicetypes;
         ksort($stypes);
         $i=1;
-        $pdf->rect(200,5,87,16 - count($stypes)*2);
+        $pdf->rect(200,5,87,count($stypes)*2);
         foreach ($stypes as $key=>$val){
             if ($i % 2 == 0){
                 $xadd=43;
@@ -196,7 +196,7 @@ class HomeController extends Controller
             if ($minister->phone<>"" and $this->circuit->showphone) {
                 $sup.= " (" . $minister->phone . ")";
             }
-            if ($minister->role=="Superintendent"){
+            if ($minister->minister->role=="Superintendent"){
                 $sup.= " (Supt)";
             }
             $pdf->text($xx,$yy,$minister->title . " " . substr($minister->firstname,0,1) . " " . $minister->surname . $sup);
@@ -208,7 +208,7 @@ class HomeController extends Controller
         }
         if (count($this->supernumeraries)){
             $pdf->SetFont('Helvetica', 'B', 10);
-            $pdf->text($xx,$yy+2,"Supernumeraries");
+            $pdf->text($xx,$yy+2,"Supernumerary Ministers");
             $yy=$yy+6;
             $pdf->SetFont('Helvetica', '', 9);
             foreach ($this->supernumeraries as $super){
@@ -291,7 +291,9 @@ class HomeController extends Controller
                 'induction'=>$ps->preacher->induction,
                 'phone'=>$ps->phone
             );
-            $preachers[$ps->preacher->society->society][$ps->preacher->status][]=$pn;
+            if (isset($ps->society)){
+                $preachers[$ps->society->society][$ps->preacher->status][]=$pn;
+            }
         }
         ksort($preachers);
         $pdf->SetFont('Helvetica', 'B', 10);
@@ -395,9 +397,9 @@ class HomeController extends Controller
 
     private function getrows(){
         $circuit=Circuit::with('societies.services')->where('id',$this->circuit->id)->first();
-        $this->ministers = Person::where('circuit_id',$this->circuit->id)->whereHas('minister', function ($q){ $q->where('status','<>','Supernumerary Minister');})->orderBy('surname')->orderBy('firstname')->get();
-        $this->supernumeraries = Person::where('circuit_id',$this->circuit->id)->whereHas('minister', function ($q){ $q->where('status','Supernumerary Minister');})->orderBy('surname')->orderBy('firstname')->get();
-        $this->localpreachers = Person::where('circuit_id',$this->circuit->id)->withWhereHas('preacher', function ($q){ $q->where('active',1);})->with('preacher.society')->orderBy('surname')->orderBy('firstname')->get();
+        $this->ministers = Person::where('circuit_id',$this->circuit->id)->whereHas('minister', function ($q){ $q->where('status','<>','Supernumerary');})->orderBy('surname')->orderBy('firstname')->get();
+        $this->supernumeraries = Person::where('circuit_id',$this->circuit->id)->whereHas('minister', function ($q){ $q->where('status','Supernumerary');})->orderBy('surname')->orderBy('firstname')->get();
+        $this->localpreachers = Person::where('circuit_id',$this->circuit->id)->withWhereHas('preacher', function ($q){ $q->where('active',1);})->with('society')->orderBy('surname')->orderBy('firstname')->get();
         foreach ($this->ministers as $minister){
             $this->preachers[$minister->id] = ['name' => substr($minister->firstname,0,1) . " " . $minister->surname,'id' => $minister->id];
         }
@@ -482,8 +484,10 @@ class HomeController extends Controller
         }
         $this->midweeks=Midweek::where('servicedate','>=',$firstday)->where('servicedate','<',$lastday)->orderBy('servicedate','ASC')->get()->pluck('servicedate','midweek')->toArray();
         foreach ($this->midweeks as $desc=>$mw){
-            if (in_array($desc,$this->circuit->midweeks)){
-                $dates[]=$mw;
+            if (isset($this->circuit->midweeks)){
+                if (in_array($desc,$this->circuit->midweeks)){
+                    $dates[]=$mw;
+                }
             }
         }
         sort($dates);
