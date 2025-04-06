@@ -13,8 +13,7 @@ use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class SocietyResource extends Resource
 {
@@ -30,12 +29,15 @@ class SocietyResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('society')
                     ->required()
-                    ->maxLength(199),
+                    ->maxLength(199)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->maxLength(199),
                 Forms\Components\Select::make('circuit_id')
                     ->relationship('circuit', 'circuit')
+                    ->searchable()
                     ->required(),
                 Forms\Components\TextInput::make('address')
                     ->maxLength(199),
@@ -54,10 +56,12 @@ class SocietyResource extends Resource
                         $set('longitude', $state['lng']);
                     })
                     ->afterStateHydrated(function ($state, $record, Set $set): void {
-                        $set('location', [
-                            'lat' => $record->latitude,
-                            'lng' => $record->longitude
-                        ]);
+                        if ($record){
+                            $set('location', [
+                                'lat' => $record->latitude,
+                                'lng' => $record->longitude
+                            ]);
+                        }
                     })
             ]);
     }

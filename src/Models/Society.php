@@ -11,7 +11,7 @@ class Society extends Model
     public $table = 'societies';
     protected $guarded = ['id'];
     protected $casts = [
-        'value' => 'json',
+        'location' => 'json',
     ];
 
     public function circuit(): BelongsTo

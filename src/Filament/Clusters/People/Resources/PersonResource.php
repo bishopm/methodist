@@ -131,7 +131,13 @@ class PersonResource extends Resource
                                 }
                             })
                             ->label('Society')
-                            ->options(Society::orderBy('society')->get()->pluck('society', 'id'))
+                            ->options(function ($record){
+                                if ($record){
+                                    return Society::where('circuit_id',$record->circuit_id)->orderBy('society')->get()->pluck('society', 'id');
+                                } else {
+                                    return Society::orderBy('society')->get()->pluck('society', 'id');
+                                }
+                            })
                             ->searchable(),
                         Forms\Components\Select::make('leadership')
                             ->visible(function ($record){
