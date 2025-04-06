@@ -30,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Rose
+                'primary' => Color::Zinc
             ])
             ->brandLogo(asset('methodist/images/mcsa.png'))
             ->brandLogoHeight('2.5rem')

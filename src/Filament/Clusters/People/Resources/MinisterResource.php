@@ -45,7 +45,7 @@ class MinisterResource extends Resource
                 Forms\Components\TextInput::make('active')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('role')
+                Forms\Components\TextInput::make('leadership')
                     ->maxLength(199)
             ]);
     }
@@ -67,7 +67,7 @@ class MinisterResource extends Resource
                         '0' => 'heroicon-o-x-circle',
                         '1' => 'heroicon-o-check-circle'
                     }),
-                Tables\Columns\TextColumn::make('role')
+                Tables\Columns\TextColumn::make('leadership')
                     ->searchable()
             ])
             ->filters([

@@ -13,9 +13,10 @@ return new class extends Migration
             $table->increments('id')->unsigned();
             $table->integer('person_id');
             $table->string('status', 199);
-            $table->string('induction', 10);
-            $table->string('number', 20);
-            $table->tinyinteger('active');
+            $table->json('leadership')->nullable();
+            $table->string('induction', 10)->nullable();
+            $table->string('number', 20)->nullable();
+            $table->tinyinteger('active')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->timestamp('deleted_at')->nullable();

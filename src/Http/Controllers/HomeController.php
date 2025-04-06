@@ -196,7 +196,7 @@ class HomeController extends Controller
             if ($minister->phone<>"" and $this->circuit->showphone) {
                 $sup.= " (" . $minister->phone . ")";
             }
-            if ($minister->minister->role=="Superintendent"){
+            if (is_array($minister->minister->leadership) and (in_array("Superintendent",$minister->minister->leadership))){
                 $sup.= " (Supt)";
             }
             $pdf->text($xx,$yy,$minister->title . " " . substr($minister->firstname,0,1) . " " . $minister->surname . $sup);
@@ -224,59 +224,31 @@ class HomeController extends Controller
                 }
             }   
         }
-
-        $stewards=Person::where('circuit_id',$this->circuit->id)->withWhereHas('leader', function($q) { $q->whereJsonContains('roles','Circuit Steward'); })->orderBy('surname')->get();
-        if (count($stewards)){
-            $pdf->SetFont('Helvetica', 'B', 10);
-            $pdf->text($xx,$yy+2,"Circuit Stewards");
-            $yy=$yy+6;
-            $pdf->SetFont('Helvetica', '', 9);
-            foreach ($stewards as $steward){
-                $sup="";
-                if ($steward->phone<>"" and $this->circuit->showphone){
-                    $sup.= " (" . $steward->phone . ")";
+        // Lay leaders
+        $roles = setting('general.leadership_roles');
+        foreach ($roles as $role){
+            $leaders=Person::where('circuit_id',$this->circuit->id)->whereJsonContains('leadership',$role)->orderBy('surname')->get();
+            if (count($leaders)){
+                $pdf->SetFont('Helvetica', 'B', 10);
+                if (count($leaders)>1){
+                    $pdf->text($xx,$yy+2,$role . "s");
+                } else {
+                    $pdf->text($xx,$yy+2,$role);
                 }
-                $pdf->text($xx,$yy,$steward->title . " " . substr($steward->firstname,0,1) . " " . $steward->surname . $sup);
-                $yy=$yy+4.5;
-                if ($yy>199) {
-                    $yy=36;
-                    $xx=$xx+70;
-                }
-            }   
-        }
-        $treasurer=Person::where('circuit_id',$this->circuit->id)->withWhereHas('leader', function($q) { $q->whereJsonContains('roles','Circuit Treasurer'); })->orderBy('surname')->first();
-        if (!is_null($treasurer)){
-            $pdf->SetFont('Helvetica', 'B', 10);
-            $pdf->text($xx,$yy+2,"Circuit Treasurer");
-            $yy=$yy+6;
-            $pdf->SetFont('Helvetica', '', 9);
-            $sup="";
-            if ($treasurer->phone<>"" and $this->circuit->showphone){
-                $sup.= " (" . $treasurer->phone . ")";
-            }
-            $pdf->text($xx,$yy,$treasurer->title . " " . substr($treasurer->firstname,0,1) . " " . $treasurer->surname . $sup);
-            $yy=$yy+4.5;
-            if ($yy>199) {
-                $yy=36;
-                $xx=$xx+70;
-            }
-        }
-
-        $secretary=Person::where('circuit_id',$this->circuit->id)->withWhereHas('leader', function($q) { $q->whereJsonContains('roles','Circuit Secretary'); })->orderBy('surname')->first();
-        if (!is_null($secretary)){
-            $pdf->SetFont('Helvetica', 'B', 10);
-            $pdf->text($xx,$yy+2,"Circuit Secretary");
-            $yy=$yy+6;
-            $pdf->SetFont('Helvetica', '', 9);
-            $sup="";
-            if ($secretary->phone<>"" and $this->circuit->showphone){
-                $sup.= " (" . $secretary->phone . ")";
-            }
-            $pdf->text($xx,$yy,$secretary->title . " " . substr($secretary->firstname,0,1) . " " . $secretary->surname . $sup);
-            $yy=$yy+4.5;
-            if ($yy>199) {
-                $yy=36;
-                $xx=$xx+70;
+                $yy=$yy+6;
+                $pdf->SetFont('Helvetica', '', 9);    
+                foreach ($leaders as $leader){
+                    $sup="";
+                    if ($leader->phone<>"" and $this->circuit->showphone){
+                        $sup.= " (" . $leader->phone . ")";
+                    }
+                    $pdf->text($xx,$yy,$leader->title . " " . substr($leader->firstname,0,1) . " " . $leader->surname . $sup);
+                    $yy=$yy+4.5;
+                    if ($yy>199) {
+                        $yy=36;
+                        $xx=$xx+70;
+                    }
+                }   
             }
         }
         $preachers=array();
@@ -299,23 +271,35 @@ class HomeController extends Controller
         $pdf->SetFont('Helvetica', 'B', 10);
         $pdf->text($xx,$yy+2,"LOCAL PREACHERS");
         $yy=$yy+4.5;
-        $sos=Person::where('circuit_id',$this->circuit->id)->withWhereHas('leader', function($q) { $q->whereJsonContains('roles','Supervisor of Studies'); })->orderBy('surname')->first();
-        if (!is_null($sos)){
-            $pdf->SetFont('Helvetica', '', 9);
-            if ($sos->title <>""){
-                $sosn=$sos->title . " " . substr($sos->firstname,0,1) . " " . $sos->surname;
-            } else {
-                $sosn=substr($sos->firstname,0,1) . " " . $sos->surname;
+
+        // Preacher leaders
+        $roles = setting('general.preacher_leadership_roles');
+        foreach ($roles as $role){
+            $leaders=Person::where('circuit_id',$this->circuit->id)->withWhereHas('preacher', function($q) use($role) { $q->whereJsonContains('leadership',$role); })->orderBy('surname')->get();
+            if (count($leaders)){
+                $pdf->SetFont('Helvetica', 'B', 10);
+                if (count($leaders)>1){
+                    $pdf->text($xx,$yy+2,$role . "s");
+                } else {
+                    $pdf->text($xx,$yy+2,$role);
+                }
+                $yy=$yy+6;
+                $pdf->SetFont('Helvetica', '', 9);    
+                foreach ($leaders as $leader){
+                    $sup="";
+                    if ($leader->phone<>"" and $this->circuit->showphone){
+                        $sup.= " (" . $leader->phone . ")";
+                    }
+                    $pdf->text($xx,$yy,$leader->title . " " . substr($leader->firstname,0,1) . " " . $leader->surname . $sup);
+                    $yy=$yy+4.5;
+                    if ($yy>199) {
+                        $yy=36;
+                        $xx=$xx+70;
+                    }
+                }   
             }
-            $pdf->text($xx,$yy+2,"Supervisor of Studies: " . $sosn);
-            $yy=$yy+6;
-            if ($yy>199) {
-                $yy=36;
-                $xx=$xx+70;
-            }
-        } else {
-            $yy=$yy+2.5;
         }
+        //    $yy=$yy+2.5;
         $pdf->SetFont('Helvetica', '', 9);
         $psociety="";
         foreach ($preachers as $psoc=>$statuses){
@@ -397,8 +381,8 @@ class HomeController extends Controller
 
     private function getrows(){
         $circuit=Circuit::with('societies.services')->where('id',$this->circuit->id)->first();
-        $this->ministers = Person::where('circuit_id',$this->circuit->id)->whereHas('minister', function ($q){ $q->where('status','<>','Supernumerary');})->orderBy('surname')->orderBy('firstname')->get();
-        $this->supernumeraries = Person::where('circuit_id',$this->circuit->id)->whereHas('minister', function ($q){ $q->where('status','Supernumerary');})->orderBy('surname')->orderBy('firstname')->get();
+        $this->ministers = Person::where('circuit_id',$this->circuit->id)->whereHas('minister', function ($q){ $q->where('status','<>','Supernumerary')->where('active',1);})->orderBy('surname')->orderBy('firstname')->get();
+        $this->supernumeraries = Person::where('circuit_id',$this->circuit->id)->whereHas('minister', function ($q){ $q->where('status','Supernumerary')->where('active',1);})->orderBy('surname')->orderBy('firstname')->get();
         $this->localpreachers = Person::where('circuit_id',$this->circuit->id)->withWhereHas('preacher', function ($q){ $q->where('active',1);})->with('society')->orderBy('surname')->orderBy('firstname')->get();
         foreach ($this->ministers as $minister){
             $this->preachers[$minister->id] = ['name' => substr($minister->firstname,0,1) . " " . $minister->surname,'id' => $minister->id];

@@ -14,7 +14,7 @@ return new class extends Migration
             $table->integer('person_id');
             $table->string('status', 199);
             $table->tinyinteger('active');
-            $table->string('role', 199)->nullable();
+            $table->string('leadership', 199)->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->timestamp('deleted_at')->nullable();

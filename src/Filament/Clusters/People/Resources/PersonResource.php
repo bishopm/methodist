@@ -6,7 +6,9 @@ use Bishopm\Methodist\Filament\Clusters\People;
 use Bishopm\Methodist\Filament\Clusters\People\Resources\PersonResource\Pages;
 use Bishopm\Methodist\Models\Circuit;
 use Bishopm\Methodist\Models\Leader;
+use Bishopm\Methodist\Models\Minister;
 use Bishopm\Methodist\Models\Person;
+use Bishopm\Methodist\Models\Preacher;
 use Bishopm\Methodist\Models\Society;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
@@ -35,33 +37,6 @@ class PersonResource extends Resource
             ->schema([
                 Section::make('Personal details')
                     ->headerActions([
-                        Action::make('Add as circuit leader')
-                            ->visible(function ($record){
-                                return $record and $record->leader ? false : true;
-                            })
-                            ->form([
-                                Select::make('leader_roles')
-                                    ->multiple()
-                                    ->options([
-                                        'Circuit Steward' => 'Circuit Steward',
-                                        'Circuit Treasurer' => 'Circuit Treasurer',
-                                        'Circuit Secretary' => 'Circuit Secretary',
-                                        'Supervisor of Studies' => 'Supervisor of Studies'
-                                    ]),
-                            ])
-                            ->action(function (array $data, Person $record, $livewire): void {
-                                $record->leader()->create([
-                                    'person_id' => $record->id,
-                                    'roles' => $data['leader_roles'],
-                                    'society_id' => $data['leader_society_id']
-                                ]);
-                                $record->save();
-                                $record->refresh();
-                                $livewire->refreshFormData([
-                                    'roles',
-                                    'society_id'
-                                ]);
-                            }),
                         Action::make('Add as preacher')
                             ->visible(function ($record){
                                 return $record and $record->preacher ? false : true;
@@ -103,35 +78,75 @@ class PersonResource extends Resource
                                     'induction'
                                 ]);
                             }),
-                        Action::make('Add as minister / deacon')
-                            ->visible(function ($record){
-                                return $record and $record->minister ? false : true;
-                            })
-                            ->action(function () {
-                                // ...
-                            }),
                     ])
                     ->schema([
+                        Forms\Components\Select::make('status')
+                            ->hiddenOn('edit')
+                            ->options([
+                                'Clergy' => [
+                                    'deacon' => 'Deacon',
+                                    'minister' => 'Minister',
+                                ],
+                                'Lay' => [
+                                    'preacher' => 'Preacher',
+                                    'leader' => 'Not a preacher',
+                                ]
+                            ])
+                            ->default('preacher')
+                            ->required(),
                         Forms\Components\TextInput::make('firstname')->label('First name')
                             ->required()
                             ->maxLength(199),
                         Forms\Components\TextInput::make('surname')
                             ->required()
                             ->maxLength(199),
-                        Forms\Components\TextInput::make('title')
-                            ->maxLength(199),
+                        Forms\Components\Select::make('title')
+                            ->options([
+                                'Dr'=>'Dr',
+                                'Mr'=>'Mr',
+                                'Mrs'=>'Mrs',
+                                'Ms'=>'Ms',
+                                'Prof'=>'Prof',
+                                'Rev'=>'Rev'
+                            ]),
                         Forms\Components\TextInput::make('phone')
-                            ->tel()
+                            ->afterStateHydrated(function (Forms\Components\TextInput $component, $state) {
+                                $component->state(str_replace(" ","",$state));
+                            })
                             ->maxLength(199),
-                        Forms\Components\Select::make('society_id')
-                            ->label('Society')
-                            ->options(Society::orderBy('society')->get()->pluck('society', 'id'))
-                            ->searchable(),
                         Forms\Components\Select::make('circuit_id')
                             ->label('Circuit')
                             ->options(Circuit::orderBy('circuit')->get()->pluck('circuit', 'id'))
                             ->searchable()
                             ->required(),
+                        Forms\Components\Select::make('society_id')
+                            ->visible(function ($record){
+                                if ($record){
+                                    $min=Minister::where('person_id',$record->id)->first();
+                                    if ($min){
+                                        return false;
+                                    } else {
+                                        return true;
+                                    }
+                                }
+                            })
+                            ->label('Society')
+                            ->options(Society::orderBy('society')->get()->pluck('society', 'id'))
+                            ->searchable(),
+                        Forms\Components\Select::make('leadership')
+                            ->visible(function ($record){
+                                if ($record){
+                                    $min=Minister::where('person_id',$record->id)->first();
+                                    if ($min){
+                                        return false;
+                                    } else {
+                                        return true;
+                                    }
+                                }
+                            })
+                            ->label('Leadership roles')
+                            ->multiple()
+                            ->options(array_combine(setting('general.leadership_roles'),setting('general.leadership_roles'))),
                     ])
                     ->columns(2),
                 Section::make('Preacher details')
@@ -159,7 +174,19 @@ class PersonResource extends Resource
                             ->required(),
                         Forms\Components\TextInput::make('number')->label('Preacher number (optional)')
                             ->numeric(),
-                        Forms\Components\TextInput::make('induction')->label('Year of induction')
+                        Forms\Components\TextInput::make('induction')->label('Year of induction'),
+                        Forms\Components\Select::make('leadership')
+                            ->visible(function ($record){
+                                $pre=Preacher::where('person_id',$record->id)->first();
+                                if ($pre){
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            })
+                            ->label('Leadership roles')
+                            ->multiple()
+                            ->options(array_combine(setting('general.preacher_leadership_roles'),setting('general.preacher_leadership_roles'))),
                     ])
                     ->columns(2),
                 Section::make('Minister details')
@@ -176,36 +203,13 @@ class PersonResource extends Resource
                                 'Supernumerary' => 'Supernumerary Minister'
                             ])
                             ->required(),
-                        Forms\Components\Select::make('role')
+                        Forms\Components\Select::make('leadership')
+                            ->multiple()
                             ->options([
                                 'Superintendent' => 'Superintendent'
                             ]),    
                         Forms\Components\Toggle::make('active')
                             ->required(),
-                    ])
-                    ->columns(2),
-                Section::make('Leader details')
-                    ->headerActions([
-                        Action::make('Remove as circuit leader')
-                            ->requiresConfirmation()
-                            ->action(function (array $data, Person $record): void {
-                                $record->leader()->delete();
-                                $record->refresh();
-                            })
-                        ->color('danger')
-                    ])
-                    ->visible(function ($record){
-                        return $record and $record->leader ? true : false;
-                    })
-                    ->relationship('leader')
-                    ->schema([
-                        Forms\Components\Select::make('roles')
-                            ->options([
-                                'Circuit Secretary' => 'Circuit Secretary',
-                                'Circuit Steward' => 'Circuit Steward',
-                                'Circuit Treasurer' => 'Circuit Treasurer'
-                            ])
-                            ->multiple(),
                     ])
                     ->columns(2),
             ]);
@@ -223,14 +227,8 @@ class PersonResource extends Resource
                 Tables\Columns\TextColumn::make('circuit.circuit')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('clergy')
-                    ->icon(function ($record){
-                        if ($record->minister){
-                            return 'heroicon-o-x-circle';
-                        } else {
-                            return 'heroicon-o-check-circle';
-                        }
-                    })
+                Tables\Columns\IconColumn::make('minister')->label('Clergy')
+                    ->icon('heroicon-o-check-circle')
             ])
             ->filters([
                 //
