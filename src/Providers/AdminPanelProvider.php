@@ -4,6 +4,7 @@ namespace Bishopm\Methodist\Providers;
 
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use Bishopm\Methodist\Filament\Pages\Dashboard;
+use Bishopm\Methodist\Filament\Widgets\Map;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -48,6 +49,7 @@ class AdminPanelProvider extends PanelProvider
                     ])
             ])
             ->widgets([
+                Map::class
             ])
             ->sidebarCollapsibleOnDesktop()
             ->middleware([

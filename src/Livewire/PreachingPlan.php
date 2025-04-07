@@ -8,6 +8,7 @@ use Livewire\Component;
 use Bishopm\Methodist\Models\Plan;
 use Bishopm\Methodist\Models\Society;
 use Bishopm\Methodist\Models\Person;
+use Bishopm\Methodist\Models\Service;
 
 class PreachingPlan extends Component
 {
@@ -27,7 +28,7 @@ class PreachingPlan extends Component
     
     // Service type options
     public $serviceTypes = [];
-    
+    public $authorisedServices = [];
     protected $listeners = ['clickedOutside' => 'saveAndClose'];
 
     public function mount($record, $today=null)
@@ -68,6 +69,25 @@ class PreachingPlan extends Component
         
         // Load the current schedule
         $this->loadSchedule();
+        $this->authorisedServices = $this->getUserAuthorisedServices();
+    }
+
+    private function getUserAuthorisedServices()
+    {
+        $allsocieties=Society::where('circuit_id',$this->circuit->id)->get()->pluck('id');
+        if (auth()->user()->hasRole('Super Admin')){
+            return Service::whereIn('society_id',$allsocieties)->get()->pluck('id')->toArray();
+        } else if (auth()->user()->circuits){
+            if (in_array($this->circuit->id,auth()->user()->circuits)){
+                return Service::whereIn('society_id',$allsocieties)->get()->pluck('id')->toArray();
+            } else {
+                return [];
+            }
+        } else if (auth()->user()->societies){
+            return Service::whereIn('society_id',auth()->user()->societies)->get()->pluck('id')->toArray();
+        } else {
+            return [];
+        }
     }
     
     public function generateSundays()
@@ -150,6 +170,7 @@ class PreachingPlan extends Component
         // Load actual schedule data
         $scheduleData = Plan::with('person')->whereIn('service_id', $this->serviceids)
             ->whereIn('servicedate', $this->dates)
+            ->where('person_id','>',0)->orWhere('servicetype','<>','')
             ->with('person')
             ->get();
         
@@ -167,11 +188,18 @@ class PreachingPlan extends Component
         }
     }
     
-    public function startEditing($churchId, $date)
+    public function startEditing($service_id, $date)
     {
-        $this->editingCell = "$churchId-$date";
-        $this->selectedPreacherId = $this->schedule[$churchId][$date]['preacher_id'] ?? null;
-        $this->selectedServiceType = $this->schedule[$churchId][$date]['servicetype'] ?? '';
+        // Check if user is authorized to edit this service
+        if (!in_array($service_id, $this->authorisedServices)) {
+            // Optional: Flash a message or log the attempt
+            session()->flash('message', 'You do not have permission to edit this service.');
+            return;
+        }
+
+        $this->editingCell = "$service_id-$date";
+        $this->selectedPreacherId = $this->schedule[$service_id][$date]['preacher_id'] ?? null;
+        $this->selectedServiceType = $this->schedule[$service_id][$date]['servicetype'] ?? '';
 
         // Dispatch browser event to set up outside click detection
         $this->dispatch('cell-editing-started', ['cellId' => $this->editingCell]);

@@ -5,6 +5,9 @@ namespace Bishopm\Methodist\Filament\Clusters\Settings\Resources;
 use Bishopm\Methodist\Filament\Clusters\Settings;
 use Bishopm\Methodist\Filament\Clusters\Settings\Resources\UserResource\Pages;
 use Bishopm\Methodist\Filament\Clusters\Settings\Resources\UserResource\RelationManagers;
+use Bishopm\Methodist\Models\Circuit;
+use Bishopm\Methodist\Models\District;
+use Bishopm\Methodist\Models\Society;
 use Bishopm\Methodist\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -34,8 +37,16 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\Select::make('roles')->multiple()->relationship('roles', 'name')
+                Forms\Components\Select::make('roles')->multiple()->relationship('roles', 'name'),
+                Forms\Components\Select::make('districts')->multiple()
+                    ->options(District::orderBy('district')->get()->pluck('district', 'id'))
+                    ->searchable(),
+                Forms\Components\Select::make('circuits')->multiple()
+                    ->options(Circuit::orderBy('circuit')->get()->pluck('circuit', 'id'))
+                    ->searchable(),
+                Forms\Components\Select::make('societies')->multiple()
+                    ->options(Society::orderBy('society')->get()->pluck('society', 'id'))
+                    ->searchable(),
             ]);
     }
 

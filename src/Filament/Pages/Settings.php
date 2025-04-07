@@ -5,15 +5,15 @@ namespace Bishopm\Methodist\Filament\Pages;
 use Closure;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
-use Bishopm\Methodist\Filament\Clusters\Settings as SettingsCluster;
 use Filament\Forms\Components\TagsInput;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
+use Bishopm\Methodist\Filament\Clusters\Settings as SettingsCluster; 
 
 class Settings extends BaseSettings
 {
-    protected static ?string $cluster = SettingsCluster::class;
-
     public static array|string $routeMiddleware = ['adminonly'];
+
+    protected static ?string $cluster = SettingsCluster::class; 
 
     public function schema(): array|Closure
     {

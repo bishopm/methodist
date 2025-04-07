@@ -5,11 +5,15 @@ use Bishopm\Methodist\Livewire\Plan;
 use Bishopm\Methodist\Livewire\PreachingPlan;
 use Illuminate\Support\ServiceProvider;
 use Bishopm\Methodist\Methodist;
+use Bishopm\Methodist\Models\User;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;
+use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class MethodistServiceProvider extends ServiceProvider
 {
@@ -35,9 +39,9 @@ class MethodistServiceProvider extends ServiceProvider
         }
         Blade::componentNamespace('Bishopm\\Methodist\\Resources\\Views\\Components', 'methodist');
         Config::set('auth.providers.users.model','Bishopm\Methodist\Models\User');
+        Config::set('filament-spatie-roles-permissions.scope_to_tenant',false);
         Config::set('filament-spatie-roles-permissions.clusters.permissions',\Bishopm\Methodist\Filament\Clusters\Settings::class);
         Config::set('filament-spatie-roles-permissions.clusters.roles',\Bishopm\Methodist\Filament\Clusters\Settings::class);
-        Config::set('filament-spatie-roles-permissions.scope_to_tenant',false);
         Config::set('filament-spatie-roles-permissions.should_redirect_to_index.roles.after_edit',true);
         Config::set('filament-spatie-roles-permissions.should_redirect_to_index.roles.after_create',true);
         Config::set('filament-spatie-roles-permissions.should_redirect_to_index.permissions.after_edit',true);
@@ -48,7 +52,17 @@ class MethodistServiceProvider extends ServiceProvider
         Config::set('filament-spatie-roles-permissions.generator.model_directories',[base_path('vendor/bishopm/methodist/src/Models')]);
         Config::set('filament-spatie-roles-permissions.generator.user_model', \Bishopm\Methodist\Models\User::class);
         Config::set('filament-spatie-roles-permissions.generator.policies_namespace','Bishopm\Methodist\Filament\Policies');
+        Config::set('livewire.render_on_redirect',false);
         Livewire::component('preaching-plan', PreachingPlan::class); 
+        Gate::policy(Role::class, \Bishopm\Methodist\Filament\Policies\RolePolicy::class);
+        Gate::policy(Permission::class, \Bishopm\Methodist\Filament\Policies\PermissionPolicy::class);
+        Gate::policy(\Bishopm\Methodist\Models\Circuit::class, \Bishopm\Methodist\Filament\Policies\CircuitPolicy::class);
+        Gate::policy(\Bishopm\Methodist\Models\District::class, \Bishopm\Methodist\Filament\Policies\DistrictPolicy::class);
+        Gate::policy(\Bishopm\Methodist\Models\Society::class, \Bishopm\Methodist\Filament\Policies\SocietyPolicy::class);
+        Gate::policy(\Bishopm\Methodist\Models\Person::class, \Bishopm\Methodist\Filament\Policies\PersonPolicy::class);
+        Gate::before(function (User $user, string $ability) {
+            return $user->isSuperAdmin() ? true: null;     
+        });      
     }
 
     /**
