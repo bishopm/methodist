@@ -2,6 +2,7 @@
 
 namespace Bishopm\Methodist\Filament\Widgets;
 
+use Bishopm\Methodist\Models\Circuit;
 use Bishopm\Methodist\Models\Society;
 use Illuminate\Support\Facades\Auth;
 use Webbingbrasil\FilamentMaps\Actions;
@@ -14,13 +15,17 @@ class Map extends MapWidget
     
     protected bool $hasBorder = false;
 
-    public array $markers;
+    public array $markers, $bounds;
 
     public array $mapOptions;
 
+    public function mount(){
+        $this->setUp();
+    }
+
     protected string | array $tileLayerUrl = [
         'OpenStreetMap' => 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        'Mapbox' => 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}.png'
+        'Mapbox' => 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token=',
     ];
      
     protected array $tileLayerOptions = [
@@ -34,23 +39,25 @@ class Map extends MapWidget
 
     public function getMarkers(): array
     {
-        $this->tileLayerUrl['Mapbox']='https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=' . setting('general.mapbox_token') . '.png';
         $user=Auth::user();
         if (!$user->hasRole('Super Admin')){
-            if ($user->circuits){
+        if ($user->districts){
+                $circuits=Circuit::whereIn('district_id',$user->districts)->select('id')->get()->pluck('id');
+                $societies=Society::whereIn('circuit_id',$circuits)->select('id','latitude','longitude','society')->get();
+        } else if ($user->circuits){
                 $societies=Society::whereIn('circuit_id',$user->circuits)->select('id','latitude','longitude','society')->get();
             } else if ($user->societies) {
                 $societies=Society::whereIn('id',$user->societies)->select('id','latitude','longitude','society')->get();
             }
             $this->markers=array();
             foreach ($societies as $soc){
-                $this->markers[]=Marker::make($soc->id)->lat($soc->latitude)->lng($soc->longitude)->popup($soc->society);
+                $this->markers[]=Marker::make($soc->id)->lat($soc->latitude)->lng($soc->longitude)->popup("<a href=\"http://methodist.local/admin/societies/" . $soc->id . "\">" . $soc->society . "</a>");
+                $this->bounds[]=[$soc->latitude,$soc->longitude];
             }
             $this->mapOptions = [
                 'center' => [$soc->latitude,$soc->longitude],
                 'zoom' => 11
             ];
-            // Better would be bounds: https://stackoverflow.com/questions/17277686/leaflet-js-center-the-map-on-a-group-of-markers
         }
         return $this->markers;
     }
@@ -59,5 +66,16 @@ class Map extends MapWidget
     {
         return [
         ];
+    }
+
+    public function setUp(): void
+    {
+        $this->getMarkers();
+        $this
+            ->height('500px')
+            ->tileLayerUrl($this->tileLayerUrl['Mapbox'] . setting('general.mapbox_token'))
+            ->mapOptions($this->mapOptions)
+            ->mapMarkers($this->markers)
+            ->fitBounds($this->bounds);
     }
 }
