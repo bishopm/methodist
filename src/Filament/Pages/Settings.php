@@ -29,7 +29,8 @@ class Settings extends BaseSettings
                             TagsInput::make('general.preacher_leadership_roles'),
                             TagsInput::make('general.minister_leadership_roles'),
                             TextInput::make('general.presiding_bishop')->label('Presiding Bishop'),
-                            TextInput::make('general.general_secretary')->label('General Secretary')
+                            TextInput::make('general.general_secretary')->label('General Secretary'),
+                            TextInput::make('general.mapbox_token')
                         ])
                 ]),
         ];

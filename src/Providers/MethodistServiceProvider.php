@@ -1,7 +1,6 @@
 <?php namespace Bishopm\Methodist\Providers;
 
 use Bishopm\Methodist\Http\Middleware\AdminRoute;
-use Bishopm\Methodist\Livewire\Plan;
 use Bishopm\Methodist\Livewire\PreachingPlan;
 use Illuminate\Support\ServiceProvider;
 use Bishopm\Methodist\Methodist;
@@ -62,7 +61,7 @@ class MethodistServiceProvider extends ServiceProvider
         Gate::policy(\Bishopm\Methodist\Models\Person::class, \Bishopm\Methodist\Filament\Policies\PersonPolicy::class);
         Gate::before(function (User $user, string $ability) {
             return $user->isSuperAdmin() ? true: null;     
-        });      
+        });
     }
 
     /**

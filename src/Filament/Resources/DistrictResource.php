@@ -6,6 +6,7 @@ use Bishopm\Methodist\Filament\Resources\DistrictResource\Pages;
 use Bishopm\Methodist\Filament\Resources\DistrictResource\RelationManagers;
 use Bishopm\Methodist\Models\Circuit;
 use Bishopm\Methodist\Models\District;
+use Bishopm\Methodist\Models\Society;
 use Dotswan\MapPicker\Fields\Map;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -74,6 +75,10 @@ class DistrictResource extends Resource
                         return $query->whereIn('id',$user->districts);
                     } else if ($user->circuits) {
                         $districts=Circuit::whereIn('id',$user->circuits)->select('district_id')->get()->pluck('district_id');
+                        return $query->whereIn('id',$districts);
+                    } else if ($user->societies) {
+                        $circuits=Society::whereIn('id',$user->societies)->select('circuit_id')->get()->pluck('circuit_id');
+                        $districts=Circuit::whereIn('id',$circuits)->select('district_id')->get()->pluck('district_id');
                         return $query->whereIn('id',$districts);
                     } else {
                         return $query->where('id',0);

@@ -81,6 +81,7 @@ class SocietyResource extends Resource
                 Tables\Columns\TextColumn::make('circuit.circuit')
                     ->sortable(),
             ])
+            ->recordUrl(fn (Society $record): string => SocietyResource::getUrl('view', ['record' => $record]))
             ->modifyQueryUsing(function (Builder $query){
                 $user=Auth::user();
                 if (!$user->hasRole('Super Admin')){
@@ -95,8 +96,9 @@ class SocietyResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()->hidden(false),
                 Tables\Actions\EditAction::make()
-                    ->hidden(function ($record) {
+                    ->disabled(function ($record) {
                         $user=Auth::user();
                         if (!$user->hasRole('Super Admin')){
                             if (($user->circuits) and (in_array($record->circuit_id,$user->circuits))) {
@@ -130,6 +132,7 @@ class SocietyResource extends Resource
         return [
             'index' => Pages\ListSocieties::route('/'),
             'create' => Pages\CreateSociety::route('/create'),
+            'view' => Pages\ViewSociety::route('/{record}'),
             'edit' => Pages\EditSociety::route('/{record}/edit'),
         ];
     }

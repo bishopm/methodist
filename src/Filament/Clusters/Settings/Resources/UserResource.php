@@ -37,15 +37,30 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('password')
+                    ->hiddenOn('edit')
+                    ->password()
+                    ->revealable()
+                    ->required(),
                 Forms\Components\Select::make('roles')->multiple()->relationship('roles', 'name'),
                 Forms\Components\Select::make('districts')->multiple()
                     ->options(District::orderBy('district')->get()->pluck('district', 'id'))
                     ->searchable(),
                 Forms\Components\Select::make('circuits')->multiple()
-                    ->options(Circuit::orderBy('circuit')->get()->pluck('circuit', 'id'))
+                    ->options(Circuit::orderBy('circuit')->get()->map(function ($circ) {
+                        return [
+                            'value' => $circ->id,
+                            'label' => $circ->circuit . ' (' . $circ->reference . ')'
+                        ];
+                    })->pluck('label', 'value'))
                     ->searchable(),
                 Forms\Components\Select::make('societies')->multiple()
-                    ->options(Society::orderBy('society')->get()->pluck('society', 'id'))
+                    ->options(Society::with('circuit')->orderBy('society')->get()->map(function ($soc) {
+                        return [
+                            'value' => $soc->id,
+                            'label' => $soc->society . ' (' . $soc->circuit->reference . ')'
+                        ];
+                    })->pluck('label', 'value'))
                     ->searchable(),
             ]);
     }
