@@ -5,6 +5,8 @@ namespace Bishopm\Methodist\Providers;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use Bishopm\Methodist\Filament\Pages\Dashboard;
 use Bishopm\Methodist\Filament\Widgets\Map;
+use Bishopm\Methodist\Models\Circuit;
+use Bishopm\Methodist\Models\Society;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -23,6 +25,8 @@ use Outerweb\FilamentSettings\Filament\Plugins\FilamentSettingsPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
+    public $circuit;
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -68,15 +72,36 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->userMenuItems([
                 MenuItem::make()
-                    ->label('Website')
-                    ->url('/')
-                    ->openUrlInNewTab()
-                    ->icon('heroicon-o-globe-alt'),
+                    ->url(function (){
+                        $user=auth()->user();
+                        if ($user->circuits){
+                            $this->circuit=$user->circuits[0];
+                        } else if ($user->societies){
+                            $this->circuit=Society::find($user->societies[0])->circuit_id;
+                        } else {
+                            $this->circuit="";
+                        }
+                        return '/admin/circuits/' . $this->circuit;
+                    })
+                    ->icon('heroicon-o-user-group')
+                    ->label(function (){
+                        if ($this->circuit==""){
+                            return "My circuits";
+                        } else {
+                            $circ=Circuit::find($this->circuit);
+                            return $circ->circuit;
+                        }
+                    }),
                 MenuItem::make()
                     ->label('Settings')
                     ->url('/admin/settings')
                     ->visible(fn (): bool => auth()->user()->isSuperAdmin())
                     ->icon('heroicon-o-cog-8-tooth'),      
+                MenuItem::make()
+                    ->label('Website')
+                    ->url('/')
+                    ->openUrlInNewTab()
+                    ->icon('heroicon-o-globe-alt'),
             ]);
     }
 }
