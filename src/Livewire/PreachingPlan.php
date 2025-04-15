@@ -38,7 +38,11 @@ class PreachingPlan extends Component
         }
         $this->today=$today;;
         $this->circuit=Circuit::find($record);
-        $this->serviceTypes=array_merge([''=>''],$this->circuit->servicetypes);
+        if ($this->circuit->servicetypes){
+            $this->serviceTypes=array_merge([''=>''],$this->circuit->servicetypes);
+        } else {
+            $this->serviceTypes=[''=>''];
+        }
         ksort($this->serviceTypes);
         // Get all societies
         $societies = Society::withWhereHas('services')->where('circuit_id',$record)->orderBy('society')->get();
@@ -142,7 +146,7 @@ class PreachingPlan extends Component
         }
         $this->midweeks=Midweek::where('servicedate','>=',$firstday)->where('servicedate','<',$lastday)->orderBy('servicedate','ASC')->get()->pluck('servicedate','midweek')->toArray();
         foreach ($this->midweeks as $desc=>$mw){
-            if (in_array($desc,$this->circuit->midweeks)){
+            if (($this->circuit->midweeks) and (in_array($desc,$this->circuit->midweeks))){
                 $dates[]=$mw;
             }
         }
@@ -168,23 +172,27 @@ class PreachingPlan extends Component
         }
         
         // Load actual schedule data
-        $scheduleData = Plan::with('person')->whereIn('service_id', $this->serviceids)
-            ->whereIn('servicedate', $this->dates)
-            ->where('person_id','>',0)->orWhere('servicetype','<>','')
-            ->with('person')
-            ->get();
-        
-        foreach ($scheduleData as $item) {
-            if ($item->person_id){
-                $preachername=substr($item->person->firstname,0,1) . " " . $item->person->surname;
-            } else {
-                $preachername="";
+        if ($this->serviceids){
+            $scheduleData = Plan::with('person')->whereIn('service_id', $this->serviceids)
+                ->whereIn('servicedate', $this->dates)
+                ->where('person_id','>',0)->orWhere('servicetype','<>','')
+                ->with('person')
+                ->get();
+            
+            foreach ($scheduleData as $item) {
+                if ($item->person_id){
+                    $preachername=substr($item->person->firstname,0,1) . " " . $item->person->surname;
+                } else {
+                    $preachername="";
+                }
+                $this->schedule[$item->service_id][$item->servicedate] = [
+                    'preacher_id' => $item->person_id,
+                    'preacher_name' => $preachername,
+                    'servicetype' => $item->servicetype ?? ''
+                ];
             }
-            $this->schedule[$item->service_id][$item->servicedate] = [
-                'preacher_id' => $item->person_id,
-                'preacher_name' => $preachername,
-                'servicetype' => $item->servicetype ?? ''
-            ];
+        } else {
+            $this->schedule=array();
         }
     }
     

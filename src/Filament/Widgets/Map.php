@@ -40,25 +40,27 @@ class Map extends MapWidget
     public function getMarkers(): array
     {
         $user=Auth::user();
+        $this->markers=array();
         if (!$user->hasRole('Super Admin')){
-        if ($user->districts){
+            if ($user->districts){
                 $circuits=Circuit::whereIn('district_id',$user->districts)->select('id')->get()->pluck('id');
                 $societies=Society::whereIn('circuit_id',$circuits)->select('id','latitude','longitude','society')->get();
-        } else if ($user->circuits){
+            } else if ($user->circuits){
                 $societies=Society::whereIn('circuit_id',$user->circuits)->select('id','latitude','longitude','society')->get();
             } else if ($user->societies) {
                 $societies=Society::whereIn('id',$user->societies)->select('id','latitude','longitude','society')->get();
             }
-            $this->markers=array();
-            foreach ($societies as $soc){
-                $this->markers[]=Marker::make($soc->id)->lat($soc->latitude)->lng($soc->longitude)->popup("<a href=\"http://methodist.local/admin/societies/" . $soc->id . "\">" . $soc->society . "</a>");
-                $this->bounds[]=[$soc->latitude,$soc->longitude];
-            }
-            $this->mapOptions = [
-                'center' => [$soc->latitude,$soc->longitude],
-                'zoom' => 11
-            ];
+        } else {
+            $societies=Society::select('id','latitude','longitude','society')->get();
         }
+        foreach ($societies as $soc){
+            $this->markers[]=Marker::make($soc->id)->lat($soc->latitude)->lng($soc->longitude)->popup("<a href=\"http://methodist.local/admin/societies/" . $soc->id . "\">" . $soc->society . "</a>");
+            $this->bounds[]=[$soc->latitude,$soc->longitude];
+        }
+        $this->mapOptions = [
+            'center' => [$soc->latitude,$soc->longitude],
+            'zoom' => 11
+        ];        
         return $this->markers;
     }
 

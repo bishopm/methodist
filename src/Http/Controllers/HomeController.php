@@ -56,24 +56,27 @@ class HomeController extends Controller
 
         // Legend
         $yadd=0;
-        $stypes=$this->circuit->servicetypes;
-        ksort($stypes);
-        $i=1;
-        $pdf->rect(200,5,87,count($stypes)*2);
-        foreach ($stypes as $key=>$val){
-            if ($i % 2 == 0){
-                $xadd=43;
-            } else {
-                $yadd=$yadd+3;
-                $xadd=0;
-            }
-            $pdf->SetFont('Helvetica', 'B', 8);
-            $pdf->text(201+$xadd,5+$yadd,$key);
-            $pdf->SetFont('Helvetica', '', 8);
-            $pdf->text(209+$xadd,5+$yadd,$val);
-            $i++;
+        if ($this->circuit->servicetypes){
+            $stypes=$this->circuit->servicetypes;
+            ksort($stypes);
+            $i=1;
+            $pdf->rect(200,5,87,count($stypes)*2);
+            foreach ($stypes as $key=>$val){
+                if ($i % 2 == 0){
+                    $xadd=43;
+                } else {
+                    $yadd=$yadd+3;
+                    $xadd=0;
+                }
+                $pdf->SetFont('Helvetica', 'B', 8);
+                $pdf->text(201+$xadd,5+$yadd,$key);
+                $pdf->SetFont('Helvetica', '', 8);
+                $pdf->text(209+$xadd,5+$yadd,$val);
+                $i++;
+            }    
+        } else {
+            $stypes=array();
         }
-
         $pdf->SetAutoPageBreak(true, 0);
         $pdf->SetFont('Helvetica', 'B', 9);
         $xx=51;

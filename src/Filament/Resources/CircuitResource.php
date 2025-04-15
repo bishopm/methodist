@@ -48,7 +48,7 @@ class CircuitResource extends Resource
                             ->required()
                             ->numeric(),
                     ]),
-                    Tab::make('Services')->columns(2)->schema([
+                    Tab::make('Service settings')->columns(2)->schema([
                         Forms\Components\Select::make('midweeks')->label('Midweek services')
                             ->multiple()
                             ->options(function (){

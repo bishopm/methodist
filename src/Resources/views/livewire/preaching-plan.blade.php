@@ -24,7 +24,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($services as $society=>$times)
+                @forelse($services as $society=>$times)
                     @foreach ($times as $time=>$service)
                         <tr>
                             @if(in_array($service['id'], $authorisedServices))
@@ -88,7 +88,9 @@
                             @endforeach
                         </tr>
                     @endforeach
-                @endforeach
+                @empty
+                    <tr><td class="text-center" colspan="100%">This table is empty because you need to add societies to your circuit and services to your societies.</td></tr>
+                @endforelse
             </tbody>
         </table>
     </div>    

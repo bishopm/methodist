@@ -2,13 +2,13 @@
 
 namespace Bishopm\Methodist\Filament\Resources\CircuitResource\RelationManagers;
 
+use Dotswan\MapPicker\Fields\Map;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SocietyRelationManager extends RelationManager
 {
@@ -17,11 +17,44 @@ class SocietyRelationManager extends RelationManager
     public function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('society')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+        ->schema([
+            Forms\Components\TextInput::make('society')
+                ->required()
+                ->maxLength(199)
+                ->live(onBlur: true)
+                ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state))),
+            Forms\Components\TextInput::make('slug')
+                ->required()
+                ->maxLength(199),
+            Forms\Components\Select::make('circuit_id')
+                ->relationship('circuit', 'circuit')
+                ->searchable()
+                ->required(),
+            Forms\Components\TextInput::make('address')
+                ->maxLength(199),
+            Forms\Components\TextInput::make('email')
+                ->email()
+                ->maxLength(199),
+            Forms\Components\TextInput::make('website')
+                ->maxLength(199),
+            Forms\Components\Hidden::make('latitude')
+                ->hiddenLabel(),
+            Forms\Components\Hidden::make('longitude')
+                ->hiddenLabel(),
+            Map::make('location')
+                ->afterStateUpdated(function (Set $set, ?array $state): void {
+                    $set('latitude', $state['lat']);
+                    $set('longitude', $state['lng']);
+                })
+                ->afterStateHydrated(function ($state, $record, Set $set): void {
+                    if ($record){
+                        $set('location', [
+                            'lat' => $record->latitude,
+                            'lng' => $record->longitude
+                        ]);
+                    }
+                })
+        ]);
     }
 
     public function table(Table $table): Table
@@ -30,6 +63,7 @@ class SocietyRelationManager extends RelationManager
             ->recordTitleAttribute('society')
             ->columns([
                 Tables\Columns\TextColumn::make('society'),
+                Tables\Columns\TextColumn::make('services.servicetime')
             ])
             ->defaultSort('society','asc')
             ->filters([

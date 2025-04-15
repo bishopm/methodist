@@ -18,9 +18,11 @@ class ServicesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('servicetime')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\TimePicker::make('servicetime')
+                    ->label('Service time')
+                    ->seconds(false)
+                    ->default('09:00')
+                    ->required(),
             ]);
     }
 
@@ -29,7 +31,7 @@ class ServicesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('service')
             ->columns([
-                Tables\Columns\TextColumn::make('servicetime'),
+                Tables\Columns\TextColumn::make('servicetime')->label('Service time')
             ])
             ->filters([
                 //

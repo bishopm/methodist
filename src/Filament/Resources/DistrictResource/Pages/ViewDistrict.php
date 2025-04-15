@@ -14,8 +14,6 @@ class ViewDistrict extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('Preaching plan')
-                ->url(fn (): string => route('filament.admin.resources.circuits.plan', ['record' => $this->record, 'today' => date('Y-m-d')])),
             Actions\EditAction::make(),
         ];
     }
