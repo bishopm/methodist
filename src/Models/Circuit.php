@@ -34,4 +34,9 @@ class Circuit extends Model
     {
         return $this->hasMany(Minister::class);
     }
+
+    public function persons(): HasMany
+    {
+        return $this->hasMany(Person::class);
+    }
 }

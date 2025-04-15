@@ -9,10 +9,18 @@ use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class SocietyRelationManager extends RelationManager
 {
     protected static string $relationship = 'societies';
+
+    public $disabled;
+
+    public function isReadOnly(): bool
+    {
+        return false;
+    }
 
     public function form(Form $form): Form
     {
@@ -73,8 +81,23 @@ class SocietyRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make()->hidden(false),
+                Tables\Actions\EditAction::make()
+                    ->hidden(function ($record) {
+                        $user=Auth::user();
+                        if (!$user->hasRole('Super Admin')){
+                            if (($user->circuits) and (in_array($record->circuit_id,$user->circuits))) {
+                                return false;
+                            } else if (($user->societies) and (in_array($record->id,$user->societies))){
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        } else {
+                            return false;
+                        }
+                    }),
+                Tables\Actions\DeleteAction::make()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

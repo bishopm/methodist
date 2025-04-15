@@ -98,7 +98,7 @@ class SocietyResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make()->hidden(false),
                 Tables\Actions\EditAction::make()
-                    ->disabled(function ($record) {
+                    ->hidden(function ($record) {
                         $user=Auth::user();
                         if (!$user->hasRole('Super Admin')){
                             if (($user->circuits) and (in_array($record->circuit_id,$user->circuits))) {

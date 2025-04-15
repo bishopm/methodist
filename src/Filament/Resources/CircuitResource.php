@@ -119,6 +119,7 @@ class CircuitResource extends Resource
     {
         return [
             RelationManagers\SocietyRelationManager::class,
+            RelationManagers\PersonsRelationManager::class,
             RelationManagers\MeetingsRelationManager::class
         ];
     }

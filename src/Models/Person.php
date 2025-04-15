@@ -19,6 +19,16 @@ class Person extends Model
         return $this->HasOne(Minister::class);
     }
 
+    public function getStatusAttribute() {
+        if ($this->minister){
+            return "Minister";
+        } else if ($this->preacher) {
+            return "Preacher";
+        } else {
+            return "Leader";
+        }
+    }
+
     public function preacher(): HasOne
     {
         return $this->HasOne(Preacher::class);
