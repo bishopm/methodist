@@ -12,7 +12,10 @@ class Person extends Model
 
     public $table = 'persons';
     protected $guarded = ['id'];
-    protected $casts = [ 'leadership' => 'array' ];
+    protected $casts = [ 
+        'guestcircuits' => 'array',
+        'leadership' => 'array' 
+    ];
 
     public function minister(): HasOne
     {

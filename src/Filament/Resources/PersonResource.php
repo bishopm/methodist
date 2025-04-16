@@ -118,6 +118,10 @@ class PersonResource extends Resource
                             ->options(Circuit::orderBy('circuit')->get()->pluck('circuit', 'id'))
                             ->searchable()
                             ->required(),
+                        Forms\Components\Select::make('guestcircuits')->label('Also preaches in these circuits')
+                            ->multiple()
+                            ->options(Circuit::orderBy('circuit')->get()->pluck('circuit', 'id'))
+                            ->searchable(),
                         Forms\Components\Select::make('society_id')
                             ->visible(function ($record){
                                 if ($record){

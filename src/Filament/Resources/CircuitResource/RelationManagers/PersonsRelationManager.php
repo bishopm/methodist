@@ -3,7 +3,6 @@
 namespace Bishopm\Methodist\Filament\Resources\CircuitResource\RelationManagers;
 
 use Bishopm\Methodist\Models\Circuit;
-use Bishopm\Methodist\Models\Guest;
 use Bishopm\Methodist\Models\Person;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -29,14 +28,13 @@ class PersonsRelationManager extends RelationManager
                     ->live()
                     ->options([
                         'circuitminister'=>'Circuit minister',
-                        'guestminister'=>'Visiting Methodist minister',
-                        'preacher'=>'Local preacher',
                         'guest'=>'Guest preacher',
+                        'preacher'=>'Local preacher',
                         'leader'=>'Lay leader'
                     ]),
-                Forms\Components\Select::make('minister_id')->label('Methodist minister')
+                Forms\Components\Select::make('person_id')->label('Select from existing names')
                     ->hidden(function (Get $get) {
-                        if (($get('status')=='circuitminister') or ($get('status')=='guestminister')){
+                        if (($get('status')=='circuitminister') or ($get('status')=='guest')){
                             return false;
                         } else {
                             return true;
@@ -44,16 +42,16 @@ class PersonsRelationManager extends RelationManager
                     })
                     ->searchable()
                     ->options(function (){
-                        $ministers=DB::table('persons')->join('ministers','persons.id','=','ministers.person_id')->select('persons.id','surname','firstname')->orderBy('surname')->orderBy('firstname')->get();
+                        $persons=DB::table('persons')->select('id','surname','firstname')->orderBy('surname')->orderBy('firstname')->get();
                         $options=array();
-                        foreach ($ministers as $minister){
-                            $options[$minister->id] = $minister->surname . ", " . $minister->firstname;
+                        foreach ($persons as $person){
+                            $options[$person->id] = $person->surname . ", " . $person->firstname;
                         }
                         return $options;
                     }),
-                Forms\Components\Section::make('New person')
+                Forms\Components\Section::make('Add a new person')
                     ->hidden(function (Get $get) {
-                        if (($get('status')=='circuitminister') or ($get('status')=='guestminister') or ($get('status')=='')){
+                        if (($get('status')=='circuitminister') or ($get('status')=='')){
                             return true;
                         } else {
                             return false;
@@ -104,20 +102,31 @@ class PersonsRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->using(function (array $data) {
-                        if ($data['status']=="guestminister"){
-                            Guest::create([
-                                'person_id'=>$data['minister_id'],
-                                'circuit_id'=>$data['circuit_id'],
-                                'status'=>'Guest preacher',
-                                'active'=>1
-                            ]);
-                            return Person::find($data['minister_id']);
-                        } elseif ($data['status']=="circuitminister"){
+                        if ($data['status']=="circuitminister"){
                             dd("changing minister circuit to " . $data['circuit_id']);
                         } elseif ($data['status']=="preacher"){
                             dd('Creating person and designating as preacher');
                         } elseif ($data['status']=="guest"){
-                            dd('Creating person and guest');
+                            if (!$data['person_id']){
+                                $person=Person::create([
+                                    'surname' => $data['surname'],
+                                    'firstname' => $data['firstname'],
+                                    'title' => $data['title'],
+                                    'phone' => $data['phone']
+                                ]);
+                            } else {
+                                $person=Person::find($data['person_id']);
+                            }
+                            if (!$person->guestcircuits){
+                                $person->guestcircuits=$data['circuit_id'];
+                                $person->save();
+                            } elseif (!in_array($data['circuit_id'],$person->guestcircuits)){
+                                $gc=json_decode($person->guestcircuits);
+                                $gc[]=$data['circuit_id'];
+                                $person->guestcircuits=$gc;
+                                $person->save();
+                            }
+                            return $person;
                         } elseif ($data['status']=="preacher"){
                             dd('Creating person and adding leader status');
                         }
