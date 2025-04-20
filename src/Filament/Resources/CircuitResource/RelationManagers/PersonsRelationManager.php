@@ -2,15 +2,15 @@
 
 namespace Bishopm\Methodist\Filament\Resources\CircuitResource\RelationManagers;
 
-use Bishopm\Methodist\Models\Circuit;
 use Bishopm\Methodist\Models\Person;
+use Bishopm\Methodist\Models\Society;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\DB;
 
 class PersonsRelationManager extends RelationManager
 {
@@ -24,34 +24,30 @@ class PersonsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('status')->label('Which best describes the person you are adding?')
+                Forms\Components\Radio::make('isnew')->label('Are you adding a new person or a visitor or transfer from another circuit?')
+                    ->hiddenOn('edit')
+                    ->columnSpanFull()
                     ->live()
+                    ->inline()
                     ->options([
-                        'circuitminister'=>'Circuit minister',
-                        'guest'=>'Guest preacher',
-                        'preacher'=>'Local preacher',
-                        'leader'=>'Lay leader'
-                    ]),
-                Forms\Components\Select::make('person_id')->label('Select from existing names')
-                    ->hidden(function (Get $get) {
-                        if (($get('status')=='circuitminister') or ($get('status')=='guest')){
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    })
-                    ->searchable()
-                    ->options(function (){
-                        $persons=DB::table('persons')->select('id','surname','firstname')->orderBy('surname')->orderBy('firstname')->get();
-                        $options=array();
+                        'existing'=>'From another circuit',
+                        'new'=>'Add a new person'
+                    ])
+                    ->default('existing'),
+                Forms\Components\Select::make('person_id')->label('Existing names')
+                    ->hiddenOn('edit')
+                    ->options(function ($livewire){
+                        $circuitid=$livewire->getOwnerRecord()->id;
+                        $persons = Person::whereHas('circuits', function ($q) use ($circuitid) { $q->where('circuit_id','<>',$circuitid); })->orderBy('surname')->orderBy('firstname')->get();
                         foreach ($persons as $person){
-                            $options[$person->id] = $person->surname . ", " . $person->firstname;
+                            $options[$person->id]=$person->surname . ", " . $person->firstname;
                         }
                         return $options;
-                    }),
-                Forms\Components\Section::make('Add a new person')
-                    ->hidden(function (Get $get) {
-                        if (($get('status')=='circuitminister') or ($get('status')=='')){
+                    })
+                    ->searchable(),
+                Forms\Components\Section::make('Personal details')
+                    ->visible(function (Get $get){
+                        if ($get('isnew')=="new"){
                             return true;
                         } else {
                             return false;
@@ -59,8 +55,8 @@ class PersonsRelationManager extends RelationManager
                     })
                     ->columns(2)
                     ->schema([
+                        Forms\Components\TextInput::make('firstname')->label('First name'),
                         Forms\Components\TextInput::make('surname'),
-                        Forms\Components\TextInput::make('firstname'),
                         Forms\Components\Select::make('title')
                             ->options([
                                 'Dr'=>'Dr',
@@ -70,16 +66,105 @@ class PersonsRelationManager extends RelationManager
                                 'Prof'=>'Prof',
                                 'Rev'=>'Rev'
                             ]),
-                        Forms\Components\TextInput::make('phone')
-                            ->afterStateHydrated(function (Forms\Components\TextInput $component, $state) {
-                                $component->state(str_replace(" ","",$state));
+                        Forms\Components\TextInput::make('phone'),
+                        Forms\Components\Select::make('status')->label('Status in this circuit')
+                            ->formatStateUsing(function ($state){
+                                if ($state){
+                                    return json_decode($state);
+                                }
                             })
-                            ->maxLength(199),
-                        ]),
-                    Forms\Components\Hidden::make('circuit_id')
-                        ->default(function ($livewire){
-                            return $livewire->getOwnerRecord()->id;
-                        })
+                            ->live()
+                            ->multiple()
+                            ->statePath('status')
+                            ->options([
+                                'Guest' => 'Guest preacher',
+                                'Leader' => 'Leader',
+                                'Minister' => 'Circuit minister',
+                                'Preacher' => 'Local preacher',
+                                'Supernumerary' => 'Supernumerary minister',
+                            ]),
+                        Forms\Components\Select::make('leadership')->label('Leadership roles')
+                            ->visible(function (Get $get){
+                                $status=$get('status');
+                                if ($status==null){
+                                    $status=[];
+                                }
+                                if ((in_array('Minister',$status)) or (in_array('Supernumerary',$status))){
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            })
+                            ->multiple()
+                            ->options(setting('general.leadership_roles')),
+                        Forms\Components\Select::make('society_id')->label('Society')
+                            ->options(function ($livewire){
+                                return Society::where('circuit_id',$livewire->getOwnerRecord()->id)->orderBy('society')->get()->pluck('society','id');
+                            })
+                            ->visible(function (Get $get){
+                                $status=$get('status');
+                                if ($status==null){
+                                    $status=[];
+                                }
+                                if ((in_array('Minister',$status)) or (in_array('Supernumerary',$status))){
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            })
+                    ]),
+                Forms\Components\Section::make('Clergy')->relationship('minister')->columns(2)
+                    ->hiddenOn('create')
+                    ->visible(function ($record){
+                        if ($record->minister){
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    })
+                    ->schema([
+                        Forms\Components\Select::make('leadership')->label('Leadership roles')
+                            ->multiple()
+                            ->options(setting('general.minister_leadership_roles')),
+                        Forms\Components\Toggle::make('active')
+                            ->onColor('success'),
+                    ]),
+                Forms\Components\Section::make('Preacher')->relationship('preacher')
+                    ->description('This section relates only to preachers')
+                    ->hiddenOn('create')
+                    ->columns(2)
+                    ->visible(function ($record){
+                        if ($record->preacher){
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    })
+                    ->schema([
+                        Forms\Components\Select::make('leadership')->label('Leadership roles')
+                            ->multiple()
+                            ->options(setting('general.preacher_leadership_roles')),
+                        Forms\Components\Select::make('status')
+                            ->live()
+                            ->options([
+                                'note' => 'Preacher on note',
+                                'trial' => 'Preacher on trial',
+                                'preacher' => 'Local preacher',
+                                'emeritus' => 'Emeritus preacher'
+                            ]),
+                        Forms\Components\TextInput::make('number')->label('Preacher number (optional)')
+                            ->numeric(),
+                        Forms\Components\TextInput::make('induction')->label('Year of induction')
+                            ->readonly(function (Get $get){
+                                if (($get('status')=="preacher") or ($get('status')=="emeritus")){
+                                    return false;
+                                } else {
+                                    return true;
+                                }
+                            }),
+                        Forms\Components\Toggle::make('active')
+                            ->onColor('success'),
+                    ])
             ]);
     }
 
@@ -91,49 +176,23 @@ class PersonsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->defaultSort('surname')
             ->recordTitleAttribute('surname')
             ->columns([
                 Tables\Columns\TextColumn::make('surname')->searchable(),
-                Tables\Columns\TextColumn::make('firstname')->label('First name'),
-                Tables\Columns\TextColumn::make('status')
+                Tables\Columns\TextColumn::make('firstname')->label('First name')->searchable(),
+                Tables\Columns\TextColumn::make('status')->searchable()
+                ->formatStateUsing(function ($state){
+                    return implode(', ',json_decode($state));
+                })
             ])
             ->filters([
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->using(function (array $data) {
-                        if ($data['status']=="circuitminister"){
-                            dd("changing minister circuit to " . $data['circuit_id']);
-                        } elseif ($data['status']=="preacher"){
-                            dd('Creating person and designating as preacher');
-                        } elseif ($data['status']=="guest"){
-                            if (!$data['person_id']){
-                                $person=Person::create([
-                                    'surname' => $data['surname'],
-                                    'firstname' => $data['firstname'],
-                                    'title' => $data['title'],
-                                    'phone' => $data['phone']
-                                ]);
-                            } else {
-                                $person=Person::find($data['person_id']);
-                            }
-                            if (!$person->guestcircuits){
-                                $person->guestcircuits=$data['circuit_id'];
-                                $person->save();
-                            } elseif (!in_array($data['circuit_id'],$person->guestcircuits)){
-                                $gc=json_decode($person->guestcircuits);
-                                $gc[]=$data['circuit_id'];
-                                $person->guestcircuits=$gc;
-                                $person->save();
-                            }
-                            return $person;
-                        } elseif ($data['status']=="preacher"){
-                            dd('Creating person and adding leader status');
-                        }
-                    })
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->modalHeading('Edit person'),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

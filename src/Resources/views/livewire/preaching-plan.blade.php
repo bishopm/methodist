@@ -53,8 +53,12 @@
                                             </select>
                                             <select wire:model="selectedPreacherId" class="form-select form-select-sm">
                                                 <option value="">-- Select --</option>
-                                                @foreach($preachers as $preacher)
-                                                    <option value="{{ $preacher['id'] }}">{{ $preacher['name'] }}</option>
+                                                @foreach($preachers as $cat=>$preachertype)
+                                                    <optgroup label="{{$cat}}">
+                                                        @foreach ($preachertype as $preacher)
+                                                            <option value="{{ $preacher['id'] }}">{{ $preacher['name'] }}</option>
+                                                        @endforeach
+                                                    </optgroup>
                                                 @endforeach
                                             </select>
                                         </div>

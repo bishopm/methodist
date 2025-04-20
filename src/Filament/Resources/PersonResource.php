@@ -4,7 +4,6 @@ namespace Bishopm\Methodist\Filament\Resources;
 
 use Bishopm\Methodist\Filament\Resources\PersonResource\Pages;
 use Bishopm\Methodist\Models\Circuit;
-use Bishopm\Methodist\Models\Leader;
 use Bishopm\Methodist\Models\Minister;
 use Bishopm\Methodist\Models\Person;
 use Bishopm\Methodist\Models\Preacher;
@@ -13,7 +12,6 @@ use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;

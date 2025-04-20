@@ -55,19 +55,23 @@ class PreachingPlan extends Component
             ksort($this->services[$society->society]);
         }
         // Get all preachers
-        $ministers = Person::where('circuit_id',$record)->whereHas('minister', function ($q){ $q->where('status','<>','Supernumerary Minister');})->orderBy('surname')->orderBy('firstname')->get();
-        $supernumeraries = Person::where('circuit_id',$record)->whereHas('minister', function ($q){ $q->where('status','Supernumerary Minister');})->orderBy('surname')->orderBy('firstname')->get();
-        $preachers = Person::where('circuit_id',$record)->whereHas('preacher', function ($q){ $q->where('active',1);})->orderBy('surname')->orderBy('firstname')->get();
-        foreach ($ministers as $minister){
-            $this->preachers[$minister->id] = ['name' => substr($minister->firstname,0,1) . " " . $minister->surname,'id' => $minister->id];
+        $persons=$this->circuit->persons->sortBy(['surname','firstname']);
+        $this->preachers['Circuit Ministers']=array();
+        $this->preachers['Local Preachers']=array();
+        $this->preachers['Supernumerary Ministers']=array();
+        $this->preachers['Guest Preachers']=array();
+        foreach ($persons as $person){
+            if (in_array("Minister",json_decode($person->pivot->status))){
+                $this->preachers['Circuit Ministers'][$person->id]=['name' => substr($person->firstname,0,1) . " " . $person->surname,'id' => $person->id];
+            } elseif (in_array("Preacher",json_decode($person->pivot->status))){
+                $this->preachers['Local Preachers'][$person->id]=['name' => substr($person->firstname,0,1) . " " . $person->surname,'id' => $person->id];
+            } elseif (in_array("Supernumerary",json_decode($person->pivot->status))){
+                $this->preachers['Supernumerary Ministers'][$person->id]=['name' => substr($person->firstname,0,1) . " " . $person->surname,'id' => $person->id];
+            } elseif (in_array("Guest",json_decode($person->pivot->status))){
+                $this->preachers['Guest Preachers'][$person->id]=['name' => substr($person->firstname,0,1) . " " . $person->surname,'id' => $person->id];
+            }
         }
-        foreach ($supernumeraries as $super){
-            $this->preachers[$super->id] = ['name' => substr($super->firstname,0,1) . " " . $super->surname,'id' => $super->id];
-        }
-        foreach ($preachers as $preacher){
-            $this->preachers[$preacher->id] = ['name' => substr($preacher->firstname,0,1) . " " . $preacher->surname,'id' => $preacher->id];
-        }
-        
+
         // Generate the upcoming 13 Sundays
         $this->generateSundays();
         
@@ -180,7 +184,7 @@ class PreachingPlan extends Component
                 ->get();
             
             foreach ($scheduleData as $item) {
-                if ($item->person_id){
+                if (($item->person_id) and ($item->person)){
                     $preachername=substr($item->person->firstname,0,1) . " " . $item->person->surname;
                 } else {
                     $preachername="";
@@ -249,7 +253,16 @@ class PreachingPlan extends Component
         
         // Update the local data
         if ($this->selectedPreacherId) {
-            $preacher = $this->preachers[$this->selectedPreacherId];
+            if (isset($this->preachers['Circuit Ministers'][$this->selectedPreacherId])){
+                $preacher = $this->preachers['Circuit Ministers'][$this->selectedPreacherId];
+            } elseif (isset($this->preachers['Local Preachers'][$this->selectedPreacherId])){
+                $preacher = $this->preachers['Local Preachers'][$this->selectedPreacherId];
+            } elseif (isset($this->preachers['Supernumerary Ministers'][$this->selectedPreacherId])){
+                $preacher = $this->preachers['Supernumerary Ministers'][$this->selectedPreacherId];
+            } elseif (isset($this->preachers['Guest Preachers'][$this->selectedPreacherId])){
+                $preacher = $this->preachers['Guest Preachers'][$this->selectedPreacherId];
+            }
+            
             $this->schedule[$service_id][$date] = [
                 'preacher_id' => $this->selectedPreacherId,
                 'preacher_name' => $preacher['name'] ?? 'Unknown',

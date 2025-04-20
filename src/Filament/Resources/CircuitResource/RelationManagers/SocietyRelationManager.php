@@ -10,6 +10,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class SocietyRelationManager extends RelationManager
 {

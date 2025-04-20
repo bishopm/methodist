@@ -4,6 +4,7 @@ namespace Bishopm\Methodist\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Circuit extends Model
@@ -35,13 +36,8 @@ class Circuit extends Model
         return $this->hasMany(Minister::class);
     }
 
-    public function guests(): HasMany
+    public function persons(): BelongsToMany
     {
-        return $this->hasMany(Minister::class);
-    }
-
-    public function persons(): HasMany
-    {
-        return $this->hasMany(Person::class);
+        return $this->belongsToMany(Person::class,'circuit_person')->withPivot('status');
     }
 }
