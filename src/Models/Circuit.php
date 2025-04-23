@@ -36,6 +36,11 @@ class Circuit extends Model
         return $this->hasMany(Minister::class);
     }
 
+    public function circuitroles(): HasMany
+    {
+        return $this->hasMany(Circuitrole::class);
+    }
+
     public function persons(): BelongsToMany
     {
         return $this->belongsToMany(Person::class,'circuit_person')->withPivot('status');

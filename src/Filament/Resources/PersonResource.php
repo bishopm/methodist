@@ -3,6 +3,7 @@
 namespace Bishopm\Methodist\Filament\Resources;
 
 use Bishopm\Methodist\Filament\Resources\PersonResource\Pages;
+use Bishopm\Methodist\Filament\Resources\PersonResource\RelationManagers;
 use Bishopm\Methodist\Models\Circuit;
 use Bishopm\Methodist\Models\Minister;
 use Bishopm\Methodist\Models\Person;
@@ -24,9 +25,12 @@ class PersonResource extends Resource
 {
     protected static ?string $model = Person::class;
 
-    protected static bool $shouldRegisterNavigation = false;
-
     protected static ?string $navigationIcon = 'heroicon-o-user';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()->roles[0]->name === "Super Admin";
+    }
 
     public static function form(Form $form): Form
     {
@@ -111,15 +115,6 @@ class PersonResource extends Resource
                                 $component->state(str_replace(" ","",$state));
                             })
                             ->maxLength(199),
-                        Forms\Components\Select::make('circuit_id')
-                            ->label('Circuit')
-                            ->options(Circuit::orderBy('circuit')->get()->pluck('circuit', 'id'))
-                            ->searchable()
-                            ->required(),
-                        Forms\Components\Select::make('guestcircuits')->label('Also preaches in these circuits')
-                            ->multiple()
-                            ->options(Circuit::orderBy('circuit')->get()->pluck('circuit', 'id'))
-                            ->searchable(),
                         Forms\Components\Select::make('society_id')
                             ->visible(function ($record){
                                 if ($record){
@@ -233,9 +228,6 @@ class PersonResource extends Resource
                     ->label('First name')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('circuit.circuit')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('society.society')
                     ->numeric()
                     ->sortable(),
@@ -273,7 +265,7 @@ class PersonResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\CircuitrolesRelationManager::class,
         ];
     }
 

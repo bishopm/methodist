@@ -194,19 +194,21 @@ class HomeController extends Controller
         $pdf->SetFont('Helvetica', 'B', 10);
         $pdf->text($xx,$yy-4.5,"Circuit Ministers");
         $pdf->SetFont('Helvetica', '', 9);
-        foreach ($this->ministers as $minister){
-            $sup="";
-            if ($minister->phone<>"" and $this->circuit->showphone) {
-                $sup.= " (" . $minister->phone . ")";
-            }
-            if (is_array($minister->minister->leadership) and (in_array("Superintendent",$minister->minister->leadership))){
-                $sup.= " (Supt)";
-            }
-            $pdf->text($xx,$yy,$minister->title . " " . substr($minister->firstname,0,1) . " " . $minister->surname . $sup);
-            $yy=$yy+4.5;
-            if ($yy>199) {
-                $yy=36;
-                $xx=$xx+70;
+        if (isset($this->ministers)){
+            foreach ($this->ministers as $minister){
+                $sup="";
+                if ($minister->phone<>"" and $this->circuit->showphone) {
+                    $sup.= " (" . $minister->phone . ")";
+                }
+                if (is_array($minister->minister->leadership) and (in_array("Superintendent",$minister->minister->leadership))){
+                    $sup.= " (Supt)";
+                }
+                $pdf->text($xx,$yy,$minister->title . " " . substr($minister->firstname,0,1) . " " . $minister->surname . $sup);
+                $yy=$yy+4.5;
+                if ($yy>199) {
+                    $yy=36;
+                    $xx=$xx+70;
+                }
             }
         }
         if (isset($this->supernumeraries)){

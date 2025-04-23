@@ -11,6 +11,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\HtmlString;
 
 class PersonsRelationManager extends RelationManager
 {
@@ -36,6 +37,14 @@ class PersonsRelationManager extends RelationManager
                     ->default('existing'),
                 Forms\Components\Select::make('person_id')->label('Existing names')
                     ->hiddenOn('edit')
+                    ->visible(function (Get $get, $operation){
+                        if ($get('isnew')=="existing"){
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    })
+                    ->live()
                     ->options(function ($livewire){
                         $circuitid=$livewire->getOwnerRecord()->id;
                         $persons = Person::whereHas('circuits', function ($q) use ($circuitid) { $q->where('circuit_id','<>',$circuitid); })->orderBy('surname')->orderBy('firstname')->get();
@@ -45,9 +54,32 @@ class PersonsRelationManager extends RelationManager
                         return $options;
                     })
                     ->searchable(),
+                Forms\Components\Select::make('status')->label('Status in this circuit')
+                    ->visible(function (Get $get, $operation){
+                        if ($get('isnew')=="existing"){
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    })
+                    ->formatStateUsing(function ($state){
+                        if ($state){
+                            return json_decode($state);
+                        }
+                    })
+                    ->live()
+                    ->multiple()
+                    ->statePath('status')
+                    ->options([
+                        'Guest' => 'Guest preacher',
+                        'Leader' => 'Leader',
+                        'Minister' => 'Circuit minister',
+                        'Preacher' => 'Local preacher',
+                        'Supernumerary' => 'Supernumerary minister',
+                    ]),
                 Forms\Components\Section::make('Personal details')
-                    ->visible(function (Get $get){
-                        if ($get('isnew')=="new"){
+                    ->visible(function (Get $get, $operation){
+                        if (($get('isnew')=="new") or ($operation=="edit")){
                             return true;
                         } else {
                             return false;
@@ -164,7 +196,26 @@ class PersonsRelationManager extends RelationManager
                             }),
                         Forms\Components\Toggle::make('active')
                             ->onColor('success'),
-                    ])
+                        ]),
+                Forms\Components\Placeholder::make('circuitroles')->label('Roles in other circuits')
+                    ->hiddenOn('create')
+                    ->visible(function ($record){
+                        if (count($record->circuitroles)>1){
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    })
+                    ->content(function ($record, RelationManager $livewire){
+                        $dat="";
+                        $circuit = $livewire->getOwnerRecord()->id;
+                        foreach ($record->circuitroles as $role){
+                            if ($role->circuit_id <> $circuit){
+                                $dat.=$role->circuit->reference . " " . $role->circuit->circuit . " (" . implode(", ",$role->status) . ")<br>";
+                            }
+                        }
+                        return new HtmlString($dat);
+                    }),
             ]);
     }
 
@@ -189,7 +240,7 @@ class PersonsRelationManager extends RelationManager
             ->filters([
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                Tables\Actions\Action::make()->label('Add a new person')
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->modalHeading('Edit person'),
