@@ -2,6 +2,7 @@
 
 namespace Bishopm\Methodist\Filament\Resources\CircuitResource\RelationManagers;
 
+use Bishopm\Methodist\Models\Circuitrole;
 use Bishopm\Methodist\Models\Person;
 use Bishopm\Methodist\Models\Society;
 use Filament\Forms;
@@ -25,66 +26,7 @@ class PersonsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Radio::make('isnew')->label('Are you adding a new person or a visitor or transfer from another circuit?')
-                    ->hiddenOn('edit')
-                    ->columnSpanFull()
-                    ->live()
-                    ->inline()
-                    ->options([
-                        'existing'=>'From another circuit',
-                        'new'=>'Add a new person'
-                    ])
-                    ->default('existing'),
-                Forms\Components\Select::make('person_id')->label('Existing names')
-                    ->hiddenOn('edit')
-                    ->visible(function (Get $get, $operation){
-                        if ($get('isnew')=="existing"){
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    })
-                    ->live()
-                    ->options(function ($livewire){
-                        $circuitid=$livewire->getOwnerRecord()->id;
-                        $persons = Person::whereHas('circuits', function ($q) use ($circuitid) { $q->where('circuit_id','<>',$circuitid); })->orderBy('surname')->orderBy('firstname')->get();
-                        foreach ($persons as $person){
-                            $options[$person->id]=$person->surname . ", " . $person->firstname;
-                        }
-                        return $options;
-                    })
-                    ->searchable(),
-                Forms\Components\Select::make('status')->label('Status in this circuit')
-                    ->visible(function (Get $get, $operation){
-                        if ($get('isnew')=="existing"){
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    })
-                    ->formatStateUsing(function ($state){
-                        if ($state){
-                            return json_decode($state);
-                        }
-                    })
-                    ->live()
-                    ->multiple()
-                    ->statePath('status')
-                    ->options([
-                        'Guest' => 'Guest preacher',
-                        'Leader' => 'Leader',
-                        'Minister' => 'Circuit minister',
-                        'Preacher' => 'Local preacher',
-                        'Supernumerary' => 'Supernumerary minister',
-                    ]),
                 Forms\Components\Section::make('Personal details')
-                    ->visible(function (Get $get, $operation){
-                        if (($get('isnew')=="new") or ($operation=="edit")){
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    })
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('firstname')->label('First name'),
@@ -240,8 +182,66 @@ class PersonsRelationManager extends RelationManager
             ->filters([
             ])
             ->headerActions([
-                Tables\Actions\Action::make()->label('Add a new person')
-            ])
+                Tables\Actions\Action::make('transfer')->label('Transfer a minister or add as guest')
+                    ->form([
+                        Forms\Components\Grid::make('transfergrid')
+                            ->schema([
+                                Forms\Components\Select::make('person_id')->label('Existing names')
+                                    ->live()
+                                    ->options(function ($livewire){
+                                        $circuitid=$livewire->getOwnerRecord()->id;
+                                        $persons = Person::whereHas('circuits', function ($q) use ($circuitid) { $q->where('circuit_id','<>',$circuitid); })->orderBy('surname')->orderBy('firstname')->get();
+                                        foreach ($persons as $person){
+                                            $options[$person->id]=$person->surname . ", " . $person->firstname;
+                                        }
+                                        return $options;
+                                    })
+                                    ->searchable(),
+                                Forms\Components\Select::make('status')->label('Status in this circuit')
+                                    ->formatStateUsing(function ($state){
+                                        if ($state){
+                                            return json_decode($state);
+                                        }
+                                    })
+                                    ->live()
+                                    ->multiple()
+                                    ->statePath('status')
+                                    ->options([
+                                        'Guest' => 'Guest preacher',
+                                        'Leader' => 'Leader',
+                                        'Minister' => 'Circuit minister',
+                                        'Preacher' => 'Local preacher',
+                                        'Supernumerary' => 'Supernumerary minister',
+                                    ])
+                            ])->columns(2)
+                    ])
+                    ->action(function (array $data, RelationManager $livewire){
+                        $circuit_id=$livewire->getOwnerRecord()->id;
+                        Circuitrole::create([
+                            'person_id'=>$data['person_id'],
+                            'circuit_id'=>$circuit_id,
+                            'status'=>$data['status']
+                        ]);
+                    }),
+                    Tables\Actions\CreateAction::make()->label('Add a new person')
+                        ->using(function (array $data, RelationManager $livewire){
+                            $circuit_id=$livewire->getOwnerRecord()->id;
+                            $person=Person::create([
+                                'firstname' => $data['firstname'],
+                                'surname' => $data['surname'],
+                                'title' => $data['title'],
+                                'phone' => $data['phone'],
+                                'leadership' => $data['leadership'],
+                                'society_id' => $data['society_id']
+                            ]);
+                            $circuitrole=Circuitrole::create([
+                                'person_id'=>$person->id,
+                                'circuit_id'=>$circuit_id,
+                                'status'=>$data['status']
+                            ]);
+                            return $person;
+                        })
+                ])
             ->actions([
                 Tables\Actions\EditAction::make()->modalHeading('Edit person'),
                 Tables\Actions\DeleteAction::make(),
