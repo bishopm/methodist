@@ -18,8 +18,8 @@ return new class extends Migration
             $table->integer('plan_month');
             $table->json('servicetypes')->nullable();
             $table->json('midweeks')->nullable();
-            $table->integer('showphone', 10)->nullable();
-            $table->integer('activated', 10)->nullable();
+            $table->integer('showphone')->nullable();
+            $table->integer('activated')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->timestamp('deleted_at')->nullable();
