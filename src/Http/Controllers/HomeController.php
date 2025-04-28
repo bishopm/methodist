@@ -257,24 +257,26 @@ class HomeController extends Controller
             }
         }
         $preachers=array();
-        foreach ($this->localpreachers as $ps){
-            if ($ps->preacher){
-                if ($ps->title <>""){
-                    $tp=$ps->title . " " . substr($ps->firstname,0,1) . " " . $ps->surname;
-                } else {
-                    $tp=substr($ps->firstname,0,1) . " " . $ps->surname;
-                }
-                $pn=array(
-                    'fname'=>$tp,
-                    'induction'=>$ps->preacher->induction,
-                    'phone'=>$ps->phone
-                );
-                if (isset($ps->society)){
-                    $preachers[$ps->society->society][$ps->preacher->status][]=$pn;
+        if (isset($this->localpreachers)){
+            foreach ($this->localpreachers as $ps){
+                if ($ps->preacher){
+                    if ($ps->title <>""){
+                        $tp=$ps->title . " " . substr($ps->firstname,0,1) . " " . $ps->surname;
+                    } else {
+                        $tp=substr($ps->firstname,0,1) . " " . $ps->surname;
+                    }
+                    $pn=array(
+                        'fname'=>$tp,
+                        'induction'=>$ps->preacher->induction,
+                        'phone'=>$ps->phone
+                    );
+                    if (isset($ps->society)){
+                        $preachers[$ps->society->society][$ps->preacher->status][]=$pn;
+                    }
                 }
             }
+            ksort($preachers);
         }
-        ksort($preachers);
         $pdf->SetFont('Helvetica', 'B', 10);
         $pdf->text($xx,$yy+2,"LOCAL PREACHERS");
         $yy=$yy+4.5;

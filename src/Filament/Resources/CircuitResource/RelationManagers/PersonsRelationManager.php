@@ -117,7 +117,7 @@ class PersonsRelationManager extends RelationManager
                     ->schema([
                         Forms\Components\Select::make('leadership')->label('Leadership roles')
                             ->multiple()
-                            ->options(setting('general.preacher_leadership_roles')),
+                            ->options(array_combine(setting('general.preacher_leadership_roles'),setting('general.preacher_leadership_roles'))),
                         Forms\Components\Select::make('status')
                             ->live()
                             ->options([
