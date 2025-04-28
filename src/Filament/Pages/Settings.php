@@ -7,7 +7,8 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TagsInput;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
-use Bishopm\Methodist\Filament\Clusters\Settings as SettingsCluster; 
+use Bishopm\Methodist\Filament\Clusters\Settings as SettingsCluster;
+use Filament\Forms\Components\KeyValue;
 
 class Settings extends BaseSettings
 {
@@ -24,7 +25,7 @@ class Settings extends BaseSettings
                         ->columns(2)
                         ->schema([
                             TextInput::make('general.site_name')->required(),
-                            TagsInput::make('general.servicetypes')->label('Default service types'),
+                            KeyValue::make('general.servicetypes')->label('Default service types'),
                             TagsInput::make('general.leadership_roles'),
                             TagsInput::make('general.preacher_leadership_roles'),
                             TagsInput::make('general.minister_leadership_roles'),
