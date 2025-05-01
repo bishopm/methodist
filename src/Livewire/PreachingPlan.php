@@ -238,18 +238,17 @@ class PreachingPlan extends Component
         if (!$this->editingCell) {
             return;
         }
-        
         $service_id=substr($this->editingCell,0,strpos($this->editingCell,"-"));
         $date=substr($this->editingCell,1+strpos($this->editingCell,"-"));
+        $del=Plan::where('service_id',$service_id)->where('servicedate',$date)->delete();
         // Update the database
-        Plan::updateOrCreate(
-            [
-                'service_id' => $service_id, 
-                'servicedate' => $date,
-                'person_id' => $this->selectedPreacherId,
-                'servicetype' => $this->selectedServiceType
-            ]
-        );
+        if ($this->selectedPreacherId and $this->selectedServiceType){
+            Plan::Create( ['service_id' => $service_id, 'servicedate' => $date, 'person_id' => $this->selectedPreacherId, 'servicetype' => $this->selectedServiceType]);
+        } elseif ($this->selectedServiceType){
+            Plan::Create( ['service_id' => $service_id, 'servicedate' => $date, 'person_id' => null, 'servicetype' => $this->selectedServiceType]);
+        } elseif ($this->selectedPreacherId){
+            Plan::Create( ['service_id' => $service_id, 'servicedate' => $date, 'person_id' => $this->selectedPreacherId, 'servicetype' => null]);
+        } 
         
         // Update the local data
         if ($this->selectedPreacherId) {

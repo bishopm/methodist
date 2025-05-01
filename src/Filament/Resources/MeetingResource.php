@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -65,7 +66,9 @@ class MeetingResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Filter::make('hide_older_meetings')
+                    ->query(fn (Builder $query): Builder => $query->where('meetingdate', '>', date('Y-m-d H:i:00',strtotime('yesterday'))))
+                    ->default()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
