@@ -54,8 +54,10 @@ class Map extends MapWidget
             $societies=Society::select('id','latitude','longitude','society')->get();
         }
         foreach ($societies as $soc){
-            $this->markers[]=Marker::make($soc->id)->lat($soc->latitude)->lng($soc->longitude)->popup("<a href=\"http://methodist.local/admin/societies/" . $soc->id . "\">" . $soc->society . "</a>");
-            $this->bounds[]=[$soc->latitude,$soc->longitude];
+            if (($soc->latitude) and ($soc->longitude)){
+                $this->markers[]=Marker::make($soc->id)->lat($soc->latitude)->lng($soc->longitude)->popup("<a href=\"http://methodist.local/admin/societies/" . $soc->id . "\">" . $soc->society . "</a>");
+                $this->bounds[]=[$soc->latitude,$soc->longitude];
+            }
         }
         $this->mapOptions = [
             'center' => [$soc->latitude,$soc->longitude],

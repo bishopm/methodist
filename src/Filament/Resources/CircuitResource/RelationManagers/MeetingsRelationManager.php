@@ -8,6 +8,7 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -44,13 +45,14 @@ class MeetingsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('description')
+            ->defaultSort('meetingdate','desc')
             ->columns([
                 Tables\Columns\TextColumn::make('description'),
                 Tables\Columns\TextColumn::make('meetingdate'),
             ])
             ->filters([
                 Filter::make('hide_older_meetings')
-                    ->query(fn (Builder $query): Builder => $query->where('meetingdate', '>', date('Y-m-d H:i:00',strtotime('yesterday'))))
+                    ->query(fn (Builder $query): Builder => $query->where('meetingdate', '>', date('Y-m-d H:i:00',strtotime('7 days ago'))))
                     ->default()
             ])
             ->headerActions([
