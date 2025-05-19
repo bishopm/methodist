@@ -18,6 +18,8 @@ use Illuminate\Support\Str;
 
 class SocietyResource extends Resource
 {
+    public static array|string $routeMiddleware = ['checkperms'];
+    
     protected static ?string $model = Society::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-home-modern';

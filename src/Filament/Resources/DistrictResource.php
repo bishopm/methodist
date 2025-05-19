@@ -35,16 +35,13 @@ class DistrictResource extends Resource
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->maxLength(199),
-                Forms\Components\TextInput::make('location')
-                    ->maxLength(199),
+                Forms\Components\Hidden::make('location'),
                 Forms\Components\TextInput::make('bishop')
                     ->maxLength(199),
                 Forms\Components\TextInput::make('secretary')
                     ->maxLength(199),
-                Forms\Components\TextInput::make('latitude')
-                    ->hiddenLabel(),
-                Forms\Components\TextInput::make('longitude')
-                    ->hiddenLabel(),
+                Forms\Components\Hidden::make('latitude'),
+                Forms\Components\Hidden::make('longitude'),
                 Map::make('location')
                     ->afterStateUpdated(function (Set $set, ?array $state): void {
                         $set('latitude', $state['lat']);

@@ -1,6 +1,7 @@
 <?php namespace Bishopm\Methodist\Providers;
 
 use Bishopm\Methodist\Http\Middleware\AdminRoute;
+use Bishopm\Methodist\Http\Middleware\CheckPerms;
 use Bishopm\Methodist\Livewire\PreachingPlan;
 use Illuminate\Support\ServiceProvider;
 use Bishopm\Methodist\Methodist;
@@ -25,6 +26,7 @@ class MethodistServiceProvider extends ServiceProvider
     {
         $router = $this->app['router'];
         $router->aliasMiddleware('adminonly', AdminRoute::class);
+        $router->aliasMiddleware('checkperms', CheckPerms::class);
         Schema::defaultStringLength(191);
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'methodist');
         Paginator::useBootstrapFive();

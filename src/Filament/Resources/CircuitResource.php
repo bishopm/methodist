@@ -21,6 +21,8 @@ use Illuminate\Support\Str;
 
 class CircuitResource extends Resource
 {
+    public static array|string $routeMiddleware = ['checkperms'];
+
     protected static ?string $model = Circuit::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
@@ -106,7 +108,14 @@ class CircuitResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->visible(function ($record){
+                    $user=Auth::user();
+                    if (($user->circuits) and (in_array($record->id,$user->circuits))){
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
