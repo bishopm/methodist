@@ -9,6 +9,8 @@ use Bishopm\Methodist\Models\District;
 use Bishopm\Methodist\Models\Meeting;
 use Bishopm\Methodist\Models\Midweek;
 use Bishopm\Methodist\Models\Plan;
+use Bishopm\Methodist\Models\Society;
+use Illuminate\Support\Facades\Http;
 
 class HomeController extends Controller
 {
@@ -24,8 +26,33 @@ class HomeController extends Controller
 
     public function home()
     {
-        $data=array();
+        $data['districts']=District::orderBy('id')->get();
         return view('methodist::web.home',$data);
+    }
+
+    public function district($district){
+        $data['district']=District::with('circuits')->whereSlug($district)->first();
+        return view('methodist::web.district',$data);
+    }
+
+    public function circuit($district, $circuit){
+        $data['circuit']=Circuit::with('district','societies','persons.minister')->whereSlug($circuit)->first();
+        return view('methodist::web.circuit',$data);
+    }
+
+    public function society($district, $circuit, $society){
+        $data['society']=Society::with('circuit')->whereId($society)->first();
+        return view('methodist::web.society',$data);
+    }
+
+    public function lectionary($sunday=""){
+        if ($sunday==""){
+            $sunday = "this Sunday";
+        }
+        $url="https://www.lectserve.com/date/" . date('Y-m-d',strtotime($sunday)) . "?lect=rcl";
+        $response=Http::get($url);
+        $data['lect']=json_decode($response->body());
+        return view('methodist::web.lectionary',$data);
     }
 
     public function pdf($circuit,$plandate){
