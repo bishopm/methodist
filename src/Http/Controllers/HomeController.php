@@ -31,7 +31,7 @@ class HomeController extends Controller
     }
 
     public function district($district){
-        $data['district']=District::with('circuits')->whereSlug($district)->first();
+        $data['district']=District::with('circuits.societies')->whereSlug($district)->first();
         return view('methodist::web.district',$data);
     }
 
