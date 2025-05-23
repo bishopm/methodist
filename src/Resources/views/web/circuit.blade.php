@@ -1,5 +1,5 @@
 <x-methodist::layouts.web pageName="Home">
-    <h1>{{$circuit->circuit}} {{$circuit->reference}}</h1>
+    <h1><a href="{{url('/')}}"><i class="bi bi-house mx-2"></i></a>{{$circuit->circuit}} {{$circuit->reference}}</h1>
     <h5><a href="{{url('/') . '/' . $circuit->district->slug}}">{{$circuit->district->district}} District</a></h5>
     <div style="height:400px" id="map"></div>
     <script>
@@ -23,25 +23,56 @@
         var bounds = new L.LatLngBounds(markers);
         map.fitBounds(bounds, {padding: [25,25]});
     </script>
-    <ul class="list-unstyled">
-        <h3>Societies</h3>
-        @foreach ($circuit->societies as $society)
-            <li><a href="{{url('/' . $circuit->district->slug . '/' . $circuit->slug . '/' . $society->id)}}">{{$society->society}}</a></li>
-        @endforeach
-    </ul>
-    <ul class="list-unstyled">
-        <h3>Clergy</h3>
-        @foreach ($circuit->persons as $person)
-            @if (in_array('Minister',json_decode($person->pivot->status)))
-                <li>{{$person->title}} {{$person->firstname}} {{$person->surname}} 
-                @if ($person->minister->leadership)
-                    @foreach ($person->minister->leadership as $lead)    
-                         <span class="bg-dark badge text-white mx-2 py-1 px-1">{{$lead}}</span>
+    <div class="row mt-3">
+        <div class="col-6">
+            <h3><a target="_blank" href="{{url('/') . '/plan/' . $circuit->slug . '/' . date('Y-m-d') }}">Preaching plan</a></h3>
+            <ul class="list-unstyled">
+                <h3>Societies</h3>
+                @foreach ($circuit->societies as $society)
+                    <li><a href="{{url('/' . $circuit->district->slug . '/' . $circuit->slug . '/' . $society->id)}}">{{$society->society}}</a></li>
+                @endforeach
+            </ul>
+        </div>
+        <div class="col-6">
+            <ul class="list-unstyled">
+                <h3>Clergy</h3>
+                @foreach ($circuit->persons as $person)
+                    @if (in_array('Minister',json_decode($person->pivot->status)))
+                        <li>{{$person->title}} {{$person->firstname}} {{$person->surname}} 
+                        @if ($person->minister->leadership)
+                            @foreach ($person->minister->leadership as $lead)    
+                                <span class="bg-dark badge text-white mx-2 py-1 px-1">{{$lead}}</span>
+                            @endforeach
+                        @endif
+                        </li>
+                    @endif
+                @endforeach
+            </ul>
+            <h3>Lectionary readings</h3>
+            <h5>{{date('l, j F Y',strtotime($lect->servicedate))}}</h5>
+            @foreach ($lect->readings as $service)
+                <h5>{{$service['name']}}</h5>
+                <ul class="list-unstyled">
+                    @foreach ($service['readings'] as $reading)
+                        @php
+                            if (str_contains($reading,' or ')){
+                                $allreadings=explode(' or ',$reading);
+                                print "<li>";
+                                foreach ($allreadings as $ndx=>$thisreading){
+                                    print "<a target=\"_blank\" href=\"https://www.biblegateway.com/passage/?search=" . $thisreading . "\">" . $thisreading . "</a>";
+                                    if ($ndx<count($allreadings)-1){
+                                        print " or ";
+                                    }
+                                }
+                                print "</li>";
+                            } else {
+                                print "<li><a target=\"_blank\" href=\"https://www.biblegateway.com/passage/?search=" . $reading . "\">" . $reading . "</a></li>";
+                            }
+                        @endphp
                     @endforeach
-                @endif
-                </li>
-            @endif
-        @endforeach
-    </ul>
+                </ul>
+            @endforeach
+        </div>
+    </div>
 </x-methodist::layouts.web>
 

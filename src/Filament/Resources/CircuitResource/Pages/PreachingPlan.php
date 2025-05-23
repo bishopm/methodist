@@ -10,7 +10,7 @@ class PreachingPlan extends Page
     protected static ?string $navigationIcon = 'heroicon-o-calendar';
     protected static string $resource = CircuitResource::class;
     protected static string $view = 'methodist::preaching-plan';
-    protected static string $layout = 'methodist::layouts.no-sidebar';
+    protected static string $layout = 'methodist::components.layouts.no-sidebar';
     protected static ?string $navigationLabel = 'Preaching Plan';
     protected static ?string $title = 'Preaching Plan';
     protected static ?int $navigationSort = 3;

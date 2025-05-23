@@ -212,6 +212,8 @@ class PersonResource extends Resource
                             ]),    
                         Forms\Components\Toggle::make('active')
                             ->required(),
+                        Forms\Components\FileUpload::make('image')
+                            ->image(),
                     ])
                     ->columns(2),
             ]);

@@ -1,5 +1,5 @@
 <x-methodist::layouts.web pageName="Home">
-    <h1>{{$society->society}}</h1>
+    <h1><a href="{{url('/')}}"><i class="bi bi-house mx-2"></i></a>{{$society->society}}</h1>
     <h5><a href="{{url('/') . '/' . $society->circuit->district->slug . '/' . $society->circuit->slug}}">{{$society->circuit->circuit}} Circuit {{$society->circuit->reference}}</a></h5>
     <div style="height:400px" id="map"></div>
     <script>
@@ -19,12 +19,12 @@
             <th>Address</th><td>{{$society->address}}</td>
         </tr>
         <tr>
-            <th>Website</th><td>{{$society->website}}</td>
+            <th>Website</th><td><a href="{{$society->website}}" target="_blank">{{$society->website}}</a></td>
         </tr>
         <tr>
             <th>Services</th><td>
                 @foreach ($society->services as $service)
-                    {{$service->servicetime}} 
+                    <span class="bg-dark badge text-white mx-1 py-1">{{$service->servicetime}}</span>
                 @endforeach
             </td>
         </tr>

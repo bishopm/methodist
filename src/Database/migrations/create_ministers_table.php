@@ -14,6 +14,7 @@ return new class extends Migration
             $table->integer('person_id');
             $table->string('status', 199);
             $table->tinyinteger('active');
+            $table->string('image')->nullable();
             $table->json('leadership')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();

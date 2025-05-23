@@ -10,6 +10,7 @@ use Bishopm\Methodist\Models\Meeting;
 use Bishopm\Methodist\Models\Midweek;
 use Bishopm\Methodist\Models\Plan;
 use Bishopm\Methodist\Models\Society;
+use Bishopm\Methodist\Models\Sunday;
 use Illuminate\Support\Facades\Http;
 
 class HomeController extends Controller
@@ -27,16 +28,27 @@ class HomeController extends Controller
     public function home()
     {
         $data['districts']=District::orderBy('id')->get();
+        $data['lect']=$this->get_lectionary();
         return view('methodist::web.home',$data);
     }
 
     public function district($district){
-        $data['district']=District::with('circuits.societies')->whereSlug($district)->first();
+        $data['district']=District::with('circuits.societies')->withWhereHas('circuits.persons.minister')->whereSlug($district)->first();
+        foreach ($data['district']->circuits as $circ){
+            foreach ($circ->persons as $person){
+                if ((isset($person->minister)) and ($person->minister->status=="Minister")){
+                    $data['ministers'][$person->surname . $person->firstname . $person->id] = $person;
+                }
+            }
+        }
+        ksort($data['ministers']);
+        $data['lect']=$this->get_lectionary();
         return view('methodist::web.district',$data);
     }
 
     public function circuit($district, $circuit){
         $data['circuit']=Circuit::with('district','societies','persons.minister')->whereSlug($circuit)->first();
+        $data['lect']=$this->get_lectionary();
         return view('methodist::web.circuit',$data);
     }
 
@@ -46,18 +58,31 @@ class HomeController extends Controller
     }
 
     public function lectionary($sunday=""){
-        if ($sunday==""){
-            $sunday = "this Sunday";
-        }
-        $url="https://www.lectserve.com/date/" . date('Y-m-d',strtotime($sunday)) . "?lect=rcl";
-        $response=Http::get($url);
-        $data['lect']=json_decode($response->body());
+        $data['lect']=$this->get_lectionary($sunday);
         return view('methodist::web.lectionary',$data);
+    }
+
+    private function get_lectionary($sunday=""){
+        if ($sunday==""){
+            $sunday = date('Y-m-d',strtotime('this Sunday'));
+        }
+        $lect=Sunday::where('servicedate',$sunday)->first();
+        if (!$lect){
+            $url="https://www.lectserve.com/date/" . date('Y-m-d',strtotime($sunday)) . "?lect=rcl";
+            $response=Http::get($url);
+            $body=json_decode($response->body());
+            $lect=Sunday::create([
+                'servicedate'=>$sunday,
+                'sunday'=>$body->daily->week,
+                'readings'=>json_encode($body->sunday->services)
+            ]);
+        }
+        return $lect;
     }
 
     public function pdf($circuit,$plandate){
         $this->plandate=$plandate;
-        $this->circuit=Circuit::find($circuit);
+        $this->circuit=Circuit::whereSlug($circuit)->first();
         $this->getdates();
         $rows=$this->getrows($this->circuit->id,$this->dates);
         $pdf = new tFPDF();
