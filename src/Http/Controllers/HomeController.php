@@ -41,7 +41,7 @@ class HomeController extends Controller
     }
 
     public function society($district, $circuit, $society){
-        $data['society']=Society::with('circuit')->whereId($society)->first();
+        $data['society']=Society::with('circuit','services')->whereId($society)->first();
         return view('methodist::web.society',$data);
     }
 
