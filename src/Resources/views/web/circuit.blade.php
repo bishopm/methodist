@@ -24,7 +24,7 @@
         map.fitBounds(bounds, {padding: [25,25]});
     </script>
     <div class="row mt-3">
-        <div class="col-6">
+        <div class="col-4">
             <h3><a target="_blank" href="{{url('/') . '/plan/' . $circuit->slug . '/' . date('Y-m-d') }}">Preaching plan</a></h3>
             <ul class="list-unstyled">
                 <h3>Societies</h3>
@@ -33,10 +33,10 @@
                 @endforeach
             </ul>
         </div>
-        <div class="col-6">
+        <div class="col-4">
             <div class="row">
                 <h3>Clergy</h3>
-                @foreach ($circuit->persons as $person)
+                @foreach ($circuit->persons->sortBy(['surname','firstname']) as $person)
                     @if (in_array('Minister',json_decode($person->pivot->status)))
                         <div class="rounded col-3 text-center">
                             @if ($person->minister->image)
@@ -54,6 +54,8 @@
                     @endif
                 @endforeach
             </div>
+        </div>
+        <div class="col-4">
             <h3>Lectionary readings</h3>
             <h5>{{date('l, j F Y',strtotime($lect->servicedate))}}</h5>
             @foreach ($lect->readings as $service)
