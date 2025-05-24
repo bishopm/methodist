@@ -6,9 +6,9 @@
         @foreach ($ministers as $minister)
             <div class="col-1 text-center">
                 @if ($minister->minister->image)
-                    <img class="img-fluid" src="{{url('/storage/' . $minister->minister->image)}}">
+                    <img class="img-fluid" src="{{url('/storage/public/' . $minister->minister->image)}}">
                 @else 
-                    <img class="img-fluid" src="{{url('/storage/blank.png')}}">
+                    <img class="img-fluid" src="{{url('/methodist/images/blank.png')}}">
                 @endif
                 <small>{{$minister->firstname}} {{$minister->surname}}</small>
             </div>

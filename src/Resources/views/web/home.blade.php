@@ -12,7 +12,7 @@
         <div class="col-6">
             <h3>Lectionary readings</h3>
             <h5>{{date('l, j F Y',strtotime($lect->servicedate))}}</h5>
-            @foreach ($lect->readings as $service)
+            @forelse ($lect->readings as $service)
                 <h5>{{$service['name']}}</h5>
                 <ul class="list-unstyled">
                     @foreach ($service['readings'] as $reading)
@@ -33,7 +33,9 @@
                         @endphp
                     @endforeach
                 </ul>
-            @endforeach
+            @empty
+                No readings
+            @endforelse
         </div>
     </div>
 </x-methodist::layouts.web>

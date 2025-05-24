@@ -34,20 +34,26 @@
             </ul>
         </div>
         <div class="col-6">
-            <ul class="list-unstyled">
+            <div class="row">
                 <h3>Clergy</h3>
                 @foreach ($circuit->persons as $person)
                     @if (in_array('Minister',json_decode($person->pivot->status)))
-                        <li>{{$person->title}} {{$person->firstname}} {{$person->surname}} 
-                        @if ($person->minister->leadership)
-                            @foreach ($person->minister->leadership as $lead)    
-                                <span class="bg-dark badge text-white mx-2 py-1 px-1">{{$lead}}</span>
-                            @endforeach
-                        @endif
-                        </li>
+                        <div class="rounded col-3 text-center">
+                            @if ($person->minister->image)
+                                <img class="img-fluid" src="{{url('/storage/public/' . $person->minister->image)}}">
+                            @else 
+                                <img class="img-fluid" src="{{url('/methodist/images/blank.png')}}">
+                            @endif
+                            <small>{{$person->firstname}} {{$person->surname}}</small>
+                            @if ($person->minister->leadership)
+                                @foreach ($person->minister->leadership as $lead)    
+                                    <span class="bg-dark badge text-white mx-2 py-1 px-1">{{$lead}}</span>
+                                @endforeach
+                            @endif
+                        </div>
                     @endif
                 @endforeach
-            </ul>
+            </div>
             <h3>Lectionary readings</h3>
             <h5>{{date('l, j F Y',strtotime($lect->servicedate))}}</h5>
             @foreach ($lect->readings as $service)

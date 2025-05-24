@@ -74,7 +74,7 @@ class HomeController extends Controller
             $lect=Sunday::create([
                 'servicedate'=>$sunday,
                 'sunday'=>$body->daily->week,
-                'readings'=>json_encode($body->sunday->services)
+                'readings'=>$body->sunday->services
             ]);
         }
         return $lect;
