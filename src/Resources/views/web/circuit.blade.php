@@ -38,18 +38,19 @@
                 <h3>Clergy</h3>
                 @foreach ($circuit->persons->sortBy(['surname','firstname']) as $person)
                     @if (in_array('Minister',json_decode($person->pivot->status)))
-                        <div class="rounded col-3 text-center">
+                        <div class="rounded col-3 text-center text-small">
                             @if ($person->minister->image)
                                 <img class="img-fluid" src="{{url('/storage/public/' . $person->minister->image)}}">
                             @else 
                                 <img class="img-fluid" src="{{url('/methodist/images/blank.png')}}">
                             @endif
-                            <small>{{$person->firstname}} {{$person->surname}}</small>
-                            @if ($person->minister->leadership)
-                                @foreach ($person->minister->leadership as $lead)    
-                                    <span class="bg-dark badge text-white mx-2 py-1 px-1">{{$lead}}</span>
-                                @endforeach
-                            @endif
+                            <small>{{$person->firstname}} {{$person->surname}}<br>
+                                @if ($person->minister->leadership)
+                                    @foreach ($person->minister->leadership as $lead)
+                                        <span class="bg-dark badge text-white text-small">{{$lead}}</span>
+                                    @endforeach
+                                @endif
+                            </small>
                         </div>
                     @endif
                 @endforeach
