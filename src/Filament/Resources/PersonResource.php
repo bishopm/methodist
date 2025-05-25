@@ -207,9 +207,7 @@ class PersonResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('leadership')
                             ->multiple()
-                            ->options([
-                                'Superintendent' => 'Superintendent'
-                            ]),    
+                            ->options(array_combine(setting('general.minister_leadership_roles'),setting('general.minister_leadership_roles'))),
                         Forms\Components\Toggle::make('active')
                             ->required(),
                         Forms\Components\FileUpload::make('image')
