@@ -16,6 +16,8 @@ class CircuitrolesRelationManager extends RelationManager
 {
     protected static string $relationship = 'circuitroles';
 
+    protected static ?string $title = 'Circuit roles';
+
     public function form(Form $form): Form
     {
         return $form
@@ -31,6 +33,7 @@ class CircuitrolesRelationManager extends RelationManager
                         'Leader' => 'Leader',
                         'Minister' => 'Circuit minister',
                         'Preacher' => 'Local preacher',
+                        'Superintendent' => 'Superintendent minister',
                         'Supernumerary' => 'Supernumerary minister',
                     ])
                     ->statePath('status')
@@ -43,6 +46,7 @@ class CircuitrolesRelationManager extends RelationManager
             ->recordTitleAttribute('circuit')
             ->columns([
                 Tables\Columns\TextColumn::make('circuit.circuit'),
+                Tables\Columns\TextColumn::make('status'),
             ])
             ->inverseRelationship('circuitrole')
             ->filters([

@@ -5,7 +5,11 @@
             <h3>Districts</h3>
             <ul class="list-unstyled">
                 @foreach ($districts as $district)
-                    <li><a href="{{url('/' . $district->slug)}}">{{$district->district}}</a></li>
+                    @if ($district->active)
+                        <li><a href="{{url('/' . $district->slug)}}">{{$district->district}}</a></li>
+                    @else
+                        <li>{{$district->district}}</li>
+                    @endif
                 @endforeach
             </ul>
         </div>

@@ -61,7 +61,7 @@ class PreachingPlan extends Component
         $this->preachers['Supernumerary Ministers']=array();
         $this->preachers['Guest Preachers']=array();
         foreach ($persons as $person){
-            if (in_array("Minister",json_decode($person->pivot->status))){
+            if ((in_array("Minister",json_decode($person->pivot->status))) or (in_array("Superintendent",json_decode($person->pivot->status)))){
                 $this->preachers['Circuit Ministers'][$person->id]=['name' => substr($person->firstname,0,1) . " " . $person->surname,'id' => $person->id];
             } elseif (in_array("Preacher",json_decode($person->pivot->status))){
                 $this->preachers['Local Preachers'][$person->id]=['name' => substr($person->firstname,0,1) . " " . $person->surname,'id' => $person->id];

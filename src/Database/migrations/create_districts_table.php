@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string('location', 199)->nullable();
             $table->double('latitude')->nullable();
             $table->double('longitude')->nullable();
-            $table->string('bishop', 199)->nullable();
-            $table->string('secretary', 199)->nullable();
+            $table->integer('bishop')->nullable();
+            $table->text('contact')->nullable();
+            $table->tinyinteger('active');
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->timestamp('deleted_at')->nullable();

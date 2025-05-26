@@ -6,6 +6,7 @@ use Bishopm\Methodist\Filament\Resources\DistrictResource\Pages;
 use Bishopm\Methodist\Filament\Resources\DistrictResource\RelationManagers;
 use Bishopm\Methodist\Models\Circuit;
 use Bishopm\Methodist\Models\District;
+use Bishopm\Methodist\Models\Person;
 use Bishopm\Methodist\Models\Society;
 use Dotswan\MapPicker\Fields\Map;
 use Filament\Forms;
@@ -36,10 +37,6 @@ class DistrictResource extends Resource
                     ->required()
                     ->maxLength(199),
                 Forms\Components\Hidden::make('location'),
-                Forms\Components\TextInput::make('bishop')
-                    ->maxLength(199),
-                Forms\Components\TextInput::make('secretary')
-                    ->maxLength(199),
                 Forms\Components\Hidden::make('latitude'),
                 Forms\Components\Hidden::make('longitude'),
                 Map::make('location')
@@ -52,7 +49,18 @@ class DistrictResource extends Resource
                             'lat' => $record->latitude,
                             'lng' => $record->longitude
                         ]);
+                    }),
+                Forms\Components\RichEditor::make('contact')->label('District office details'),
+                Forms\Components\Select::make('bishop')
+                    ->options( function () {
+                        $persons = Person::whereHas('minister')->orderBy('surname')->orderBy('firstname')->get();
+                        foreach ($persons as $person){
+                            $options[$person->id]=$person->surname . ", " . $person->firstname;
+                        }
+                        return $options;
                     })
+                    ->searchable(),
+                Forms\Components\Toggle::make('active')
             ]);
     }
 
@@ -64,6 +72,15 @@ class DistrictResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
+                Tables\Columns\IconColumn::make('active')
+                    ->icon(fn (string $state): string => match ($state) {
+                        '0' => 'heroicon-o-x-circle',
+                        '1' => 'heroicon-o-check-circle'
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        '0' => 'danger',
+                        '1' => 'success'
+                    })
             ])
             ->modifyQueryUsing(function (Builder $query){
                 $user=Auth::user();

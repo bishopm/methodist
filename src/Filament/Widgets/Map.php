@@ -44,17 +44,17 @@ class Map extends MapWidget
         if (!$user->hasRole('Super Admin')){
             if ($user->districts){
                 $circuits=Circuit::whereIn('district_id',$user->districts)->select('id')->get()->pluck('id');
-                $societies=Society::whereIn('circuit_id',$circuits)->whereNotNull('latitude')->whereNotNull('longitude')->select('id','latitude','longitude','society')->get();
+                $societies=Society::with('circuit')->whereIn('circuit_id',$circuits)->whereNotNull('latitude')->whereNotNull('longitude')->select('id','latitude','longitude','society')->get();
             } else if ($user->circuits){
-                $societies=Society::whereIn('circuit_id',$user->circuits)->whereNotNull('latitude')->whereNotNull('longitude')->select('id','latitude','longitude','society')->get();
+                $societies=Society::with('circuit')->whereIn('circuit_id',$user->circuits)->whereNotNull('latitude')->whereNotNull('longitude')->select('id','latitude','longitude','society')->get();
             } else if ($user->societies) {
-                $societies=Society::whereIn('id',$user->societies)->whereNotNull('latitude')->whereNotNull('longitude')->select('id','latitude','longitude','society')->get();
+                $societies=Society::with('circuit')->whereIn('id',$user->societies)->whereNotNull('latitude')->whereNotNull('longitude')->select('id','latitude','longitude','society')->get();
             }
         } else {
-            $societies=Society::select('id','latitude','longitude','society')->whereNotNull('latitude')->whereNotNull('longitude')->get();
+            $societies=Society::with('circuit')->select('id','latitude','longitude','society','circuit_id')->whereNotNull('latitude')->whereNotNull('longitude')->get();
         }
         foreach ($societies as $soc){
-            if (($soc->latitude) and ($soc->longitude)){
+            if (($soc->latitude) and ($soc->longitude) and ($soc->circuit->active)){
                 $this->markers[]=Marker::make($soc->id)->lat($soc->latitude)->lng($soc->longitude)->popup("<a href=\"http://methodist.local/admin/societies/" . $soc->id . "\">" . $soc->society . "</a>");
                 $this->bounds[]=[$soc->latitude,$soc->longitude];
             }

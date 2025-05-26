@@ -49,6 +49,7 @@ class CircuitResource extends Resource
                         Forms\Components\TextInput::make('reference')->label('Circuit number')
                             ->required()
                             ->numeric(),
+                        Forms\Components\Toggle::make('active')
                     ]),
                     Tab::make('Service settings')->columns(2)->schema([
                         Forms\Components\Select::make('midweeks')->label('Midweek services')
@@ -69,7 +70,7 @@ class CircuitResource extends Resource
                                 '2' => 'February',
                                 '3' => 'March'
                             ]),
-                    ])
+                        ]),
                 ]),
             ]);
     }
@@ -97,10 +98,14 @@ class CircuitResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('district.district')
                     ->sortable(),
-                Tables\Columns\IconColumn::make('activated')->label('Active')
+                Tables\Columns\IconColumn::make('active')
                     ->icon(fn (string $state): string => match ($state) {
                         '0' => 'heroicon-o-x-circle',
                         '1' => 'heroicon-o-check-circle'
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        '0' => 'danger',
+                        '1' => 'success'
                     })
             ])->defaultSort('reference','asc')
             ->filters([

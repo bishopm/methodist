@@ -11,7 +11,7 @@
                 <tr>
                     <th class="bg-dark text-white" colspan="2">
                         <a href="{{route('filament.admin.resources.circuits.plan', ['record' => $circuit->id, 'today' => date('Y-m-d',strtotime($firstday . '- 3 months'))])}}"><i class="text-white bi bi-arrow-left h4"></i></a>
-                        <a href="/plan/{{$circuit->id}}/{{$today}}" class="mx-3 btn btn-sm btn-secondary">View PDF</a>
+                        <a href="/plan/{{$circuit->slug}}/{{$today}}" class="mx-3 btn btn-sm btn-secondary">View PDF</a>
                         <a href="{{route('filament.admin.resources.circuits.plan', ['record' => $circuit->id, 'today' => date('Y-m-d',strtotime($firstday . '+ 3 months'))])}}"><i class="text-white bi bi-arrow-right h4"></i></a>
                     </th>
                     @foreach($dates as $date)

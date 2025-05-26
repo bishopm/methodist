@@ -24,39 +24,45 @@
         map.fitBounds(bounds, {padding: [25,25]});
     </script>
     <div class="row mt-3">
-        <div class="col-4">
+        <div class="col-md-4">
             <h3><a target="_blank" href="{{url('/') . '/plan/' . $circuit->slug . '/' . date('Y-m-d') }}">Preaching plan</a></h3>
             <ul class="list-unstyled">
                 <h3>Societies</h3>
-                @foreach ($circuit->societies as $society)
+                @foreach ($circuit->societies->sortBy('society') as $society)
                     <li><a href="{{url('/' . $circuit->district->slug . '/' . $circuit->slug . '/' . $society->id)}}">{{$society->society}}</a></li>
                 @endforeach
             </ul>
         </div>
-        <div class="col-4">
+        <div class="col-md-4">
             <div class="row">
-                <h3>Clergy</h3>
+                <h3 class="text-center">Ministers</h3>
                 @foreach ($circuit->persons->sortBy(['surname','firstname']) as $person)
-                    @if (in_array('Minister',json_decode($person->pivot->status)))
-                        <div class="rounded col-3 text-center text-small">
-                            @if ($person->minister->image)
-                                <img class="img-fluid" src="{{url('/storage/public/' . $person->minister->image)}}">
-                            @else 
-                                <img class="img-fluid" src="{{url('/methodist/images/blank.png')}}">
-                            @endif
-                            <small>{{$person->firstname}} {{$person->surname}}<br>
-                                @if ($person->minister->leadership)
-                                    @foreach ($person->minister->leadership as $lead)
-                                        <span class="bg-dark badge text-white text-small">{{$lead}}</span>
-                                    @endforeach
+                    @if ((in_array('Minister',json_decode($person->pivot->status))) or (in_array('Superintendent',json_decode($person->pivot->status))))
+                        <div class="rounded col text-small">
+                            <a href="{{url('/ministers/' . $person->id)}}">
+                                @if ($person->minister->image)
+                                    <img width="100px" src="{{url('/storage/public/' . $person->minister->image)}}">
+                                @else 
+                                    <img width="100px" src="{{url('/methodist/images/blank.png')}}">
                                 @endif
-                            </small>
+                                <small>{{$person->firstname}} {{$person->surname}}
+                                    @if (in_array('Superintendent',json_decode($person->pivot->status)))
+                                        (Supt)
+                                    @endif
+                                    <br>
+                                    @if ($person->minister->leadership)
+                                        @foreach ($person->minister->leadership as $lead)
+                                            <span class="bg-dark badge text-white text-small">{{$lead}}</span>
+                                        @endforeach
+                                    @endif
+                                </small>
+                            </a>
                         </div>
                     @endif
                 @endforeach
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-md-4">
             <h3>Lectionary readings</h3>
             <h5>{{date('l, j F Y',strtotime($lect->servicedate))}}</h5>
             @foreach ($lect->readings as $service)

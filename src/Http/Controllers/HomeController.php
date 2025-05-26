@@ -25,15 +25,15 @@ class HomeController extends Controller
     public $supernumeraries;
     public $localpreachers;
 
-    public function home()
-    {
-        $data['districts']=District::orderBy('id')->get();
+    public function circuit($district, $circuit){
+        $data['circuit']=Circuit::with('district','societies','persons.minister')->whereSlug($circuit)->first();
         $data['lect']=$this->get_lectionary();
-        return view('methodist::web.home',$data);
+        return view('methodist::web.circuit',$data);
     }
 
     public function district($district){
         $data['district']=District::with('circuits.societies')->withWhereHas('circuits.persons.minister')->whereSlug($district)->first();
+        $data['bishop']=Person::find($data['district']->bishop);
         foreach ($data['district']->circuits as $circ){
             foreach ($circ->persons as $person){
                 if ((isset($person->minister)) and ($person->minister->status=="Minister")){
@@ -46,15 +46,11 @@ class HomeController extends Controller
         return view('methodist::web.district',$data);
     }
 
-    public function circuit($district, $circuit){
-        $data['circuit']=Circuit::with('district','societies','persons.minister')->whereSlug($circuit)->first();
+    public function home()
+    {
+        $data['districts']=District::orderBy('id')->get();
         $data['lect']=$this->get_lectionary();
-        return view('methodist::web.circuit',$data);
-    }
-
-    public function society($district, $circuit, $society){
-        $data['society']=Society::with('circuit','services')->whereId($society)->first();
-        return view('methodist::web.society',$data);
+        return view('methodist::web.home',$data);
     }
 
     public function lectionary($sunday=""){
@@ -260,7 +256,8 @@ class HomeController extends Controller
         $pdf->SetFont('Helvetica', '', 10);
         $pdf->text($xx,$yy,"Presiding Bishop: " . setting('general.presiding_bishop'));
         $pdf->text($xx,$yy+4.5,"General Secretary: " . setting('general.general_secretary'));
-        $pdf->text($xx,$yy+9,"District Bishop: " . District::find($this->circuit->district_id)->bishop);
+        $bishop=Person::find($this->circuit->district->bishop);
+        $pdf->text($xx,$yy+9,"District Bishop: " . $bishop->name);
         $yy=$yy+20;
         $pdf->SetFont('Helvetica', 'B', 10);
         $pdf->text($xx,$yy-4.5,"Circuit Ministers");
@@ -271,7 +268,7 @@ class HomeController extends Controller
                 if ($minister->phone<>"" and $this->circuit->showphone) {
                     $sup.= " (" . $minister->phone . ")";
                 }
-                if (is_array($minister->minister->leadership) and (in_array("Superintendent",$minister->minister->leadership))){
+                if (is_array(json_decode($minister->pivot->status)) and (in_array("Superintendent",json_decode($minister->pivot->status)))){
                     $sup.= " (Supt)";
                 }
                 $pdf->text($xx,$yy,$minister->title . " " . substr($minister->firstname,0,1) . " " . $minister->surname . $sup);
@@ -465,7 +462,7 @@ class HomeController extends Controller
         $circuit=Circuit::with('societies.services','persons')->where('id',$this->circuit->id)->first();
         $persons=$circuit->persons->sortBy(['surname','firstname']);
         foreach ($persons as $person){
-            if (in_array("Minister",json_decode($person->pivot->status))){
+            if ((in_array("Minister",json_decode($person->pivot->status))) or (in_array("Superintendent",json_decode($person->pivot->status)))){
                 $this->ministers[]=$person;
             } elseif (in_array("Supernumerary",json_decode($person->pivot->status))){
                 $this->supernumeraries[]=$person;
@@ -557,4 +554,15 @@ class HomeController extends Controller
         sort($dates);
         $this->dates=$dates;
     }
+
+    public function minister($id){
+        $data['minister']=Person::with('minister','circuitroles.circuit')->whereId($id)->first();
+        return view('methodist::web.minister',$data);
+    }
+
+    public function society($district, $circuit, $society){
+        $data['society']=Society::with('circuit','services')->whereId($society)->first();
+        return view('methodist::web.society',$data);
+    }
+
 }

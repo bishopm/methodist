@@ -23,6 +23,11 @@ class Person extends Model
         return $this->HasOne(Minister::class);
     }
 
+    public function getNameAttribute($value)
+    {
+        return $this->title . " " . substr($this->firstname,0,1) . " " . $this->surname;
+    }
+
     public function preacher(): HasOne
     {
         return $this->HasOne(Preacher::class);

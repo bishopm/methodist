@@ -19,7 +19,7 @@ return new class extends Migration
             $table->json('servicetypes')->nullable();
             $table->json('midweeks')->nullable();
             $table->integer('showphone')->nullable();
-            $table->integer('activated')->nullable();
+            $table->tinyinteger('active');
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->timestamp('deleted_at')->nullable();
