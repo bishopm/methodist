@@ -8,6 +8,10 @@
     @if ($minister->minister->ordained)
         <p><b>Ordained:</b> {{$minister->minister->ordained}}</p>
     @endif
+    @foreach ($minister->minister->leadership as $lead)
+        <span class="bg-dark badge text-white text-small mx-3">{{$lead}}</span>
+    @endforeach
+        
     @foreach ($minister->circuitroles as $circuit)
         @if (in_array('Minister',$circuit->status) or in_array('Superintendent',$circuit->status))
             <p><a href="{{url('/' . $circuit->circuit->district->slug . '/' . $circuit->circuit->slug)}}">{{$circuit->circuit->circuit}} {{$circuit->circuit->reference}}</a></p>

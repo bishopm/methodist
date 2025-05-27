@@ -4,9 +4,13 @@
     <div class="row mt-3">
         <div class="col-md-3">
             @if ($bishop and $bishop->minister->image)
-                <img width="100px" src="{{url('/storage/public/' . $bishop->minister->image)}}">
+                <a href="{{url('/ministers/' . $bishop->id)}}">
+                    <img width="100px" src="{{url('/storage/public/' . $bishop->minister->image)}}">
+                </a>
             @elseif ($bishop)
-                <img width="100px"  src="{{url('/methodist/images/blank.png')}}">
+                <a href="{{url('/ministers/' . $bishop->id)}}">
+                    <img width="100px"  src="{{url('/methodist/images/blank.png')}}">
+                </a>
             @endif
             <h6 class="mt-3"><span class="bg-dark badge text-white text-small">District Bishop</span> {{$bishop->name ?? ''}}</h6>
             <span class="bg-dark badge text-white text-small">District Office</span>
