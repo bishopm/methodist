@@ -199,7 +199,6 @@ class PersonResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('status')
                             ->options([
-                                'Bishop' => 'Bishop',
                                 'Deacon' => 'Deacon',
                                 'Minister' => 'Minister',
                                 'Supernumerary' => 'Supernumerary Minister'
