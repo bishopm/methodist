@@ -37,49 +37,6 @@ class PersonResource extends Resource
         return $form
             ->schema([
                 Section::make('Personal details')
-                    ->headerActions([
-                        Action::make('Add as preacher')
-                            ->visible(function ($record){
-                                return $record and $record->preacher ? false : true;
-                            })
-                            ->form([
-                                Select::make('status')
-                                    ->live()
-                                    ->options([
-                                        'note' => 'Preacher on note',
-                                        'trial' => 'Preacher on trial',
-                                        'preacher' => 'Local preacher',
-                                        'emeritus' => 'Emeritus preacher'
-                                    ]),
-                                Forms\Components\TextInput::make('number')->label('Preacher number (optional)')
-                                    ->numeric(),
-                                Forms\Components\TextInput::make('induction')->label('Year of induction')
-                                    ->readonly(function (Get $get){
-                                        if (($get('status')=="preacher") or ($get('status')=="emeritus")){
-                                            return false;
-                                        } else {
-                                            return true;
-                                        }
-                                    })
-                            ])
-                            ->action(function (array $data, Person $record, $livewire): void {
-                                $record->preacher()->create([
-                                    'person_id' => $record->id,
-                                    'number' => $data['number'],
-                                    'status' => $data['status'],
-                                    'society_id' => $data['society_id'],
-                                    'induction' => $data['induction']
-                                ]);
-                                $record->save();
-                                $record->refresh();
-                                $livewire->refreshFormData([
-                                    'status',
-                                    'number',
-                                    'society_id',
-                                    'induction'
-                                ]);
-                            }),
-                    ])
                     ->schema([
                         Forms\Components\Select::make('status')
                             ->hiddenOn('edit')
@@ -207,10 +164,11 @@ class PersonResource extends Resource
                         Forms\Components\Select::make('leadership')
                             ->multiple()
                             ->options(array_combine(setting('general.minister_leadership_roles'),setting('general.minister_leadership_roles'))),
-                        Forms\Components\Toggle::make('active')
-                            ->required(),
                         Forms\Components\FileUpload::make('image')
                             ->image(),
+                        Forms\Components\TextInput::make('ordained')->numeric(),
+                        Forms\Components\Toggle::make('active')
+                            ->required(),                       
                     ])
                     ->columns(2),
             ]);

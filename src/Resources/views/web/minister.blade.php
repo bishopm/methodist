@@ -5,6 +5,9 @@
     @else 
         <img width="100px" src="{{url('/methodist/images/blank.png')}}">
     @endif
+    @if ($minister->minister->ordained)
+        <p><b>Ordained:</b> {{$minister->minister->ordained}}</p>
+    @endif
     @foreach ($minister->circuitroles as $circuit)
         @if (in_array('Minister',$circuit->status) or in_array('Superintendent',$circuit->status))
             <p><a href="{{url('/' . $circuit->circuit->district->slug . '/' . $circuit->circuit->slug)}}">{{$circuit->circuit->circuit}} {{$circuit->circuit->reference}}</a></p>

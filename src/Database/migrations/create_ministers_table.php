@@ -16,6 +16,7 @@ return new class extends Migration
             $table->tinyinteger('active');
             $table->string('image')->nullable();
             $table->json('leadership')->nullable();
+            $table->year('ordained')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('updated_at')->nullable();
             $table->timestamp('deleted_at')->nullable();
