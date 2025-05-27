@@ -48,13 +48,7 @@
                                 <br>
                                 <small>{{$person->firstname}} {{$person->surname}}
                                     @if (in_array('Superintendent',json_decode($person->pivot->status)))
-                                        (Supt)
-                                    @endif
-                                    <br>
-                                    @if ($person->minister->leadership)
-                                        @foreach ($person->minister->leadership as $lead)
-                                            <span class="bg-dark badge text-white text-small">{{$lead}}</span>
-                                        @endforeach
+                                        <br><span class="bg-dark badge text-white text-small">Superintendent</span>
                                     @endif
                                 </small>
                             </a>
