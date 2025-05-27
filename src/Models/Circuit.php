@@ -45,4 +45,9 @@ class Circuit extends Model
     {
         return $this->belongsToMany(Person::class,'circuit_person')->withPivot('status');
     }
+
+    public function getCircuitnameAttribute($value)
+    {
+        return $this->reference . " " . $this->circuit;
+    }
 }

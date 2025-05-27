@@ -56,7 +56,7 @@ class CircuitrolesRelationManager extends RelationManager
                 Tables\Actions\Action::make('Add to a circuit')
                     ->form(fn (): array => [
                         Forms\Components\Select::make('circuit_id')->label('Circuit')
-                            ->options(Circuit::orderBy('circuit')->get()->pluck('circuit', 'id'))
+                            ->options(Circuit::orderBy('reference')->get()->pluck('circuitname', 'id'))
                             ->searchable()
                             ->required(),
                         Forms\Components\Select::make('status')->label('Status in this circuit')

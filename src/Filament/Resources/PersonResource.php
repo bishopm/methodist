@@ -53,7 +53,7 @@ class PersonResource extends Resource
                             ])
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Set $set, ?string $state) {
-                                if ($state=="Minister"){
+                                if ($state=="minister"){
                                     $set('title', "Rev");
                                 }
                             })

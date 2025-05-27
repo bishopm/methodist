@@ -43,7 +43,6 @@ class HomeController extends Controller
             }
         }
         ksort($data['ministers']);
-        $data['lect']=$this->get_lectionary();
         return view('methodist::web.district',$data);
     }
 

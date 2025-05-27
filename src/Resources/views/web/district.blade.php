@@ -39,7 +39,7 @@
                 @endforeach
             </ul>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-8">
             <h3>Ministers</h3>
             <div class="row">
                 @foreach ($ministers as $minister)
@@ -58,32 +58,6 @@
                     @endif
                 @endforeach
             </div>
-        </div>
-        <div class="col-md-4">
-            <h3>Lectionary readings</h3>
-            <h6>{{date('l, j F Y',strtotime($lect->servicedate))}}</h6>
-            @foreach ($lect->readings as $service)
-                <h6>{{$service['name']}}</h6>
-                <ul class="list-unstyled">
-                    @foreach ($service['readings'] as $reading)
-                        @php
-                            if (str_contains($reading,' or ')){
-                                $allreadings=explode(' or ',$reading);
-                                print "<li>";
-                                foreach ($allreadings as $ndx=>$thisreading){
-                                    print "<a target=\"_blank\" href=\"https://www.biblegateway.com/passage/?search=" . $thisreading . "\">" . $thisreading . "</a>";
-                                    if ($ndx<count($allreadings)-1){
-                                        print " or ";
-                                    }
-                                }
-                                print "</li>";
-                            } else {
-                                print "<li><a target=\"_blank\" href=\"https://www.biblegateway.com/passage/?search=" . $reading . "\">" . $reading . "</a></li>";
-                            }
-                        @endphp
-                    @endforeach
-                </ul>
-            @endforeach
         </div>
     </div>
 </x-methodist::layouts.web>
