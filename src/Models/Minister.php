@@ -10,7 +10,9 @@ class Minister extends Model
 {
     public $table = 'ministers';
     protected $guarded = ['id'];
-    protected $casts = [ 'leadership' => 'array' ];
+    protected $casts = [
+        'leadership' => 'array'
+    ];
 
     public function person(): BelongsTo
     {

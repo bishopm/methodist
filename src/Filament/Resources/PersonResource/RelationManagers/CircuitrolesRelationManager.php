@@ -65,6 +65,7 @@ class CircuitrolesRelationManager extends RelationManager
                                 'Leader' => 'Leader',
                                 'Minister' => 'Circuit minister',
                                 'Preacher' => 'Local preacher',
+                                'Superintendent' => 'Superintendent minister',
                                 'Supernumerary' => 'Supernumerary minister',
                             ])
                             ->multiple()

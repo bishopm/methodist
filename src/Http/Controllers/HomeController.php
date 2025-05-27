@@ -34,9 +34,10 @@ class HomeController extends Controller
     public function district($district){
         $data['district']=District::with('circuits.societies')->withWhereHas('circuits.persons.minister')->whereSlug($district)->first();
         $data['bishop']=Person::find($data['district']->bishop);
+        $data['ministers']=array();
         foreach ($data['district']->circuits as $circ){
             foreach ($circ->persons as $person){
-                if ((isset($person->minister)) and ($person->minister->status=="Minister")){
+                if ((isset($person->minister)) and ($person->minister->status=="Minister") and ($person->id <> $data['district']->bishop)){
                     $data['ministers'][$person->surname . $person->firstname . $person->id] = $person;
                 }
             }

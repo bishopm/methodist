@@ -13,6 +13,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
@@ -108,7 +109,9 @@ class CircuitResource extends Resource
                     })
             ])->defaultSort('reference','asc')
             ->filters([
-                //
+                Filter::make('hide_inactive_circuits')
+                    ->query(fn (Builder $query): Builder => $query->where('active', 1))
+                    ->default()
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
