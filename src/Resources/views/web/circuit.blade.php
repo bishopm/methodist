@@ -38,7 +38,7 @@
                 <h3 class="text-center">Ministers</h3>
                 @foreach ($circuit->persons->sortBy(['surname','firstname']) as $person)
                     @if ((in_array('Minister',json_decode($person->pivot->status))) or (in_array('Superintendent',json_decode($person->pivot->status))))
-                        <div class="rounded col text-small">
+                        <div class="rounded col text-small text-center">
                             <a href="{{url('/ministers/' . $person->id)}}">
                                 @if ($person->minister->image)
                                     <img width="100px" src="{{url('/storage/public/' . $person->minister->image)}}">
