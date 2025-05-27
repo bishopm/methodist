@@ -41,15 +41,28 @@ class CircuitResource extends Resource
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))   
                             ->maxLength(199),
+                        Forms\Components\TextInput::make('reference')->label('Circuit number')
+                            ->required()
+                            ->live(onBlur:true)
+                            ->afterStateUpdated(function (Set $set, ?string $state) {
+                                if (strlen($state)==3){
+                                    $set('district_id', intval(substr($state,0,1)));
+                                } elseif (strlen($state)==4){
+                                    if (substr($state,0,1)=="0"){
+                                        $set('district_id', intval(substr($state,1,1)));
+                                    } else {
+                                        $set('district_id', intval(substr($state,0,2)));
+                                    }
+                                }
+                            })
+                            ->numeric(),
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(199),
                         Forms\Components\Select::make('district_id')
                             ->relationship('district', 'district')
                             ->required(),
-                        Forms\Components\TextInput::make('reference')->label('Circuit number')
-                            ->required()
-                            ->numeric(),
+                        
                         Forms\Components\Toggle::make('active')
                     ]),
                     Tab::make('Service settings')->columns(2)->schema([

@@ -15,6 +15,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -50,6 +51,12 @@ class PersonResource extends Resource
                                     'leader' => 'Not a preacher',
                                 ]
                             ])
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (Set $set, ?string $state) {
+                                if ($state=="Minister"){
+                                    $set('title', "Rev");
+                                }
+                            })
                             ->default('preacher')
                             ->required(),
                         Forms\Components\TextInput::make('firstname')->label('First name')
