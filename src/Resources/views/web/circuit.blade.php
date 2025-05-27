@@ -45,6 +45,7 @@
                                 @else 
                                     <img width="100px" src="{{url('/methodist/images/blank.png')}}">
                                 @endif
+                                <br>
                                 <small>{{$person->firstname}} {{$person->surname}}
                                     @if (in_array('Superintendent',json_decode($person->pivot->status)))
                                         (Supt)
