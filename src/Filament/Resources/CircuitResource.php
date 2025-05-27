@@ -65,6 +65,7 @@ class CircuitResource extends Resource
                     Tab::make('Plan settings')->columns(2)->schema([
                         Forms\Components\Toggle::make('showphone')->label('Show phone numbers on plan'),
                         Forms\Components\Select::make('plan_month')->label('First plan starts in this month')
+                            ->default(2)    
                             ->options([
                                 '1' => 'January',
                                 '2' => 'February',
