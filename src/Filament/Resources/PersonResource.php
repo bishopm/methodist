@@ -91,13 +91,7 @@ class PersonResource extends Resource
                                 }
                             })
                             ->label('Society')
-                            ->options(function ($record){
-                                if ($record){
-                                    return Society::where('circuit_id',$record->circuit_id)->orderBy('society')->get()->pluck('society', 'id');
-                                } else {
-                                    return Society::orderBy('society')->get()->pluck('society', 'id');
-                                }
-                            })
+                            ->options(Society::orderBy('society')->get()->pluck('society', 'id'))
                             ->searchable(),
                         Forms\Components\Select::make('leadership')
                             ->visible(function ($record){
@@ -110,7 +104,7 @@ class PersonResource extends Resource
                                     }
                                 }
                             })
-                            ->label('Leadership roles')
+                            ->label('Circuit leadership roles')
                             ->multiple()
                             ->options(array_combine(setting('general.leadership_roles'),setting('general.leadership_roles'))),
                     ])
@@ -150,7 +144,7 @@ class PersonResource extends Resource
                                     return true;
                                 }
                             })
-                            ->label('Leadership roles')
+                            ->label('Preacher leadership roles')
                             ->multiple()
                             ->options(array_combine(setting('general.preacher_leadership_roles'),setting('general.preacher_leadership_roles'))),
                     ])
@@ -169,6 +163,7 @@ class PersonResource extends Resource
                             ])
                             ->required(),
                         Forms\Components\Select::make('leadership')
+                            ->label('District leadership roles')
                             ->multiple()
                             ->options(array_combine(setting('general.minister_leadership_roles'),setting('general.minister_leadership_roles'))),
                         Forms\Components\FileUpload::make('image')

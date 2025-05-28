@@ -26,7 +26,18 @@ class HomeController extends Controller
     public $localpreachers;
 
     public function circuit($district, $circuit){
-        $data['circuit']=Circuit::with('district','societies','persons.minister')->whereSlug($circuit)->first();
+        $data['circuit']=Circuit::with('district','societies','persons')->whereSlug($circuit)->first();
+        foreach ($data['circuit']->persons as $person){
+            if ($person->minister){
+                $data['ministers'][$person->surname.$person->firstname]=$person;
+            } elseif ($person->leadership){
+                foreach ($person->leadership as $lead){
+                    $data['leaders'][$lead][]=$person;
+                    ksort($data['leaders'][$lead]);
+                }
+            } 
+        }
+        ksort($data['ministers']);
         $data['lects']=$this->get_lectionary();
         return view('methodist::web.circuit',$data);
     }

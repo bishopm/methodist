@@ -36,24 +36,30 @@
         <div class="col-md-4">
             <div class="row">
                 <h3 class="text-center">Ministers</h3>
-                @foreach ($circuit->persons->sortBy(['surname','firstname']) as $person)
-                    @if ((in_array('Minister',json_decode($person->pivot->status))) or (in_array('Superintendent',json_decode($person->pivot->status))))
+                @foreach ($ministers as $minister)
+                    @if ((in_array('Minister',json_decode($minister->pivot->status))) or (in_array('Superintendent',json_decode($minister->pivot->status))))
                         <div class="rounded col text-small text-center">
-                            <a href="{{url('/ministers/' . $person->id)}}">
-                                @if ($person->minister->image)
-                                    <img class="rounded" width="100px" src="{{url('/storage/public/' . $person->minister->image)}}">
+                            <a href="{{url('/ministers/' . $minister->id)}}">
+                                @if ($minister->minister->image)
+                                    <img class="rounded" width="100px" src="{{url('/storage/public/' . $minister->minister->image)}}">
                                 @else 
                                     <img class="rounded" width="100px" src="{{url('/methodist/images/blank.png')}}">
                                 @endif
                                 <br>
-                                <small>{{$person->firstname}} {{$person->surname}}
-                                    @if (in_array('Superintendent',json_decode($person->pivot->status)))
+                                <small>{{$minister->firstname}} {{$minister->surname}}
+                                    @if (in_array('Superintendent',json_decode($minister->pivot->status)))
                                         <br><span class="bg-dark badge text-white text-small">Superintendent</span>
                                     @endif
                                 </small>
                             </a>
                         </div>
                     @endif
+                @endforeach
+                @foreach ($leaders as $category=>$persons)
+                    <h4>{{$category}}</h4>
+                    @foreach ($persons as $person)
+                        <p>{{$person->title}} {{substr($person->firstname,0,1)}}. {{$person->surname}}</p>
+                    @endforeach
                 @endforeach
             </div>
         </div>

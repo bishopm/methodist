@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
@@ -95,7 +96,9 @@ class SocietyResource extends Resource
                 }
             })
             ->filters([
-                //
+                Filter::make('hide_inactive_societies')
+                    ->query(fn (Builder $query): Builder => $query->whereHas('circuit', function($q) { $q->where('active',1); }))
+                    ->default()
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->hidden(false),

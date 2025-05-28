@@ -26,9 +26,9 @@ class Settings extends BaseSettings
                         ->schema([
                             TextInput::make('general.site_name')->required(),
                             KeyValue::make('general.servicetypes')->label('Default service types'),
-                            TagsInput::make('general.leadership_roles'),
-                            TagsInput::make('general.preacher_leadership_roles'),
-                            TagsInput::make('general.minister_leadership_roles'),
+                            TagsInput::make('general.leadership_roles')->label('Circuit leadership roles'),
+                            TagsInput::make('general.preacher_leadership_roles')->label('Preaching leadership roles'),
+                            TagsInput::make('general.minister_leadership_roles')->label('District leadership roles'),
                             TextInput::make('general.presiding_bishop')->label('Presiding Bishop'),
                             TextInput::make('general.general_secretary')->label('General Secretary'),
                             TextInput::make('general.mapbox_token')
