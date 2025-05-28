@@ -5,11 +5,11 @@
         <div class="col-md-3">
             @if ($bishop and $bishop->minister->image)
                 <a href="{{url('/ministers/' . $bishop->id)}}">
-                    <img width="100px" src="{{url('/storage/public/' . $bishop->minister->image)}}">
+                    <img class="rounded" width="100px" src="{{url('/storage/public/' . $bishop->minister->image)}}">
                 </a>
             @elseif ($bishop)
                 <a href="{{url('/ministers/' . $bishop->id)}}">
-                    <img width="100px"  src="{{url('/methodist/images/blank.png')}}">
+                    <img class="rounded" width="100px"  src="{{url('/methodist/images/blank.png')}}">
                 </a>
             @endif
             <h6 class="mt-3"><span class="bg-dark badge text-white text-small">District Bishop</span> {{$bishop->name ?? ''}}</h6>
@@ -51,9 +51,9 @@
                         <div class="col text-center">
                             <a href="{{url('/ministers/' . $minister->id)}}">
                                 @if ($minister->minister->image)
-                                    <img width="100px" src="{{url('/storage/public/' . $minister->minister->image)}}">
+                                    <img class="rounded" width="100px" src="{{url('/storage/public/' . $minister->minister->image)}}">
                                 @else 
-                                    <img width="100px" src="{{url('/methodist/images/blank.png')}}">
+                                    <img class="rounded" width="100px" src="{{url('/methodist/images/blank.png')}}">
                                 @endif
                                 <br>
                                 <small>{{$minister->firstname}} {{$minister->surname}}</small>

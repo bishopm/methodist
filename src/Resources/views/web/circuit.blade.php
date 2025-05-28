@@ -41,9 +41,9 @@
                         <div class="rounded col text-small text-center">
                             <a href="{{url('/ministers/' . $person->id)}}">
                                 @if ($person->minister->image)
-                                    <img width="100px" src="{{url('/storage/public/' . $person->minister->image)}}">
+                                    <img class="rounded" width="100px" src="{{url('/storage/public/' . $person->minister->image)}}">
                                 @else 
-                                    <img width="100px" src="{{url('/methodist/images/blank.png')}}">
+                                    <img class="rounded" width="100px" src="{{url('/methodist/images/blank.png')}}">
                                 @endif
                                 <br>
                                 <small>{{$person->firstname}} {{$person->surname}}
@@ -58,7 +58,7 @@
             </div>
         </div>
         <div class="col-md-4">
-<h3>Lectionary readings</h3>
+            <h3>Lectionary readings</h3>
             @forelse ($lects as $lect)
                 @foreach ($lect->readings as $service)
                     <h5>{{date('l, j F Y',strtotime($lect->servicedate))}}</h5>

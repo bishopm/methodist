@@ -1,9 +1,9 @@
 <x-methodist::layouts.web pageName="{{$minister->title}} {{$minister->firstname}} {{$minister->surname}}">
     <h4><a href="{{url('/')}}"><i class="bi bi-house mx-2"></i></a>{{$minister->title}} {{$minister->firstname}} {{$minister->surname}}</h4>
     @if ($minister->minister->image)
-        <img width="100px" src="{{url('/storage/public/' . $minister->minister->image)}}">
+        <img class="rounded" width="100px" src="{{url('/storage/public/' . $minister->minister->image)}}">
     @else 
-        <img width="100px" src="{{url('/methodist/images/blank.png')}}">
+        <img class="rounded" width="100px" src="{{url('/methodist/images/blank.png')}}">
     @endif
     @if ($minister->minister->ordained)
         <p><b>Ordained:</b> {{$minister->minister->ordained}}</p>
