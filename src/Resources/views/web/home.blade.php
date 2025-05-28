@@ -1,7 +1,7 @@
 <x-methodist::layouts.web pageName="Home">
     <h1>MCSA</h1>
     <div class="row">
-        <div class="col-6">
+        <div class="col-md-6">
             <h3>Districts</h3>
             <ul class="list-unstyled">
                 @foreach ($districts as $district)
@@ -13,7 +13,7 @@
                 @endforeach
             </ul>
         </div>
-        <div class="col-6">
+        <div class="col-md-6">
             <h3>Lectionary readings</h3>
             @forelse ($lects as $lect)
                 @foreach ($lect->readings as $service)
