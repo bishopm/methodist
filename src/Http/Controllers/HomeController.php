@@ -27,7 +27,7 @@ class HomeController extends Controller
 
     public function circuit($district, $circuit){
         $data['circuit']=Circuit::with('district','societies','persons.minister')->whereSlug($circuit)->first();
-        $data['lect']=$this->get_lectionary();
+        $data['lects']=$this->get_lectionary();
         return view('methodist::web.circuit',$data);
     }
 
@@ -54,7 +54,7 @@ class HomeController extends Controller
     }
 
     public function lectionary($sunday=""){
-        $data['lect']=$this->get_lectionary($sunday);
+        $data['lects']=$this->get_lectionary($sunday);
         return view('methodist::web.lectionary',$data);
     }
 
