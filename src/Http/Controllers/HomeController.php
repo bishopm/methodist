@@ -49,7 +49,7 @@ class HomeController extends Controller
     public function home()
     {
         $data['districts']=District::orderBy('id')->get();
-        $data['lect']=$this->get_lectionary();
+        $data['lects']=$this->get_lectionary();
         return view('methodist::web.home',$data);
     }
 
@@ -62,17 +62,35 @@ class HomeController extends Controller
         if ($sunday==""){
             $sunday = date('Y-m-d',strtotime('this Sunday'));
         }
-        $lect=Sunday::where('servicedate',$sunday)->first();
-        if (!$lect){
+        $lect[$sunday]=Sunday::where('servicedate',$sunday)->first();
+        if (!$lect[$sunday]){
             $url="https://www.lectserve.com/date/" . date('Y-m-d',strtotime($sunday)) . "?lect=rcl";
             $response=Http::get($url);
             $body=json_decode($response->body());
-            $lect=Sunday::create([
+            $lect[$sunday]=Sunday::create([
                 'servicedate'=>$sunday,
                 'sunday'=>$body->daily->week,
                 'readings'=>$body->sunday->services
             ]);
         }
+        $lastsunday = date('Y-m-d',strtotime('last Sunday'));
+        $midweeks=Midweek::where('servicedate','>',$lastsunday)->where('servicedate','<',$sunday)->get();
+        if ($midweeks){
+            foreach ($midweeks as $midweek){
+                $lect[$midweek->servicedate]=Sunday::where('servicedate',$midweek->servicedate)->first();
+                if (!$lect[$midweek->servicedate]){
+                    $url="https://www.lectserve.com/date/" . date('Y-m-d',strtotime($midweek->servicedate)) . "?lect=rcl";
+                    $response=Http::get($url);
+                    $body=json_decode($response->body());
+                    $lect[$midweek->servicedate]=Sunday::create([
+                        'servicedate'=>$midweek->servicedate,
+                        'sunday'=>$body->red_letter->services[0]->name,
+                        'readings'=>$body->red_letter->services
+                    ]);
+                }
+            }
+        }
+        ksort($lect);
         return $lect;
     }
 
