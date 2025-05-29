@@ -32,9 +32,11 @@ class HomeController extends Controller
         foreach ($data['circuit']->persons as $person){
             if ($person->minister){
                 $data['ministers'][$person->surname.$person->firstname]=$person;
-            } elseif ($person->leadership){
-                foreach ($person->leadership as $lead){
-                    $data['leaders'][$lead][$person->surname.$person->firstname]=$person;
+            } elseif ($person->pivot->status){
+                foreach (json_decode($person->pivot->status) as $lead){
+                    if ($lead <> "Preacher"){
+                        $data['leaders'][$lead][$person->surname.$person->firstname]=$person;
+                    }
                 }
             } 
         }

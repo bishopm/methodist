@@ -81,8 +81,8 @@ class CircuitrolesRelationManager extends RelationManager
                                     ];
                                 } elseif ($person->preacher){
                                     $options=array_combine(setting('general.leadership_roles'),setting('general.leadership_roles'));
-                                    $options[]=['Guest' => 'Guest preacher'];
-                                    $options[]=['Preacher' => 'Local preacher'];
+                                    $options['Guest']= 'Guest preacher';
+                                    $options['Preacher']='Local preacher';
                                 } else {
                                     $options=array_combine(setting('general.leadership_roles'),setting('general.leadership_roles'));
                                 }
