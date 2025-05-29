@@ -164,11 +164,8 @@ class PersonResource extends Resource
                     ->label('First name')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('society.society')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('minister')->label('Clergy')
-                    ->icon('heroicon-o-check-circle')
+                Tables\Columns\TextColumn::make('circuitroles.status')->label('Status')
+                    ->formatStateUsing(fn ($state) => implode(json_decode($state))),
             ])
             ->defaultSort('surname')
             ->modifyQueryUsing(function (Builder $query){

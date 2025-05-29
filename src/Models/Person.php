@@ -43,9 +43,4 @@ class Person extends Model
         return $this->belongsToMany(Circuit::class,'circuit_person')->withPivot('status');
     }
 
-    public function society(): BelongsTo
-    {
-        return $this->belongsTo(Society::class);
-    }
-
 }

@@ -55,14 +55,20 @@
                         </div>
                     @endif
                 @endforeach
+                <table>
                 @foreach ($leaders as $category=>$persons)
-                    <h6>{{$category}}</h6>
-                    <ul class="list-unstyled">
+                    <tr class="bg-primary">
+                        <th class="text-white text-center">{{$category}}@if(count($persons)>1)s @endif</th>
+                    </tr>
+                    <tr>
+                        <td>
                         @foreach ($persons as $person)
-                            <li>{{$person->title}} {{substr($person->firstname,0,1)}}. {{$person->surname}}</li>
+                            {{$person->title}} {{substr($person->firstname,0,1)}}. {{$person->surname}}@if(!$loop->last), @else.@endif
                         @endforeach
-                    </ul>
+                        </td>
+                    </tr>
                 @endforeach
+                </table>
             </div>
         </div>
         <div class="col-md-4">

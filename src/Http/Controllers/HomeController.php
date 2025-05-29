@@ -34,10 +34,12 @@ class HomeController extends Controller
                 $data['ministers'][$person->surname.$person->firstname]=$person;
             } elseif ($person->leadership){
                 foreach ($person->leadership as $lead){
-                    $data['leaders'][$lead][]=$person;
-                    ksort($data['leaders'][$lead]);
+                    $data['leaders'][$lead][$person->surname.$person->firstname]=$person;
                 }
             } 
+        }
+        foreach ($data['leaders'] as $ll=>$vv){
+            ksort($data['leaders'][$ll]);
         }
         ksort($data['ministers']);
         $data['lects']=$this->get_lectionary();

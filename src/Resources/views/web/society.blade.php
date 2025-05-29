@@ -16,28 +16,25 @@
     </script>
     <table class="table">
         <tr>
-            <th>Address</th><td>{{$society->address}}</td>
+            <th class="bg-dark text-white">Address</th><td>{{$society->address}}</td>
         </tr>
         <tr>
-            <th>Website</th><td><a href="{{$society->website}}" target="_blank">{{$society->website}}</a></td>
+            <th class="bg-dark text-white">Website</th><td><a href="{{$society->website}}" target="_blank">{{$society->website}}</a></td>
         </tr>
         <tr>
-            <th>Services</th><td>
+            <th class="bg-dark text-white">Services</th><td>
                 @foreach ($society->services as $service)
                     <span class="bg-dark badge text-white mx-1 py-1">{{$service->servicetime}}</span>
                 @endforeach
             </td>
         </tr>
-        @foreach ($society->preachers as $preacher)
-            <tr>
-                @if ($loop->first)
-                    <th>Preachers</th>
-                @else
-                    <td></td>
-                @endif
-                <td>{{$preacher->person->title}} {{substr($preacher->person->firstname,0,1)}} {{$preacher->person->surname}}</td>
-            </tr>
-        @endforeach
-        
+        <tr>
+            <th class="bg-dark text-white">Preachers</th>
+            <td>
+                @foreach ($society->preachers->sortBy('person.surname') as $preacher)
+                   {{$preacher->person->title}} {{substr($preacher->person->firstname,0,1)}} {{$preacher->person->surname}}@if(!$loop->last), @else.@endif
+                @endforeach
+            </td>
+        </tr>       
     </table>
 </x-methodist::layouts.web>
