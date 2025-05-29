@@ -84,6 +84,9 @@ class SocietyRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\ViewAction::make()->hidden(false),
                 Tables\Actions\EditAction::make()
+                    ->url(function ($record){
+                        return route('filament.admin.resources.societies.edit',['record'=>$record]);
+                    })
                     ->hidden(function ($record) {
                         $user=Auth::user();
                         if (!$user->hasRole('Super Admin')){
