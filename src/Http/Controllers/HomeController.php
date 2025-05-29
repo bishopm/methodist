@@ -11,6 +11,7 @@ use Bishopm\Methodist\Models\Midweek;
 use Bishopm\Methodist\Models\Plan;
 use Bishopm\Methodist\Models\Society;
 use Bishopm\Methodist\Models\Sunday;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 class HomeController extends Controller
@@ -335,7 +336,7 @@ class HomeController extends Controller
         // Lay leaders
         $roles = setting('general.leadership_roles');
         foreach ($roles as $role){
-            $leaders=Person::whereHas('circuits',function ($q) { $q->where('circuits.id',$this->circuit->id); })->whereJsonContains('leadership',$role)->orderBy('surname')->get();
+            $leaders=DB::table('persons')->join('circuit_person','persons.id','=','circuit_person.person_id')->where('circuit_person.circuit_id',$this->circuit->id)->whereJsonContains('status',$role)->orderBy('surname')->get();
             if (count($leaders)){
                 $pdf->SetFont('Helvetica', 'B', 10);
                 if (count($leaders)>1){

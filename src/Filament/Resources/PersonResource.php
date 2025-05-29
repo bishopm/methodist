@@ -103,7 +103,8 @@ class PersonResource extends Resource
                                 'preacher' => 'Local preacher',
                                 'trial' =>'Preacher on trial',
                                 'note' => 'Preacher on note',
-                                'emeritus' => 'Emeritus preacher'
+                                'emeritus' => 'Emeritus preacher',
+                                'guest' => 'Guest preacher'
                             ])
                             ->required(),
                         Forms\Components\Select::make('society_id')

@@ -40,26 +40,6 @@ class PersonsRelationManager extends RelationManager
                                 'Rev'=>'Rev'
                             ]),
                         Forms\Components\TextInput::make('phone'),
-                        Forms\Components\Select::make('status')->label('Status in this circuit')
-                            ->options(function ($record){
-                                if ($record->minister){
-                                    $options=[
-                                        'Guest' => 'Guest preacher',
-                                        'Minister' => 'Circuit minister',
-                                        'Superintendent' => 'Superintendent minister',
-                                        'Supernumerary' => 'Supernumerary minister'
-                                    ];
-                                } elseif ($record->preacher){
-                                    $options=array_combine(setting('general.leadership_roles'),setting('general.leadership_roles'));
-                                    $options['Guest']= 'Guest preacher';
-                                    $options['Preacher']='Local preacher';
-                                } else {
-                                    $options=array_combine(setting('general.leadership_roles'),setting('general.leadership_roles'));
-                                }
-                                return $options;
-                            })
-                            ->multiple()
-                            ->statePath('status'),
                     ]),
                 Forms\Components\Section::make('Clergy')->relationship('minister')->columns(2)
                     ->hiddenOn('create')
@@ -103,7 +83,8 @@ class PersonsRelationManager extends RelationManager
                                 'note' => 'Preacher on note',
                                 'trial' => 'Preacher on trial',
                                 'preacher' => 'Local preacher',
-                                'emeritus' => 'Emeritus preacher'
+                                'emeritus' => 'Emeritus preacher',
+                                'guest' => 'Guest preacher'
                             ]),
                         Forms\Components\TextInput::make('number')->label('Preacher number (optional)')
                             ->numeric(),
@@ -176,23 +157,6 @@ class PersonsRelationManager extends RelationManager
                                         return $options;
                                     })
                                     ->searchable(),
-                                Forms\Components\Select::make('status')->label('Status in this circuit')
-                                    ->formatStateUsing(function ($state){
-                                        if ($state){
-                                            return json_decode($state);
-                                        }
-                                    })
-                                    ->live()
-                                    ->multiple()
-                                    ->statePath('status')
-                                    ->options([
-                                        'Guest' => 'Guest preacher',
-                                        'Leader' => 'Leader',
-                                        'Minister' => 'Circuit minister',
-                                        'Preacher' => 'Local preacher',
-                                        'Superintendent' => 'Superintendent minister',
-                                        'Supernumerary' => 'Supernumerary minister',
-                                    ])
                             ])->columns(2)
                     ])
                     ->action(function (array $data, RelationManager $livewire){
