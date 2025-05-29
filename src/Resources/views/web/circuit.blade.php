@@ -40,8 +40,8 @@
                     @if ((in_array('Minister',json_decode($minister->pivot->status))) or (in_array('Superintendent',json_decode($minister->pivot->status))))
                         <div class="rounded col text-small text-center">
                             <a href="{{url('/ministers/' . $minister->id)}}">
-                                @if ($minister->minister->image)
-                                    <img class="rounded" width="100px" src="{{url('/storage/public/' . $minister->minister->image)}}">
+                                @if ($minister->image)
+                                    <img class="rounded" width="100px" src="{{url('/storage/public/' . $minister->image)}}">
                                 @else 
                                     <img class="rounded" width="100px" src="{{url('/methodist/images/blank.png')}}">
                                 @endif
@@ -56,10 +56,12 @@
                     @endif
                 @endforeach
                 @foreach ($leaders as $category=>$persons)
-                    <h4>{{$category}}</h4>
-                    @foreach ($persons as $person)
-                        <p>{{$person->title}} {{substr($person->firstname,0,1)}}. {{$person->surname}}</p>
-                    @endforeach
+                    <h6>{{$category}}</h6>
+                    <ul class="list-unstyled">
+                        @foreach ($persons as $person)
+                            <li>{{$person->title}} {{substr($person->firstname,0,1)}}. {{$person->surname}}</li>
+                        @endforeach
+                    </ul>
                 @endforeach
             </div>
         </div>

@@ -3,9 +3,9 @@
     <h5><a href="{{url('/')}}">All districts</a></h5>
     <div class="row mt-3">
         <div class="col-md-3">
-            @if ($bishop and $bishop->minister->image)
+            @if ($bishop and $bishop->image)
                 <a href="{{url('/ministers/' . $bishop->id)}}">
-                    <img class="rounded" width="100px" src="{{url('/storage/public/' . $bishop->minister->image)}}">
+                    <img class="rounded" width="100px" src="{{url('/storage/public/' . $bishop->image)}}">
                 </a>
             @elseif ($bishop)
                 <a href="{{url('/ministers/' . $bishop->id)}}">
@@ -50,8 +50,8 @@
                     @if ($minister->minister->active)
                         <div class="col text-center">
                             <a href="{{url('/ministers/' . $minister->id)}}">
-                                @if ($minister->minister->image)
-                                    <img class="rounded" width="100px" src="{{url('/storage/public/' . $minister->minister->image)}}">
+                                @if ($minister->image)
+                                    <img class="rounded" width="100px" src="{{url('/storage/public/' . $minister->image)}}">
                                 @else 
                                     <img class="rounded" width="100px" src="{{url('/methodist/images/blank.png')}}">
                                 @endif

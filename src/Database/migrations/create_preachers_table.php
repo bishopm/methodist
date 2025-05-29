@@ -12,6 +12,7 @@ return new class extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id')->unsigned();
             $table->integer('person_id');
+            $table->integer('society_id');
             $table->string('status', 199);
             $table->json('leadership')->nullable();
             $table->string('induction', 10)->nullable();

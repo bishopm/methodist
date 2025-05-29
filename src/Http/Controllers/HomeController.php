@@ -27,6 +27,8 @@ class HomeController extends Controller
 
     public function circuit($district, $circuit){
         $data['circuit']=Circuit::with('district','societies','persons')->whereSlug($circuit)->first();
+        $data['leaders']=array();
+        $data['ministers']=array();
         foreach ($data['circuit']->persons as $person){
             if ($person->minister){
                 $data['ministers'][$person->surname.$person->firstname]=$person;
@@ -590,7 +592,7 @@ class HomeController extends Controller
     }
 
     public function society($district, $circuit, $society){
-        $data['society']=Society::with('circuit','services')->whereId($society)->first();
+        $data['society']=Society::with('circuit','services','preachers.person')->whereId($society)->first();
         return view('methodist::web.society',$data);
     }
 

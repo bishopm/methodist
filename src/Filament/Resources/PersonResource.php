@@ -79,34 +79,8 @@ class PersonResource extends Resource
                                 $component->state(str_replace(" ","",$state));
                             })
                             ->maxLength(199),
-                        Forms\Components\Select::make('society_id')
-                            ->visible(function ($record){
-                                if ($record){
-                                    $min=Minister::where('person_id',$record->id)->first();
-                                    if ($min){
-                                        return false;
-                                    } else {
-                                        return true;
-                                    }
-                                }
-                            })
-                            ->label('Society')
-                            ->options(Society::orderBy('society')->get()->pluck('society', 'id'))
-                            ->searchable(),
-                        Forms\Components\Select::make('leadership')
-                            ->visible(function ($record){
-                                if ($record){
-                                    $min=Minister::where('person_id',$record->id)->first();
-                                    if ($min){
-                                        return false;
-                                    } else {
-                                        return true;
-                                    }
-                                }
-                            })
-                            ->label('Circuit leadership roles')
-                            ->multiple()
-                            ->options(array_combine(setting('general.leadership_roles'),setting('general.leadership_roles'))),
+                        Forms\Components\FileUpload::make('image')
+                            ->image(),
                     ])
                     ->columns(2),
                 Section::make('Preacher details')
@@ -132,6 +106,10 @@ class PersonResource extends Resource
                                 'emeritus' => 'Emeritus preacher'
                             ])
                             ->required(),
+                        Forms\Components\Select::make('society_id')
+                            ->label('Society')
+                            ->options(Society::orderBy('society')->get()->pluck('society', 'id'))
+                            ->searchable(),
                         Forms\Components\TextInput::make('number')->label('Preacher number (optional)')
                             ->numeric(),
                         Forms\Components\TextInput::make('induction')->label('Year of induction'),
@@ -159,6 +137,7 @@ class PersonResource extends Resource
                             ->options([
                                 'Deacon' => 'Deacon',
                                 'Minister' => 'Minister',
+                                'Superintendent' => 'Superintendent minister',
                                 'Supernumerary' => 'Supernumerary Minister'
                             ])
                             ->required(),
@@ -166,8 +145,6 @@ class PersonResource extends Resource
                             ->label('District leadership roles')
                             ->multiple()
                             ->options(array_combine(setting('general.minister_leadership_roles'),setting('general.minister_leadership_roles'))),
-                        Forms\Components\FileUpload::make('image')
-                            ->image(),
                         Forms\Components\TextInput::make('ordained')->numeric(),
                         Forms\Components\Toggle::make('active')
                             ->required(),                       

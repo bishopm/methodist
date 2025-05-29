@@ -55,36 +55,7 @@ class PersonsRelationManager extends RelationManager
                                 'Minister' => 'Circuit minister',
                                 'Preacher' => 'Local preacher',
                                 'Supernumerary' => 'Supernumerary minister',
-                            ]),
-                        Forms\Components\Select::make('leadership')->label('Leadership roles')
-                            ->visible(function (Get $get){
-                                $status=$get('status');
-                                if ($status==null){
-                                    $status=[];
-                                }
-                                if ((in_array('Minister',$status)) or (in_array('Supernumerary',$status))){
-                                    return false;
-                                } else {
-                                    return true;
-                                }
-                            })
-                            ->multiple()
-                            ->options(setting('general.leadership_roles')),
-                        Forms\Components\Select::make('society_id')->label('Society')
-                            ->options(function ($livewire){
-                                return Society::where('circuit_id',$livewire->getOwnerRecord()->id)->orderBy('society')->get()->pluck('society','id');
-                            })
-                            ->visible(function (Get $get){
-                                $status=$get('status');
-                                if ($status==null){
-                                    $status=[];
-                                }
-                                if ((in_array('Minister',$status)) or (in_array('Supernumerary',$status))){
-                                    return false;
-                                } else {
-                                    return true;
-                                }
-                            })
+                            ])
                     ]),
                 Forms\Components\Section::make('Clergy')->relationship('minister')->columns(2)
                     ->hiddenOn('create')
@@ -96,9 +67,10 @@ class PersonsRelationManager extends RelationManager
                         }
                     })
                     ->schema([
-                        Forms\Components\Select::make('leadership')->label('Leadership roles')
+                        Forms\Components\Select::make('leadership')->label('District leadership roles')
                             ->multiple()
                             ->options(setting('general.minister_leadership_roles')),
+                        Forms\Components\TextInput::make('ordained')->numeric(),
                         Forms\Components\Toggle::make('active')
                             ->onColor('success'),
                     ]),
@@ -114,9 +86,13 @@ class PersonsRelationManager extends RelationManager
                         }
                     })
                     ->schema([
-                        Forms\Components\Select::make('leadership')->label('Leadership roles')
+                        Forms\Components\Select::make('leadership')->label('Preacher leadership roles')
                             ->multiple()
                             ->options(array_combine(setting('general.preacher_leadership_roles'),setting('general.preacher_leadership_roles'))),
+                        Forms\Components\Select::make('society_id')->label('Society')
+                            ->options(function ($livewire){
+                                return Society::where('circuit_id',$livewire->getOwnerRecord()->id)->orderBy('society')->get()->pluck('society','id');
+                            }),
                         Forms\Components\Select::make('status')
                             ->live()
                             ->options([

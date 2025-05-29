@@ -24,8 +24,8 @@ class Society extends Model
         return $this->hasMany(Service::class)->orderBy('servicetime');
     }
 
-    public function persons(): HasMany
+    public function preachers(): HasMany
     {
-        return $this->hasMany(Person::class);
+        return $this->hasMany(Preacher::class);
     }
 }

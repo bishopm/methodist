@@ -28,5 +28,16 @@
                 @endforeach
             </td>
         </tr>
+        @foreach ($society->preachers as $preacher)
+            <tr>
+                @if ($loop->first)
+                    <th>Preachers</th>
+                @else
+                    <td></td>
+                @endif
+                <td>{{$preacher->person->title}} {{substr($preacher->person->firstname,0,1)}} {{$preacher->person->surname}}</td>
+            </tr>
+        @endforeach
+        
     </table>
 </x-methodist::layouts.web>
