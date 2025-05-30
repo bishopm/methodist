@@ -184,6 +184,29 @@ class PersonsRelationManager extends RelationManager
                                         return $options;
                                     })
                                     ->searchable(),
+                                Forms\Components\Select::make('status')->label('Status in this circuit')
+                                    ->options(function (Get $get){
+                                        $person = Person::find($get('person_id'));
+                                        if ($person){
+                                            if ($person->minister){
+                                                $options=[
+                                                    'Guest' => 'Guest preacher',
+                                                    'Minister' => 'Circuit minister',
+                                                    'Superintendent' => 'Superintendent minister',
+                                                    'Supernumerary' => 'Supernumerary minister'
+                                                ];
+                                            } elseif ($person->preacher){
+                                                $options=array_combine(setting('general.leadership_roles'),setting('general.leadership_roles'));
+                                                $options['Guest'] = 'Guest preacher';
+                                                $options['Preacher'] = 'Local preacher';
+                                            } else {
+                                                $options=array_combine(setting('general.leadership_roles'),setting('general.leadership_roles'));
+                                            }
+                                            return $options;
+                                        }
+                                    })
+                                    ->multiple()
+                                    ->statePath('status'),
                             ])->columns(2)
                     ])
                     ->action(function (array $data, RelationManager $livewire){

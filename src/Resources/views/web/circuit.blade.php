@@ -57,16 +57,18 @@
                 @endforeach
                 <table>
                 @foreach ($leaders as $category=>$persons)
-                    <tr class="bg-primary">
-                        <th class="text-white text-center">{{$category}}@if(count($persons)>1)s @endif</th>
-                    </tr>
-                    <tr>
-                        <td>
-                        @foreach ($persons as $person)
-                            {{$person->title}} {{substr($person->firstname,0,1)}}. {{$person->surname}}@if(!$loop->last), @else.@endif
-                        @endforeach
-                        </td>
-                    </tr>
+                    @if ($category <> "Guest")
+                        <tr class="bg-primary">
+                            <th class="text-white text-center">{{$category}}@if(count($persons)>1)s @endif</th>
+                        </tr>
+                        <tr>
+                            <td>
+                            @foreach ($persons as $person)
+                                {{$person->title}} {{substr($person->firstname,0,1)}}. {{$person->surname}}@if(!$loop->last), @else.@endif
+                            @endforeach
+                            </td>
+                        </tr>
+                    @endif
                 @endforeach
                 </table>
             </div>
