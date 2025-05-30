@@ -99,7 +99,34 @@ class PersonsRelationManager extends RelationManager
                         Forms\Components\Toggle::make('active')
                             ->onColor('success'),
                         ]),
-                Forms\Components\Placeholder::make('circuitroles')->label('Roles in other circuits')
+                Forms\Components\Section::make('Status in this circuit')
+                    ->hiddenOn('create')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\Select::make('status')->label('')
+                            ->options(function ($record){
+                                $person = $record;
+                                if ($person->minister){
+                                    $options=[
+                                        'Guest' => 'Guest preacher',
+                                        'Minister' => 'Circuit minister',
+                                        'Superintendent' => 'Superintendent minister',
+                                        'Supernumerary' => 'Supernumerary minister'
+                                    ];
+                                } elseif ($person->preacher){
+                                    $options=array_combine(setting('general.leadership_roles'),setting('general.leadership_roles'));
+                                    $options['Guest'] = 'Guest preacher';
+                                    $options['Preacher'] = 'Local preacher';
+                                } else {
+                                    $options=array_combine(setting('general.leadership_roles'),setting('general.leadership_roles'));
+                                }
+                                return $options;
+                            })
+                            ->formatStateUsing(fn ($state) => json_decode($state))
+                            ->multiple()
+                            ->statePath('status'),
+                    ]),                
+                Forms\Components\Placeholder::make('circuitroles')->label('Status in other circuits')
                     ->hiddenOn('create')
                     ->visible(function ($record){
                         if (count($record->circuitroles)>1){

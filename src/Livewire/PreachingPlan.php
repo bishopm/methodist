@@ -63,12 +63,12 @@ class PreachingPlan extends Component
         foreach ($persons as $person){
             if ((in_array("Minister",json_decode($person->pivot->status))) or (in_array("Superintendent",json_decode($person->pivot->status)))){
                 $this->preachers['Circuit Ministers'][$person->id]=['name' => substr($person->firstname,0,1) . " " . $person->surname,'id' => $person->id];
+            } elseif (in_array("Guest",json_decode($person->pivot->status))){
+                $this->preachers['Guest Preachers'][$person->id]=['name' => substr($person->firstname,0,1) . " " . $person->surname,'id' => $person->id];
             } elseif (in_array("Preacher",json_decode($person->pivot->status))){
                 $this->preachers['Local Preachers'][$person->id]=['name' => substr($person->firstname,0,1) . " " . $person->surname,'id' => $person->id];
             } elseif (in_array("Supernumerary",json_decode($person->pivot->status))){
                 $this->preachers['Supernumerary Ministers'][$person->id]=['name' => substr($person->firstname,0,1) . " " . $person->surname,'id' => $person->id];
-            } elseif (in_array("Guest",json_decode($person->pivot->status))){
-                $this->preachers['Guest Preachers'][$person->id]=['name' => substr($person->firstname,0,1) . " " . $person->surname,'id' => $person->id];
             }
         }
 
