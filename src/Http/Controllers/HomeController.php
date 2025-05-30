@@ -374,8 +374,8 @@ class HomeController extends Controller
                         'induction'=>$ps->preacher->induction,
                         'phone'=>$ps->phone
                     );
-                    if (isset($ps->society)){
-                        $preachers[$ps->society->society][$ps->preacher->status][]=$pn;
+                    if (isset($ps->preacher->society)){
+                        $preachers[$ps->preacher->society->society][$ps->preacher->status][]=$pn;
                     }
                 }
             }
@@ -495,7 +495,7 @@ class HomeController extends Controller
     }
 
     private function getrows(){
-        $circuit=Circuit::with('societies.services','persons')->where('id',$this->circuit->id)->first();
+        $circuit=Circuit::with('societies.services','persons.preacher.society')->where('id',$this->circuit->id)->first();
         $persons=$circuit->persons->sortBy(['surname','firstname']);
         foreach ($persons as $person){
             if ((in_array("Minister",json_decode($person->pivot->status))) or (in_array("Superintendent",json_decode($person->pivot->status)))){
