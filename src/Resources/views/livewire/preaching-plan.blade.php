@@ -81,7 +81,11 @@
                                                             {{ $schedule[$service['id']][$date]['servicetype'] }}
                                                         </span>
                                                     @endif
-                                                    <span class="items-center text-sm">{{ $schedule[$service['id']][$date]['preacher_name'] }}</span>
+                                                    @if(!empty($schedule[$service['id']][$date]['preacher_name']))
+                                                        <span class="items-center text-sm">{{ $schedule[$service['id']][$date]['preacher_name'] }}</span>
+                                                    @else
+                                                        —
+                                                    @endif
                                                 </div>
                                             @else
                                                 —
