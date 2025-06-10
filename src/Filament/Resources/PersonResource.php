@@ -166,7 +166,13 @@ class PersonResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('circuitroles.status')->label('Status')
-                    ->formatStateUsing(fn ($state) => implode(json_decode($state))),
+                    ->formatStateUsing(function ($state){
+                        if (is_array(json_decode($state))){
+                            return implode(json_decode($state));
+                        } else {
+                            return $state;
+                        }
+                    })
             ])
             ->defaultSort('surname')
             ->modifyQueryUsing(function (Builder $query){
