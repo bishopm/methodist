@@ -1,7 +1,33 @@
 <div>
-    <div class="overflow-x-auto">
+    <style>
+        /* make the table area scroll vertically */
+        .plan-table-wrap {
+            max-height: 70vh;      /* or any height you like */
+            overflow: auto;
+        }
+
+        /* sticky headers */
+        .plan-table-wrap thead th {
+            position: sticky;
+            z-index: 2;            /* keep above body cells */
+        }
+
+        /* first header row sticks at the very top */
+        .plan-table-wrap thead tr:first-child th {
+            top: 0;
+            z-index: 3;
+            background: #fff;      /* ensure it doesn't show rows underneath */
+        }
+
+        /* second header row sticks below the first */
+        .plan-table-wrap thead tr:nth-child(2) th {
+            top: 3rem;             /* adjust to the actual height of row 1 */
+            /* if your first row is taller/shorter, tweak this value */
+        }
+    </style>
+    <div class="overflow-x-auto table-responsive plan-table-wrap">
         <table class="table table-condensed table-striped">
-            <thead>
+            <thead style="position: sticky; top: 0; z-index: 1020;">
                 <tr>
                     <th>
                         <a class="text-black" style="text-decoration: none;" href="{{url('/admin/circuits/' . $circuit->id)}}" title="Back to circuit page"><i class="text-black bi bi-house"></i> Home</a>
