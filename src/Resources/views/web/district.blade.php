@@ -1,6 +1,6 @@
 <x-methodist::layouts.web pageName="Home">
-    <h1><a href="{{url('/')}}"><i class="bi bi-house mx-2"></i></a>{{$district->district}} District</h1>
-    <h5><a href="{{url('/')}}">All districts</a></h5>
+    <h1 class="text-md-start text-center"><a href="{{url('/')}}"><i class="bi bi-house mx-2"></i></a>{{$district->district}} District</h1>
+    <h5 class="text-md-start text-center"><a href="{{url('/')}}">All districts</a></h5>
     <div class="row mt-3">
         <div class="col-md-3">
             @if ($bishop and $bishop->image)
@@ -32,7 +32,7 @@
             </script>        
         </div>
         <div class="col-md-4">
-            <h3>Circuits</h3>
+            <h3 class="text-md-start text-center">Circuits</h3>
             <ul class="list-unstyled">
                 @foreach ($district->circuits->sortBy('reference') as $circuit)
                     @if ($circuit->active)
@@ -44,7 +44,7 @@
             </ul>
         </div>
         <div class="col-md-8">
-            <h3>Ministers</h3>
+            <h3 class="text-md-start text-center">Ministers</h3>
             <div class="row">
                 @foreach ($ministers as $minister)
                     @if ($minister->minister->active)

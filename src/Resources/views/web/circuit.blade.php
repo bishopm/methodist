@@ -1,6 +1,6 @@
 <x-methodist::layouts.web pageName="Home">
-    <h1><a href="{{url('/')}}"><i class="bi bi-house mx-2"></i></a>{{$circuit->circuit}} {{$circuit->reference}}</h1>
-    <h5><a href="{{url('/') . '/' . $circuit->district->slug}}">{{$circuit->district->district}} District</a></h5>
+    <h1 class="text-md-start text-center"><a href="{{url('/')}}"><i class="bi bi-house mx-2"></i></a>{{$circuit->circuit}} {{$circuit->reference}}</h1>
+    <h5 class="text-md-start text-center"><a href="{{url('/') . '/' . $circuit->district->slug}}">{{$circuit->district->district}} District</a></h5>
     <div style="height:400px" id="map"></div>
     <script>
         var map = L.map('map');
@@ -23,22 +23,22 @@
         var bounds = new L.LatLngBounds(markers);
         map.fitBounds(bounds, {padding: [25,25]});
     </script>
-    <div class="row mt-3">
-        <div class="col-md-4">
-            <h3><a target="_blank" href="{{url('/') . '/plan/' . $circuit->slug . '/' . date('Y-m-d') }}">Preaching plan</a></h3>
+    <div class="row">
+        <div class="col-md-4 pt-3">
+            <h3 class="text-md-start text-center"><a target="_blank" href="{{url('/') . '/plan/' . $circuit->slug . '/' . date('Y-m-d') }}">Preaching plan</a></h3>
             <ul class="list-unstyled">
-                <h3>Societies</h3>
+                <h3 class="text-md-start text-center">Societies</h3>
                 @foreach ($circuit->societies->sortBy('society') as $society)
                     <li><a href="{{url('/' . $circuit->district->slug . '/' . $circuit->slug . '/' . $society->id)}}">{{$society->society}}</a></li>
                 @endforeach
             </ul>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 pt-3">
             <div class="row">
-                <h3 class="text-center">Ministers</h3>
+                <h3 class="text-md-start text-center">Ministers</h3>
                 @foreach ($ministers as $minister)
                     @if ((in_array('Minister',json_decode($minister->pivot->status))) or (in_array('Superintendent',json_decode($minister->pivot->status))))
-                        <div class="rounded col text-small text-center">
+                        <div class="rounded col text-small text-md-start text-center">
                             <a href="{{url('/ministers/' . $minister->id)}}">
                                 @if ($minister->image)
                                     <img class="rounded" width="100px" src="{{url('/storage/public/' . $minister->image)}}">
@@ -73,12 +73,12 @@
                 </table>
             </div>
         </div>
-        <div class="col-md-4">
-            <h3>Lectionary readings</h3>
+        <div class="col-md-4 pt-3">
+            <h3 class="text-md-start text-center">Lectionary readings</h3>
             @forelse ($lects as $lect)
                 @foreach ($lect->readings as $service)
                     <h5>{{date('l, j F Y',strtotime($lect->servicedate))}}</h5>
-                    <h5>{{$service['name']}}</h5>
+                    <p>{{$service['name']}}</p>
                     <ul class="list-unstyled">
                         @foreach ($service['readings'] as $reading)
                             @php
