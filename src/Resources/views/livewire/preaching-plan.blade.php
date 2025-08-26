@@ -1,14 +1,14 @@
 <div>
     <style>
-        /* make the table area scroll vertically */
         html, body {
             height: 100%;
             margin: 0;
+            overflow: hidden; /* prevent page scroll */
         }
 
         .plan-table-wrap {
-            height: 100vh;  /* table can grow up to the full screen */
-            overflow: auto;     /* if it’s taller, scroll inside */
+            height: 100vh;   /* fill the screen */
+            overflow: auto;  /* only this scrolls */
         }
 
         /* sticky headers */
