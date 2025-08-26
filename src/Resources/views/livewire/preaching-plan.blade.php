@@ -28,6 +28,11 @@
         .plan-table-wrap thead tr:nth-child(2) th {
             top: 2rem;             
         }
+
+        .cell-spinner {
+            z-index: 10;
+            pointer-events: none; /* lets the user still interact with selects once they appear */
+        }
     </style>
     <div class="table-responsive plan-table-wrap">
         <table class="table table-striped">
@@ -83,6 +88,15 @@
                                             data-cell-id="{{ $service['id'] }}-{{ $date }}"
                                             class="flex flex-col"
                                         >
+                                            {{-- Spinner overlay for this cell --}}
+                                            <div wire:loading.delay.longer 
+                                                wire:target="startEditing, saveAndClose" 
+                                                class="cell-spinner position-absolute top-50 start-50 translate-middle">
+                                                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
+                                                </div>
+                                            </div>
+
                                             <select wire:model="selectedServiceType" wire:change="saveAndClose" class="form-select form-select-sm">
                                                 @foreach($serviceTypes as $value => $label)
                                                     <option value="{{ $value }}">{{ $label }}</option>
