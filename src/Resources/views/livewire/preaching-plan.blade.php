@@ -138,10 +138,5 @@
                 @endforelse
             </tbody>
         </table>
-    </div>    
-    @foreach($serviceTypes as $key => $label)
-        @if($key)
-            <span class="badge bg-dark">{{ $key }} : {{ $label }}</span>
-        @endif
-    @endforeach
+    </div>
 </div>
