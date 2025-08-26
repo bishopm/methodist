@@ -2,7 +2,7 @@
     <style>
         /* make the table area scroll vertically */
         .plan-table-wrap {
-            max-height: 70vh;      /* or any height you like */
+            flex: 1 1 auto;  /* fills remaining space */
             overflow: auto;
         }
 
@@ -21,8 +21,7 @@
 
         /* second header row sticks below the first */
         .plan-table-wrap thead tr:nth-child(2) th {
-            top: 3rem;             /* adjust to the actual height of row 1 */
-            /* if your first row is taller/shorter, tweak this value */
+            top: 2rem;             
         }
     </style>
     <div class="table-responsive plan-table-wrap">
