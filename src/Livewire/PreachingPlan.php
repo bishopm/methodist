@@ -29,7 +29,7 @@ class PreachingPlan extends Component
     // Service type options
     public $serviceTypes = [];
     public $authorisedServices = [];
-    protected $listeners = ['clickedOutside' => 'saveAndClose'];
+    //protected $listeners = ['clickedOutside' => 'saveAndClose'];
 
     public function mount($record, $today=null)
     {

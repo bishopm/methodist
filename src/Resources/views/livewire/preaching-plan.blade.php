@@ -42,16 +42,15 @@
                                     @if($editingCell === "{$service['id']}-{$date}")
                                         <div 
                                             x-data="{}"
-                                            @click.away="$dispatch('clickedOutside')"
                                             data-cell-id="{{ $service['id'] }}-{{ $date }}"
                                             class="flex flex-col"
                                         >
-                                            <select wire:model="selectedServiceType" class="form-select form-select-sm">
+                                            <select wire:model="selectedServiceType" wire:change="saveAndClose" class="form-select form-select-sm">
                                                 @foreach($serviceTypes as $value => $label)
                                                     <option value="{{ $value }}">{{ $label }}</option>
                                                 @endforeach
                                             </select>
-                                            <select wire:model="selectedPreacherId" class="form-select form-select-sm">
+                                            <select wire:model="selectedPreacherId" wire:change="saveAndClose" class="form-select form-select-sm">
                                                 <option value="">-- Select --</option>
                                                 @foreach($preachers as $cat=>$preachertype)
                                                     <optgroup label="{{$cat}}">
