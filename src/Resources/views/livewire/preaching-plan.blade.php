@@ -25,27 +25,35 @@
             /* if your first row is taller/shorter, tweak this value */
         }
     </style>
-    <div class="overflow-x-auto table-responsive plan-table-wrap">
-        <table class="table table-condensed table-striped">
-            <thead style="position: sticky; top: 0; z-index: 1020;">
+    <div class="table-responsive plan-table-wrap">
+        <table class="table table-striped">
+            <thead>
                 <tr>
-                    <th>
-                        <a class="text-black" style="text-decoration: none;" href="{{url('/admin/circuits/' . $circuit->id)}}" title="Back to circuit page"><i class="text-black bi bi-house"></i> Home</a>
+                    <th class="bg-white">
+                    <a class="text-black text-decoration-none" href="{{ url('/admin/circuits/' . $circuit->id) }}" title="Back to circuit page">
+                        <i class="text-black bi bi-house"></i> Home
+                    </a>
                     </th>
-                    <th class="text-center" colspan="100%">{{$circuit->circuit}} Circuit {{$circuit->reference}} Preaching plan ({{$period}})</th>
+                    <th class="bg-white text-center" colspan="100%">
+                    {{ $circuit->circuit }} Circuit {{ $circuit->reference }} Preaching plan ({{ $period }})
+                    </th>
                 </tr>
                 <tr>
                     <th class="bg-dark text-white" colspan="2">
-                        <a href="{{route('filament.admin.resources.circuits.plan', ['record' => $circuit->id, 'today' => date('Y-m-d',strtotime($firstday . '- 3 months'))])}}"><i class="text-white bi bi-arrow-left h4"></i></a>
-                        <a href="/plan/{{$circuit->slug}}/{{$today}}" class="mx-3 btn btn-sm btn-secondary">View PDF</a>
-                        <a href="{{route('filament.admin.resources.circuits.plan', ['record' => $circuit->id, 'today' => date('Y-m-d',strtotime($firstday . '+ 3 months'))])}}"><i class="text-white bi bi-arrow-right h4"></i></a>
+                    <a href="{{ route('filament.admin.resources.circuits.plan', ['record' => $circuit->id, 'today' => date('Y-m-d',strtotime($firstday . '- 3 months'))]) }}">
+                        <i class="text-white bi bi-arrow-left h4"></i>
+                    </a>
+                    <a href="/plan/{{ $circuit->slug }}/{{ $today }}" class="mx-3 btn btn-sm btn-secondary">View PDF</a>
+                    <a href="{{ route('filament.admin.resources.circuits.plan', ['record' => $circuit->id, 'today' => date('Y-m-d',strtotime($firstday . '+ 3 months'))]) }}">
+                        <i class="text-white bi bi-arrow-right h4"></i>
+                    </a>
                     </th>
                     @foreach($dates as $date)
-                        <th class="bg-dark text-white text-center">
-                            {{ date('j M',strtotime($date)) }}
-                            @php $mw=array_search($date,$midweeks); @endphp
-                            <div class="text-sm text-center">{{$mw}}</div>
-                        </th>
+                    <th class="bg-dark text-white text-center">
+                        {{ date('j M', strtotime($date)) }}
+                        @php $mw = array_search($date, $midweeks); @endphp
+                        <div class="text-sm text-center">{{ $mw }}</div>
+                    </th>
                     @endforeach
                 </tr>
             </thead>
