@@ -37,11 +37,10 @@ class PreachingPlan extends Component
             $today=date('Y-m-d');
         }
         $this->today=$today;;
+        $this->serviceTypes=array_merge([''=>''],setting('general.servicetypes'));
         $this->circuit=Circuit::find($record);
         if ($this->circuit->servicetypes){
-            $this->serviceTypes=array_merge([''=>''],$this->circuit->servicetypes);
-        } else {
-            $this->serviceTypes=[''=>''];
+            $this->serviceTypes=array_merge($this->serviceTypes,$this->circuit->servicetypes);
         }
         ksort($this->serviceTypes);
         // Get all societies
@@ -269,7 +268,12 @@ class PreachingPlan extends Component
             ];
         } else {
             // If no preacher selected, set to null
-            $this->schedule[$service_id][$date] = null;
+            if (!$this->selectedServiceType){
+                $this->schedule[$service_id][$date] = null;
+            } else {
+                $this->schedule[$service_id][$date] = null;
+                $this->schedule[$service_id][$date]['servicetype'] = $this->selectedServiceType;
+            }
         }
     }
 
