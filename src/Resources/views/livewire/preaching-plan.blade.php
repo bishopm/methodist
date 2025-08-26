@@ -7,7 +7,7 @@
         }
 
         .plan-table-wrap {
-            max-height: 100vh;  /* table can grow up to the full screen */
+            height: 100vh;  /* table can grow up to the full screen */
             overflow: auto;     /* if it’s taller, scroll inside */
         }
 
