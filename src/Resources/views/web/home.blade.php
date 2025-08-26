@@ -1,8 +1,8 @@
 <x-methodist::layouts.web pageName="Home">
-    <h1 class="text-center">MCSA</h1>
+    <h1 class="text-md-start text-center">MCSA</h1>
     <div class="row">
         <div class="col-md-6">
-            <h3 class="text-center">Districts</h3>
+            <h3 class="text-md-start text-center">Districts</h3>
             <ul class="list-unstyled">
                 @foreach ($districts as $district)
                     @if ($district->active)
@@ -14,7 +14,7 @@
             </ul>
         </div>
         <div class="col-md-6">
-            <h3 class="text-center">Lectionary readings</h3>
+            <h3 class="text-md-start text-center">Lectionary readings</h3>
             @forelse ($lects as $lect)
                 @foreach ($lect->readings as $service)
                     <h5>{{date('l, j F Y',strtotime($lect->servicedate))}}</h5>
