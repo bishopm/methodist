@@ -43,7 +43,7 @@ class Circuit extends Model
 
     public function persons(): BelongsToMany
     {
-        return $this->belongsToMany(Person::class,'circuit_person')->withPivot('status');
+        return $this->belongsToMany(Person::class,'circuit_person')->withPivot('status','societies');
     }
 
     public function getCircuitnameAttribute($value)

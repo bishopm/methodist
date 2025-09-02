@@ -5,8 +5,10 @@ namespace Bishopm\Methodist\Filament\Resources\PersonResource\RelationManagers;
 use Bishopm\Methodist\Models\Circuit;
 use Bishopm\Methodist\Models\Circuitrole;
 use Bishopm\Methodist\Models\Person;
+use Bishopm\Methodist\Models\Society;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -47,6 +49,14 @@ class CircuitrolesRelationManager extends RelationManager
                     })
                     ->multiple()
                     ->statePath('status'),
+                Forms\Components\Select::make('societies')->label('Societies')
+                    ->options(function (Get $get){
+                        $circuit=$get('circuit_id');
+                        $options = Society::where('circuit_id',$circuit)->orderBy('society')->get()->pluck('society','id');
+                        return $options;
+                    })
+                    ->multiple()
+                    ->statePath('societies'),
             ]);
     }
 
@@ -96,7 +106,8 @@ class CircuitrolesRelationManager extends RelationManager
                         Circuitrole::create([
                             'person_id'=>$person_id,
                             'circuit_id'=>$data['circuit_id'],
-                            'status'=>$data['status']
+                            'status'=>$data['status'],
+                            'societies'=>$data['societies']
                         ]);
                     })
             ])

@@ -99,11 +99,11 @@ class PersonsRelationManager extends RelationManager
                         Forms\Components\Toggle::make('active')
                             ->onColor('success'),
                         ]),
-                Forms\Components\Section::make('Status in this circuit')
+                Forms\Components\Section::make('Status and pastoral responsibilities in this circuit')
                     ->hiddenOn('create')
                     ->columns(2)
                     ->schema([
-                        Forms\Components\Select::make('status')->label('')
+                        Forms\Components\Select::make('status')->label('Status')
                             ->options(function ($record){
                                 $person = $record;
                                 if ($person->minister){
@@ -125,6 +125,13 @@ class PersonsRelationManager extends RelationManager
                             ->formatStateUsing(fn ($state) => json_decode($state))
                             ->multiple()
                             ->statePath('status'),
+                        Forms\Components\Select::make('societies')->label('Societies')
+                            ->options(function ($record){
+                                return Society::where('circuit_id',$record->circuit_id)->orderBy('society')->get()->pluck('society','id');
+                            })
+                            ->formatStateUsing(fn ($state) => json_decode($state))
+                            ->multiple()
+                            ->statePath('societies'),
                     ]),                
                 Forms\Components\Placeholder::make('circuitroles')->label('Status in other circuits')
                     ->hiddenOn('create')
@@ -214,7 +221,8 @@ class PersonsRelationManager extends RelationManager
                         Circuitrole::create([
                             'person_id'=>$data['person_id'],
                             'circuit_id'=>$circuit_id,
-                            'status'=>$data['status']
+                            'status'=>$data['status'],
+                            'societies'=>$data['societies']
                         ]);
                     }),
                     Tables\Actions\CreateAction::make()->label('Add a new person')
@@ -231,7 +239,8 @@ class PersonsRelationManager extends RelationManager
                             $circuitrole=Circuitrole::create([
                                 'person_id'=>$person->id,
                                 'circuit_id'=>$circuit_id,
-                                'status'=>$data['status']
+                                'status'=>$data['status'],
+                                'societies'=>$data['societies']
                             ]);
                             return $person;
                         })

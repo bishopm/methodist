@@ -36,5 +36,17 @@
                 @endforeach
             </td>
         </tr>       
+        <tr>
+            @if (count($ministers)>1)
+                <th class="bg-dark text-white">Ministers</th>
+            @else 
+                <th class="bg-dark text-white">Minister</th>
+            @endif
+            <td>
+                @foreach ($ministers as $minister)
+                    {{$minister->title}} {{substr($minister->firstname,0,1)}} {{$minister->surname}}@if(!$loop->last), @else.@endif
+                @endforeach
+            </td>
+        </tr>       
     </table>
 </x-methodist::layouts.web>

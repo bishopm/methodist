@@ -12,7 +12,8 @@ class Circuitrole extends Model
     public $table = 'circuit_person';
     protected $guarded = ['id'];
     protected $casts = [ 
-        'status' => 'json' 
+        'status' => 'json',
+        'societies' => 'json'
     ];
     public $timestamps = false;
 
