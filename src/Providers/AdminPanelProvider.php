@@ -2,6 +2,7 @@
 
 namespace Bishopm\Methodist\Providers;
 
+use Alareqi\FilamentPwa\FilamentPwaPlugin;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use Bishopm\Methodist\Filament\Pages\Dashboard;
 use Bishopm\Methodist\Filament\Widgets\Map;
@@ -47,6 +48,19 @@ class AdminPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->plugins([
+                FilamentPwaPlugin::make()
+                    ->name('MCSA')
+                    ->shortName('MCSA')
+                    ->description('MCSA PWA')
+                    ->themeColor('#fe0002')
+                    ->backgroundColor('#ffffff')
+                    ->standalone()
+                    ->language('en')
+                    ->ltr()
+                    ->installation(true,2000,5000,false)
+                    ->addShortcut('Dashboard', '/admin', 'Main dashboard')
+                    ->icons('methodist/images/icons', [72, 96, 128, 144, 152, 192, 384, 512])
+                    ->serviceWorker('my-app-v1.0.0', '/offline'),
                 FilamentSpatieRolesPermissionsPlugin::make(),
                 FilamentSettingsPlugin::make()
                     ->pages([
