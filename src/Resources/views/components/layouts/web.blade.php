@@ -10,7 +10,7 @@
   <meta name="keywords" content="">
 
   <!-- PWA -->
-  <link rel="manifest" href="{{ asset('manifest.json') }}" crossorigin="use-credentials" />
+  <link rel="manifest" href="{{ url('/manifest.json') }}" crossorigin="use-credentials" />
   <!-- Chrome for Android theme color -->
   <meta name="theme-color" content="#000000">
   
@@ -61,8 +61,8 @@
   <script type="text/javascript">
       // Initialize the service worker
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('{{ asset('sw.js') }}', {
-            scope: '/public/'
+        navigator.serviceWorker.register("{{ url('/service-worker.js') }}", {
+            scope: '/'
         }).then(function (registration) {
             // Registration was successful
             console.log('ServiceWorker registration successful with scope: ', registration.scope);

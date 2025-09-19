@@ -3,6 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use Spatie\Honeypot\ProtectAgainstSpam;
 
+// PWA Manifest and SW
+
+Route::get('/manifest.json', fn() => response()->view('methodist::pwa.manifest')->header('Content-Type', 'application/json'));
+Route::get('/service-worker.js', fn () => response()->view('methodist::pwa.service-worker')->header('Content-Type', 'application/javascript'));
+
 // Website routes
 Route::middleware(['web'])->controller('\Bishopm\Methodist\Http\Controllers\HomeController')->group(function () {
     Route::get('/', 'home')->name('home');
@@ -16,5 +21,4 @@ Route::middleware(['web'])->controller('\Bishopm\Methodist\Http\Controllers\Home
         Route::get('/{district}/{circuit}/{society}', 'society')->name('society');
     }
 });
-
 
