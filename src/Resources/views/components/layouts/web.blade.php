@@ -40,6 +40,12 @@
     }
   </style>
   <main class="pt-3">
+    <div class="d-flex justify-content-center my-3">
+        <a href="{{url('/')}}"><img src="{{ asset('methodist/images/mcsa.png') }}" alt="MCSA Logo" style="max-height:60px;"></a>
+        <button id="installPwaBtn" class="btn btn-primary btn-lg d-none">
+            <i class="bi bi-download me-2"></i> Install App
+        </button>
+    </div>
     {{$slot}}
   </main>
   <footer id="footer" class="footer dark-background">
@@ -71,6 +77,39 @@
             console.log('ServiceWorker registration failed: ', err);
         });
       }
+    
+    // PWA installation prompt
+    let deferredPrompt;
+    const installBtn = document.getElementById("installPwaBtn");
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+        // Stop Chrome from showing the default prompt
+        e.preventDefault();
+        // Save the event so it can be triggered later
+        deferredPrompt = e;
+        // Show the install button
+        installBtn.style.display = "block";
+    });
+
+    installBtn.addEventListener("click", async () => {
+        if (deferredPrompt) {
+            // Show the install prompt
+            deferredPrompt.prompt();
+            // Wait for the user to respond
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`User response to install prompt: ${outcome}`);
+            // Reset the prompt
+            deferredPrompt = null;
+            // Hide the button after install
+            installBtn.style.display = "none";
+        }
+    });
+
+    // Optional: hide button if app is already installed
+    window.addEventListener("appinstalled", () => {
+        console.log("PWA was installed");
+        installBtn.style.display = "none";
+    });
   </script>
 </body>
 </html>
