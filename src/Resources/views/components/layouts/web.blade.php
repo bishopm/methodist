@@ -39,11 +39,8 @@
       text-decoration: none;
     }
   </style>
-  <main class="pt-3">
-    <div class="d-flex justify-content-center my-1">
-      <a href="{{url('/')}}"><img src="{{ asset('methodist/images/mcsa.png') }}" alt="MCSA Logo" style="max-height:60px;"></a>
-    </div>
-    <div class="d-flex justify-content-center my-3">
+  <main class="pt-1">
+    <div class="d-flex justify-content-center my-2">
         <button id="installPwaBtn" class="btn btn-primary btn-md d-none">
             <i class="bi bi-download me-2"></i> Install App
         </button>
@@ -81,29 +78,31 @@
       }
     
     // PWA installation prompt
-    let deferredPrompt;
-    const installBtn = document.getElementById("installPwaBtn");
+    if (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+      let deferredPrompt;
+      const installBtn = document.getElementById("installPwaBtn");
 
-    window.addEventListener("beforeinstallprompt", (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installBtn.classList.remove("d-none");
-    });
+      window.addEventListener("beforeinstallprompt", (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+          installBtn.classList.remove("d-none");
+      });
 
-    installBtn.addEventListener("click", async () => {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log(`User response to install prompt: ${outcome}`);
-            deferredPrompt = null;
-            installBtn.classList.add("d-none");
-        }
-    });
+      installBtn.addEventListener("click", async () => {
+          if (deferredPrompt) {
+              deferredPrompt.prompt();
+              const { outcome } = await deferredPrompt.userChoice;
+              console.log(`User response to install prompt: ${outcome}`);
+              deferredPrompt = null;
+              installBtn.classList.add("d-none");
+          }
+      });
 
-    window.addEventListener("appinstalled", () => {
-        console.log("PWA installed successfully");
-        installBtn.classList.add("d-none");
-    });
+      window.addEventListener("appinstalled", () => {
+          console.log("PWA installed successfully");
+          installBtn.classList.add("d-none");
+      });
+    }
   </script>
 </body>
 </html>

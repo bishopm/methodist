@@ -1,5 +1,7 @@
-<x-methodist::layouts.web pageName="Home">
-    <h1 class="text-md-start text-center"><a href="{{url('/')}}"><i class="bi bi-house mx-2"></i></a>{{$circuit->circuit}} {{$circuit->reference}}</h1>
+<x-methodist::layouts.web pageName="Circuit">
+    <h1 class="text-md-start text-center">
+        <a href="{{url('/')}}"><img src="{{ asset('methodist/images/mcsa.png') }}" alt="MCSA Logo" style="max-height:30px; margin-bottom:5px;margin-right:5px;"></a>{{$circuit->circuit}} {{$circuit->reference}}
+    </h1>
     <h5 class="text-md-start text-center"><a href="{{url('/') . '/' . $circuit->district->slug}}">{{$circuit->district->district}} District</a></h5>
     <div style="height:400px" id="map"></div>
     <script>
