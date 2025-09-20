@@ -7,8 +7,7 @@
   "background_color": "#ffffff",
   "orientation": "portrait-primary",
   "theme_color": "#000000",
-  "scope": "{{ config('app.url') }}/",
-  "id": "{{ config('app.url') }}/",
+  "scope": "/",
   "icons": [
     {
         "src": "../methodist/images/icons/android/android-launchericon-512-512.png",
