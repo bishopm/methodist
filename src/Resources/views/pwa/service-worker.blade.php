@@ -1,47 +1,69 @@
-var staticCacheName = "pwa-v" + new Date().getTime();
-var filesToCache = [
-    '/',
+const staticCacheName = "pwa-v" + new Date().getTime();
+const filesToCache = [
+    "/",                // homepage
+    "/offline",         // offline fallback page (Laravel route)
+    "/css/app.css",
+    "/js/app.js",
+    "/icons/icon-192x192.png",
+    "/icons/icon-512x512.png"
 ];
 
-// Cache on install
+// Install: pre-cache core files
 self.addEventListener("install", event => {
-    this.skipWaiting();
+    self.skipWaiting();
     event.waitUntil(
-        caches.open(staticCacheName)
-            .then(cache => {
-                cache.add('/').catch(error => {
-                    console.error('Failed to cache root route:', error);
-                });
-                return cache.addAll(filesToCache);
-            })
-    )
-});
-
-// Clear cache on activate
-self.addEventListener('activate', event => {
-    event.waitUntil(
-        caches.keys().then(cacheNames => {
-            return Promise.all(
-                cacheNames
-                    .filter(cacheName => (cacheName.startsWith("pwa-")))
-                    .filter(cacheName => (cacheName !== staticCacheName))
-                    .map(cacheName => caches.delete(cacheName))
-            );
+        caches.open(staticCacheName).then(cache => {
+            return cache.addAll(filesToCache);
         })
     );
 });
 
-// Serve from Cache
-self.addEventListener('fetch', (event) => {
-  event.respondWith(caches.open(staticCacheName).then((cache) => {
-    return cache.match(event.request).then((cachedResponse) => {
-        const fetchedResponse = fetch(event.request).then((networkResponse) => {
-            cache.put(event.request, networkResponse.clone());
-    
-            return networkResponse;
-        });
-    
-        return cachedResponse || fetchedResponse;
-        });
-    }));
+// Activate: clear old caches
+self.addEventListener("activate", event => {
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames
+                    .filter(name => name.startsWith("pwa-") && name !== staticCacheName)
+                    .map(name => caches.delete(name))
+            );
+        })
+    );
+    self.clients.claim();
+});
+
+// Fetch: network-first for HTML (dynamic routes), cache-first for assets
+self.addEventListener("fetch", event => {
+    if (event.request.method !== "GET") return; // don’t cache POST etc.
+
+    if (event.request.mode === "navigate") {
+        // Handle page navigation (HTML requests like /district/circuit/society)
+        event.respondWith(
+            fetch(event.request)
+                .then(response => {
+                    return caches.open(staticCacheName).then(cache => {
+                        cache.put(event.request, response.clone());
+                        return response;
+                    });
+                })
+                .catch(() => {
+                    // Offline fallback if no cache
+                    return caches.match(event.request).then(cached => {
+                        return cached || caches.match("/offline");
+                    });
+                })
+        );
+    } else {
+        // Handle static assets (CSS, JS, images)
+        event.respondWith(
+            caches.match(event.request).then(cached => {
+                return cached || fetch(event.request).then(networkResponse => {
+                    return caches.open(staticCacheName).then(cache => {
+                        cache.put(event.request, networkResponse.clone());
+                        return networkResponse;
+                    });
+                });
+            })
+        );
+    }
 });

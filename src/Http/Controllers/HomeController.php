@@ -597,6 +597,10 @@ class HomeController extends Controller
         return view('methodist::web.minister',$data);
     }
 
+    public function offline(){
+        return view('methodist::web.offline');
+    }
+
     public function society($district, $circuit, $society){
         $data['society']=Society::with('circuit','services','preachers.person')->whereId($society)->first();
         $jsonid=json_encode($data['society']->id);
