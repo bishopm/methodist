@@ -28,4 +28,5 @@ class Society extends Model
     {
         return $this->hasMany(Preacher::class);
     }
+
 }

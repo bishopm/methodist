@@ -594,6 +594,18 @@ class HomeController extends Controller
 
     public function minister($id){
         $data['minister']=Person::with('minister','circuitroles.circuit')->whereId($id)->first();
+        $circuitroles=$data['minister']->circuitroles;
+        foreach ($circuitroles as $role){
+            $societies=array();
+            if (isset($role->societies)){
+                foreach ($role->societies as $soc){
+                    $societies[] = Society::find($soc)->society;
+                }
+                $data['societies'][$role->circuit_id]=$societies;
+            } else {
+                $data['societies']=[];
+            }
+        }
         return view('methodist::web.minister',$data);
     }
 

@@ -1,5 +1,5 @@
 {
-    "name": "Connexion PWA",
+    "name": "Connexion",
     "short_name": "Connexion",
     "description": "The Connexion app helps Methodists to maintain circuit preaching plans and society records",
     "start_url": "/",
