@@ -31,8 +31,8 @@
             "description": "A screenshot of the home page"
         },
         {
-            "src": "../methodist/images/icons/android/android-launchericon-192-192.png",
-            "sizes": "192x192",
+            "src": "../methodist/images/icons/android/android-launchericon-512-512.png",
+            "sizes": "512x512",
             "type": "image/png",
             "description": "A screenshot of the home page"
         }
