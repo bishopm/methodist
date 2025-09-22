@@ -2,10 +2,11 @@ const staticCacheName = "pwa-v" + new Date().getTime();
 const filesToCache = [
     "/",                // homepage
     "/offline",         // offline fallback page (Laravel route)
-    "/css/app.css",
-    "/js/app.js",
-    "/icons/icon-192x192.png",
-    "/icons/icon-512x512.png"
+    "{{ asset('methodist/css/bootstrap.min.css')}}",
+    "{{ asset('methodist/js/bootstrap.min.js')}}",
+    "{{ asset('methodist/images/icons/android/android-launchericon-192-192.png') }}",
+    "{{ asset('methodist/images/icons/android/android-launchericon-512-512.png') }}",
+    "{{ asset('methodist/images/icons/ios/512.png') }}"
 ];
 
 // Install: pre-cache core files
