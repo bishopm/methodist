@@ -2,6 +2,7 @@
 
 namespace Bishopm\Methodist\Http\Controllers;
 
+use Bishopm\Methodist\Classes\LectionaryService;
 use Bishopm\Methodist\Classes\tFPDF;
 use Bishopm\Methodist\Models\Person;
 use Bishopm\Methodist\Models\Circuit;
@@ -78,6 +79,8 @@ class HomeController extends Controller
     }
 
     private function get_lectionary($sunday=""){
+        $lects=new LectionaryService();
+        return $lects->getReadings(date('Y-m-d'));
         if ($sunday==""){
             $sunday = date('Y-m-d',strtotime('this Sunday'));
         }

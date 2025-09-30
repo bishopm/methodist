@@ -17,33 +17,27 @@
         </div>
         <div class="col-md-6">
             <h3 class="text-md-start text-center">Lectionary readings</h3>
-            @forelse ($lects as $lect)
-                @foreach ($lect->readings as $service)
-                    <h5>{{date('l, j F Y',strtotime($lect->servicedate))}}</h5>
-                    <p>{{$service['name']}}</p>
-                    <ul class="list-unstyled">
-                        @foreach ($service['readings'] as $reading)
-                            @php
-                                if (str_contains($reading,' or ')){
-                                    $allreadings=explode(' or ',$reading);
-                                    print "<li>";
-                                    foreach ($allreadings as $ndx=>$thisreading){
-                                        print "<a target=\"_blank\" href=\"https://www.biblegateway.com/passage/?search=" . $thisreading . "\">" . $thisreading . "</a>";
-                                        if ($ndx<count($allreadings)-1){
-                                            print " or ";
-                                        }
-                                    }
-                                    print "</li>";
-                                } else {
-                                    print "<li><a target=\"_blank\" href=\"https://www.biblegateway.com/passage/?search=" . $reading . "\">" . $reading . "</a></li>";
+            <h5>{{date('l, j F Y',strtotime($lects['sunday']))}}</h5>
+            <p>{{$lects['liturgical_day']}}</p>
+            <ul class="list-unstyled">
+                @foreach ($lects['sunday_readings'] as $reading)
+                    @php
+                        if (str_contains($reading,' or ')){
+                            $allreadings=explode(' or ',$reading);
+                            print "<li>";
+                            foreach ($allreadings as $ndx=>$thisreading){
+                                print "<a target=\"_blank\" href=\"https://www.biblegateway.com/passage/?search=" . $thisreading . "\">" . $thisreading . "</a>";
+                                if ($ndx<count($allreadings)-1){
+                                    print " or ";
                                 }
-                            @endphp
-                        @endforeach
-                    </ul>
+                            }
+                            print "</li>";
+                        } else {
+                            print "<li><a target=\"_blank\" href=\"https://www.biblegateway.com/passage/?search=" . $reading . "\">" . $reading . "</a></li>";
+                        }
+                    @endphp
                 @endforeach
-            @empty
-                No readings
-            @endforelse
+            </ul>
         </div>
     </div>
 </x-methodist::layouts.web>
