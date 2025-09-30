@@ -1,5 +1,6 @@
 <?php namespace Bishopm\Methodist\Providers;
 
+use Bishopm\Methodist\Livewire\ServiceDetails;
 use Bishopm\Methodist\Http\Middleware\AdminRoute;
 use Bishopm\Methodist\Http\Middleware\CheckPerms;
 use Bishopm\Methodist\Livewire\PreachingPlan;
@@ -55,6 +56,7 @@ class MethodistServiceProvider extends ServiceProvider
         Config::set('filament-spatie-roles-permissions.generator.policies_namespace','Bishopm\Methodist\Filament\Policies');
         Config::set('livewire.render_on_redirect',false);
         Livewire::component('preaching-plan', PreachingPlan::class); 
+        Livewire::component('service-details', ServiceDetails::class);
         Gate::policy(Role::class, \Bishopm\Methodist\Filament\Policies\RolePolicy::class);
         Gate::policy(Permission::class, \Bishopm\Methodist\Filament\Policies\PermissionPolicy::class);
         Gate::policy(\Bishopm\Methodist\Models\Circuit::class, \Bishopm\Methodist\Filament\Policies\CircuitPolicy::class);

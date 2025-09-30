@@ -6,7 +6,6 @@ use Bishopm\Methodist\Classes\LectionaryService;
 use Bishopm\Methodist\Classes\tFPDF;
 use Bishopm\Methodist\Models\Person;
 use Bishopm\Methodist\Models\Circuit;
-use Bishopm\Methodist\Models\Circuitrole;
 use Bishopm\Methodist\Models\District;
 use Bishopm\Methodist\Models\Meeting;
 use Bishopm\Methodist\Models\Midweek;
