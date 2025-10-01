@@ -53,12 +53,16 @@
         <h4>Upcoming services</h4>
         <table class="table">
             <tr>
-                <th></th>
-                <th>{{$sundays[0]}}</th>
-                <th>{{$sundays[1]}}</th>
+                <th class="bg-secondary text-white"></th>
+                <th class="bg-secondary text-white">{{date('d M',strtotime($sundays[0]))}}</th>
+                <th class="bg-secondary text-white">{{date('d M',strtotime($sundays[1]))}}</th>
             </tr>
-            @foreach ($upcoming as $plan)
-                {{dd($plan)}}
+            @foreach ($upcoming as $service=>$plan)
+                <tr>
+                    <td class="bg-secondary text-white">{{$service}}</td>
+                    <td>{{$plan[$sundays[0]]}}</td>
+                    <td>{{$plan[$sundays[1]]}}</td>
+                </tr>
             @endforeach
         </table>
     @endif
