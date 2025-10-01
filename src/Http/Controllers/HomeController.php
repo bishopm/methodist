@@ -78,6 +78,9 @@ class HomeController extends Controller
     }
 
     private function get_lectionary($sunday=""){
+        $service = new LectionaryService();
+        $readings = $service->getReadings('2025-04-15');
+        dd($readings);
         $lects=new LectionaryService();
         return $lects->getReadings(date('Y-m-d'));
         if ($sunday==""){
