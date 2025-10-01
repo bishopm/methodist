@@ -581,11 +581,22 @@ class HomeController extends Controller
     }
 
     public function society($district, $circuit, $society){
-        $data['society']=Society::with('circuit','services','preachers.person')->whereId($society)->first();
+        $district_id=District::whereSlug($district)->first()->id;
+        $circuit_id=Circuit::whereSlug($circuit)->where('district_id',$district_id)->first()->id;
+        $data['society']=Society::with('circuit','services','preachers.person')->where('circuit_id',$circuit_id)->whereSlug($society)->first();
+        $data['services']=$data['society']->services->pluck('id','servicetime');
         $jsonid=json_encode($data['society']->id);
         $data['ministers']=DB::table('circuit_person')
             ->join('persons', 'circuit_person.person_id', '=', 'persons.id')
             ->whereJsonContains('societies', [$jsonid])->get();
+        $data['sundays']=array();
+        $data['sundays'][]=date('Y-m-d',strtotime('Sunday'));
+        $data['sundays'][]=date('Y-m-d',604800+strtotime('Sunday'));
+        $plans=Plan::with('service','person')->whereIn('service_id',$data['services'])->whereIn('servicedate',$data['sundays'])->get();
+        $data['upcoming']=array();
+        foreach ($plans as $plan){
+            $data['upcoming'][$plan->servicedate][$plan->service->servicetime]=$plan->person->title . " " . substr($plan->person->firstname,0,1) . " " . $plan->person->surname;
+        }
         return view('methodist::web.society',$data);
     }
 

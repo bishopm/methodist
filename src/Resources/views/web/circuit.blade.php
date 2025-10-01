@@ -80,7 +80,7 @@
         <div class="tab-pane fade" id="pills-societies" role="tabpanel" aria-labelledby="pills-societies-tab">
             <ul class="list-unstyled">
                 @foreach ($circuit->societies->sortBy('society') as $society)
-                    <li><a href="{{url('/' . $circuit->district->slug . '/' . $circuit->slug . '/' . $society->id)}}">{{$society->society}}</a></li>
+                    <li><a href="{{url('/' . $circuit->district->slug . '/' . $circuit->slug . '/' . $society->slug)}}">{{$society->society}}</a></li>
                 @endforeach
             </ul>
         </div>

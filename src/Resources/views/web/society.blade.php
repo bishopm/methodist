@@ -49,4 +49,17 @@
             </td>
         </tr>       
     </table>
+    @if (count($upcoming))
+        <h4>Upcoming services</h4>
+        <table class="table">
+            <tr>
+                <th></th>
+                <th>{{$sundays[0]}}</th>
+                <th>{{$sundays[1]}}</th>
+            </tr>
+            @foreach ($upcoming as $plan)
+                {{dd($plan)}}
+            @endforeach
+        </table>
+    @endif
 </x-methodist::layouts.web>
