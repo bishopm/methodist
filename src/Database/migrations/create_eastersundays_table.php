@@ -11,7 +11,7 @@ return new class extends Migration
         {
             $table->engine = 'InnoDB';
             $table->increments('id')->unsigned();
-            $table->integer('year');
+            $table->string('year');
             $table->date('eastersunday');
         });
     }

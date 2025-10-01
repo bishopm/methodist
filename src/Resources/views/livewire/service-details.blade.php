@@ -10,7 +10,7 @@
                         @php
                             $readings = explode(' or ', $reading);
                         @endphp
-                        <li><strong>{{ ucwords(str_replace('_', ' ', $key)) }}:</strong>
+                        <li>
                             @foreach($readings as $ndx=>$subReading)
                                 <a target="_blank" href="https://www.biblegateway.com/passage/?search={{ $subReading }}">{{ $subReading }}</a>
                                 @if ($ndx<count($readings)-1)
@@ -19,7 +19,7 @@
                             @endforeach
                         </li>
                     @else
-                        <li><strong>{{ ucwords(str_replace('_', ' ', $key)) }}:</strong> 
+                        <li>
                             <a target="_blank" href="https://www.biblegateway.com/passage/?search={{ $reading }}">{{ $reading }}</a>
                         </li>
                     @endif
@@ -31,16 +31,16 @@
     {{-- Midweek Readings --}}
     @if(!empty($service['midweek_readings']))
         <div class="mb-6">
-            <h3 class="text-lg font-semibold mb-2">Midweek Readings</h3>
+            <h4 class="text-lg font-semibold mb-2">Midweek Services</h4>
             <ul class="list-unstyled">
                 @foreach($service['midweek_readings'] as $midweek)
-                    <li><strong>{{ ucfirst($midweek['day_name']) }}:</strong></li>
+                    <li class="pt-1"><strong>{{ ucfirst($midweek['day_name']) }}</strong></li>
                     @foreach ($midweek['readings'] as $key => $reading)
                         @if (str_contains($reading, ' or '))
                             @php
                                 $readings = explode(' or ', $reading);
                             @endphp
-                            <li><strong>{{ ucwords(str_replace('_', ' ', $key)) }}:</strong>
+                            <li>
                                 @foreach($readings as $ndx=>$subReading)
                                     <a target="_blank" href="https://www.biblegateway.com/passage/?search={{ $subReading }}">{{ $subReading }}</a>
                                     @if ($ndx<count($readings)-1)
@@ -49,7 +49,7 @@
                                 @endforeach
                             </li>
                         @else
-                            <li><strong>{{ ucwords(str_replace('_', ' ', $key)) }}:</strong> 
+                            <li>
                                 <a target="_blank" href="https://www.biblegateway.com/passage/?search={{ $reading }}">{{ $reading }}</a>
                             </li>
                         @endif
