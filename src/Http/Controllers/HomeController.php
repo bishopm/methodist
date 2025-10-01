@@ -11,9 +11,7 @@ use Bishopm\Methodist\Models\Meeting;
 use Bishopm\Methodist\Models\Midweek;
 use Bishopm\Methodist\Models\Plan;
 use Bishopm\Methodist\Models\Society;
-use Bishopm\Methodist\Models\Sunday;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 
 class HomeController extends Controller
 {
