@@ -3,8 +3,19 @@
         <a href="{{url('/')}}"><img src="{{ asset('methodist/images/mcsa.png') }}" alt="MCSA Logo" style="max-height:30px; margin-bottom:5px;margin-right:5px;"></a>{{$district->district}} District
     </h1>
     <h5 class="text-md-start text-center"><a href="{{url('/')}}">All districts</a></h5>
-    <div class="row mt-3">
-        <div class="col-md-3">
+    <ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-district" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">District</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-circuits" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Circuits</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-ministers" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Ministers</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="pills-tabContent">
+        <div class="tab-pane fade show active" id="pills-district" role="tabpanel" aria-labelledby="pills-district-tab">
             @if ($bishop and $bishop->image)
                 <a href="{{url('/ministers/' . $bishop->id)}}">
                     <img class="rounded" width="100px" src="{{url('/storage/public/' . $bishop->image)}}">
@@ -17,9 +28,7 @@
             <h6 class="mt-3"><span class="bg-dark badge text-white text-small">District Bishop</span> {{$bishop->name ?? ''}}</h6>
             <span class="bg-dark badge text-white text-small">District Office</span>
             {!!$district->contact!!}
-        </div>
-        <div class="col-md-9">
-            <div style="height:400px" id="map" class="mb-3"></div>
+            <div style="height:400px;" id="map" class="mb-3"></div>
             <script>
                 var map = L.map('map').setView([{{$district->latitude}}, {{$district->longitude}}], 15);
                 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -33,8 +42,7 @@
                 var marker = L.marker([{{$district->latitude}}, {{$district->longitude}}]).bindPopup('District Office').addTo(map);
             </script>        
         </div>
-        <div class="col-md-4">
-            <h3 class="text-md-start text-center">Circuits</h3>
+        <div class="tab-pane fade" id="pills-circuits" role="tabpanel" aria-labelledby="pills-circuits-tab">
             <ul class="list-unstyled">
                 @foreach ($district->circuits->sortBy('reference') as $circuit)
                     @if ($circuit->active)
@@ -45,8 +53,7 @@
                 @endforeach
             </ul>
         </div>
-        <div class="col-md-8">
-            <h3 class="text-md-start text-center">Ministers</h3>
+        <div class="tab-pane fade" id="pills-ministers" role="tabpanel" aria-labelledby="pills-ministers-tab">
             <div class="row">
                 @foreach ($ministers as $minister)
                     @if ($minister->minister->active)
