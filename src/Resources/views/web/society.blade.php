@@ -19,7 +19,7 @@
             <th class="bg-dark text-white">Address</th><td>{{$society->address}}</td>
         </tr>
         <tr>
-            <th class="bg-dark text-white">Website</th><td><a href="{{$society->website}}" target="_blank">{{$society->website}}</a></td>
+            <th class="bg-dark text-white">Website</th><td><a href="{{$society->website}}" target="_blank">{{substr($society->website,strpos($society->website,'//')+2)}}</a></td>
         </tr>
         <tr>
             <th class="bg-dark text-white">Services</th><td>
@@ -49,7 +49,7 @@
             </td>
         </tr>       
     </table>
-    @if (count($upcoming))
+    @if ($plans)
         <h4>Upcoming services</h4>
         <table class="table">
             <tr>

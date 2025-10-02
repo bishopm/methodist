@@ -593,6 +593,11 @@ class HomeController extends Controller
         $data['sundays'][]=date('Y-m-d',strtotime('Sunday'));
         $data['sundays'][]=date('Y-m-d',604800+strtotime('Sunday'));
         $plans=Plan::with('service','person')->whereIn('service_id',$data['services'])->whereIn('servicedate',$data['sundays'])->get();
+        if (count($plans)){
+            $data['plans']=true;
+        } else {
+            $data['plans']=false;
+        }
         foreach ($data['services'] as $time=>$val){
             foreach ($data['sundays'] as $sunday){
                 $data['upcoming'][$time][$sunday]="";

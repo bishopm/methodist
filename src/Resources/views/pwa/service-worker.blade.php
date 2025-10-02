@@ -1,9 +1,9 @@
-const staticCacheName = "pwa-v" + new Date().getTime();
+const staticCacheName = "pwa-static-v" + new Date().getTime();
 const filesToCache = [
     "/",                // homepage
     "/offline",         // offline fallback page (Laravel route)
-    "{{ asset('methodist/css/bootstrap.min.css')}}",
-    "{{ asset('methodist/js/bootstrap.min.js')}}",
+    "{{ asset('methodist/css/bootstrap.min.css') }}",
+    "{{ asset('methodist/js/bootstrap.min.js') }}",
     "{{ asset('methodist/images/icons/android/android-launchericon-192-192.png') }}",
     "{{ asset('methodist/images/icons/android/android-launchericon-512-512.png') }}",
     "{{ asset('methodist/images/icons/ios/512.png') }}"
@@ -13,9 +13,7 @@ const filesToCache = [
 self.addEventListener("install", event => {
     self.skipWaiting();
     event.waitUntil(
-        caches.open(staticCacheName).then(cache => {
-            return cache.addAll(filesToCache);
-        })
+        caches.open(staticCacheName).then(cache => cache.addAll(filesToCache))
     );
 });
 
@@ -33,37 +31,39 @@ self.addEventListener("activate", event => {
     self.clients.claim();
 });
 
-// Fetch: network-first for HTML (dynamic routes), cache-first for assets
+// Fetch: SWR for HTML pages, cache-first (with background update) for assets
 self.addEventListener("fetch", event => {
     if (event.request.method !== "GET") return; // don’t cache POST etc.
 
     if (event.request.mode === "navigate") {
-        // Handle page navigation (HTML requests like /district/circuit/society)
+        // SWR for dynamic pages
         event.respondWith(
-            fetch(event.request)
-                .then(response => {
-                    return caches.open(staticCacheName).then(cache => {
-                        cache.put(event.request, response.clone());
-                        return response;
-                    });
-                })
-                .catch(() => {
-                    // Offline fallback if no cache
-                    return caches.match(event.request).then(cached => {
-                        return cached || caches.match("/offline");
-                    });
-                })
-        );
-    } else {
-        // Handle static assets (CSS, JS, images)
-        event.respondWith(
-            caches.match(event.request).then(cached => {
-                return cached || fetch(event.request).then(networkResponse => {
+            caches.match(event.request).then(cachedResponse => {
+                const fetchPromise = fetch(event.request).then(networkResponse => {
                     return caches.open(staticCacheName).then(cache => {
                         cache.put(event.request, networkResponse.clone());
                         return networkResponse;
                     });
+                }).catch(() => {
+                    // Offline fallback if no network
+                    return caches.match("/offline");
                 });
+
+                return cachedResponse || fetchPromise;
+            })
+        );
+    } else {
+        // Static assets (CSS, JS, images) → cache-first with background update
+        event.respondWith(
+            caches.match(event.request).then(cachedResponse => {
+                const fetchPromise = fetch(event.request).then(networkResponse => {
+                    return caches.open(staticCacheName).then(cache => {
+                        cache.put(event.request, networkResponse.clone());
+                        return networkResponse;
+                    });
+                }).catch(() => cachedResponse);
+
+                return cachedResponse || fetchPromise;
             })
         );
     }
