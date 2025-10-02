@@ -50,7 +50,7 @@
         </tr>       
     </table>
     @if ($plans)
-        <h4>Upcoming services</h4>
+        <h4 class="text-center">Upcoming services</h4>
         <table class="table">
             <tr>
                 <th class="bg-secondary text-white"></th>
