@@ -1,6 +1,4 @@
-<x-methodist::layouts.web pageName="Society">
-    <h1 class="text-md-start text-center"><a href="{{url('/')}}"><img src="{{ asset('methodist/images/mcsa.png') }}" alt="MCSA Logo" style="max-height:30px; margin-bottom:5px;margin-right:5px;"></a>{{$society->society}}</h1>
-    <h5 class="text-md-start text-center"><a href="{{url('/') . '/' . $society->circuit->district->slug . '/' . $society->circuit->slug}}">{{$society->circuit->circuit}} Circuit {{$society->circuit->reference}}</a></h5>
+<x-methodist::layouts.web pageName="{{$society->society}} Society">
     <div style="height:400px" id="map"></div>
     <script>
         var map = L.map('map').setView([{{$society->latitude}}, {{$society->longitude}}], 15);

@@ -1,8 +1,4 @@
-<x-methodist::layouts.web pageName="Circuit">
-    <h1 class="text-md-start text-center">
-        <a href="{{url('/')}}"><img src="{{ asset('methodist/images/mcsa.png') }}" alt="MCSA Logo" style="max-height:30px; margin-bottom:5px;margin-right:5px;"></a>{{$circuit->circuit}} {{$circuit->reference}}
-    </h1>
-    <h5 class="text-md-start text-center"><a href="{{url('/') . '/' . $circuit->district->slug}}">{{$circuit->district->district}} District</a></h5>
+<x-methodist::layouts.web pageName="{{$circuit->circuit}} Circuit {{$circuit->reference}}">
     <ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="pills-circuit-tab" data-bs-toggle="pill" data-bs-target="#pills-circuit" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Circuit</button>
@@ -60,11 +56,11 @@
                     @endif
                 @endforeach
             </div>
-            <table>
+            <table class="table">
                 @foreach ($leaders as $category=>$persons)
                     @if ($category <> "Guest")
-                        <tr class="bg-primary">
-                            <th class="text-white text-center">{{$category}}@if(count($persons)>1)s @endif</th>
+                        <tr class="table-primary">
+                            <th class="text-center">{{$category}}@if(count($persons)>1)s @endif</th>
                         </tr>
                         <tr>
                             <td>

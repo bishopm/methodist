@@ -60,6 +60,7 @@ class HomeController extends Controller
             }
         }
         ksort($data['ministers']);
+        $data['pageName'] = $data['district']->district . ' District';
         return view('methodist::web.district',$data);
     }
 

@@ -1,8 +1,4 @@
-<x-methodist::layouts.web pageName="District">
-    <h1 class="text-md-start text-center">
-        <a href="{{url('/')}}"><img src="{{ asset('methodist/images/mcsa.png') }}" alt="MCSA Logo" style="max-height:30px; margin-bottom:5px;margin-right:5px;"></a>{{$district->district}} District
-    </h1>
-    <h5 class="text-md-start text-center"><a href="{{url('/')}}">All districts</a></h5>
+<x-methodist::layouts.web pageName="{{$district->district}} District">
     <ul class="nav nav-pills mb-3 justify-content-center" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-district" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">District</button>
