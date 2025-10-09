@@ -6,6 +6,7 @@ use Bishopm\Methodist\Http\Middleware\CheckPerms;
 use Bishopm\Methodist\Livewire\PreachingPlan;
 use Illuminate\Support\ServiceProvider;
 use Bishopm\Methodist\Methodist;
+use Bishopm\Methodist\Models\Circuit;
 use Bishopm\Methodist\Models\User;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
@@ -15,6 +16,7 @@ use Livewire\Livewire;
 use Illuminate\Support\Facades\Gate;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\View;
 
 class MethodistServiceProvider extends ServiceProvider
 {
@@ -65,6 +67,12 @@ class MethodistServiceProvider extends ServiceProvider
         Gate::policy(\Bishopm\Methodist\Models\Person::class, \Bishopm\Methodist\Filament\Policies\PersonPolicy::class);
         Gate::before(function (User $user, string $ability) {
             return $user->isSuperAdmin() ? true: null;     
+        });
+        View::composer('*', function ($view) {
+            $circuits = cache()->remember('all_circuits', now()->addHours(12), function () {
+                return Circuit::orderBy('circuit')->get();
+            });
+            $view->with('circuits', $circuits);
         });
     }
 

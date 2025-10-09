@@ -11,6 +11,8 @@ Route::get('/service-worker.js', fn () => response()->view('methodist::pwa.servi
 // Website routes
 Route::middleware(['web'])->controller('\Bishopm\Methodist\Http\Controllers\HomeController')->group(function () {
     Route::get('/', 'home')->name('home');
+    Route::get('/ideas', 'ideas')->name('ideas');
+    Route::post('/ideas/store', 'storeidea')->name('ideas.store');
     Route::get('/lectionary/{sunday?}','lectionary')->name('lectionary');
     Route::get('/ministers/{id}','minister')->name('minister');
     Route::get('/offline', 'offline')->name('offline');

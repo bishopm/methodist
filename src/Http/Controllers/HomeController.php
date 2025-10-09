@@ -2,20 +2,23 @@
 
 namespace Bishopm\Methodist\Http\Controllers;
 
+use Bishopm\Methodist\Models\Tag;
 use Bishopm\Methodist\Classes\LectionaryService;
 use Bishopm\Methodist\Classes\tFPDF;
 use Bishopm\Methodist\Models\Person;
 use Bishopm\Methodist\Models\Circuit;
 use Bishopm\Methodist\Models\District;
+use Bishopm\Methodist\Models\Idea;
 use Bishopm\Methodist\Models\Meeting;
 use Bishopm\Methodist\Models\Midweek;
 use Bishopm\Methodist\Models\Plan;
 use Bishopm\Methodist\Models\Society;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Str;
 
 class HomeController extends Controller
 {
-
     public $circuit;
     public $plandate;
     public $dates;
@@ -69,6 +72,75 @@ class HomeController extends Controller
         $data['districts']=District::orderBy('id')->get();
         $data['lects']=$this->get_lectionary();
         return view('methodist::web.home',$data);
+    }
+
+    public function ideas(){
+        $data['circuits'] = Circuit::orderBy('circuit')->get();
+        $data['tags'] = Tag::orderBy('name')->get();
+        return view('methodist::web.ideas', $data);
+    }
+
+    public function storeidea(Request $request)
+    {
+        $validated = $request->validate([
+            'circuit_id' => 'required|exists:circuits,id',
+            'tags' => 'required|array|min:1',
+            'tags.*' => 'string',
+            'description' => 'required|string|min:10',
+            'email' => 'required|email|max:199',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'circuit_id.required' => 'Please select a circuit.',
+            'circuit_id.exists' => 'The selected circuit is invalid.',
+            'tags.required' => 'Please select at least one subject.',
+            'tags.min' => 'Please select at least one subject.',
+            'description.required' => 'Please provide a description of your ministry idea.',
+            'description.min' => 'The description must be at least 10 characters.',
+            'email.required' => 'Please provide your email address.',
+            'email.email' => 'Please provide a valid email address.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a JPEG, PNG, JPG, or GIF file.',
+            'image.max' => 'The image must not be larger than 2MB.',
+        ]);
+
+        // Handle image upload
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('ministry-ideas', 'public');
+        }
+
+        // Create the idea (unpublished by default)
+        $idea = Idea::create([
+            'circuit_id' => $validated['circuit_id'],
+            'description' => $validated['description'],
+            'email' => $validated['email'],
+            'image' => $imagePath,
+            'published' => false, // Unpublished until admin approval
+        ]);
+
+        // Process tags (handle both existing and new)
+        $tagIds = [];
+        foreach ($validated['tags'] as $tagInput) {
+            if (strpos($tagInput, 'new:') === 0) {
+                // This is a new tag, create it
+                $tagName = substr($tagInput, 4); // Remove 'new:' prefix
+                $tag = Tag::firstOrCreate(
+                    ['name' => $tagName],
+                    ['slug' => Str::slug($tagName)]
+                );
+                $tagIds[] = $tag->id;
+            } else {
+                // This is an existing tag ID
+                $tagIds[] = $tagInput;
+            }
+        }
+
+        // Attach tags using the Taggable trait
+        $idea->tag($tagIds);
+
+        return redirect()
+            ->route('ideas')
+            ->with('success', 'Thank you! Your ministry idea has been submitted and will be reviewed by our team before being published.');
     }
 
     public function lectionary($sunday=""){

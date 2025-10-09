@@ -25,6 +25,8 @@
   <link rel="stylesheet" href="{{ asset('methodist/css/bootstrap.min.css') }}">
   <link rel="stylesheet" href="{{ asset('methodist/css/bootstrap-icons.min.css') }}">
   <link rel="stylesheet" href="{{ asset('methodist/css/leaflet.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
   <script src="{{ asset('methodist/js/leaflet.js') }}"></script>
 
   <style>
@@ -112,14 +114,19 @@
           <ul class="list-unstyled">
               <li><a href="/" class="d-block py-2"><i class="bi bi-house me-2"></i> Home</a></li>
               <li><a href="/lectionary" class="d-block py-2"><i class="bi bi-book me-2"></i> Lectionary</a></li>
-              <li><a href="/projects" class="d-block py-2"><i class="bi bi-lightbulb me-2"></i> Projects</a></li>
+              <li><a href="/ideas" class="d-block py-2"><i class="bi bi-lightbulb me-2"></i> Ministry ideas</a></li>
               <li><a href="/admin" class="d-block py-2"><i class="bi bi-lock me-2"></i> Login</a></li>
+              <li>
+                <button class="dropdown-item" onclick="new bootstrap.Modal(document.getElementById('userSettingsModal')).show()">
+                    <i class="bi bi-gear me-2"></i>Settings
+                </button>
+              </li>
           </ul>
       </div>
   </div>
 
   <!-- Main content -->
-  <main class="pt-1 px-3" id="pwaMainContent">
+  <main class="pt-1 px-3 pb-5" id="pwaMainContent">
       <div class="d-flex justify-content-center my-2">
           <button id="installPwaBtn" class="btn btn-primary btn-md d-none">
               <i class="bi bi-download me-2"></i> Install App
@@ -138,64 +145,97 @@
       <a class="btn btn-link text-dark" href="/" id="pwaHomeBtn" title="Home">
           <i class="bi bi-house fs-4"></i>
       </a>
+      <a class="btn btn-link text-dark" href="/ideas" id="pwaHomeBtn" title="Ideas">
+          <i class="bi bi-lightbulb fs-4"></i>
+      </a>
   </nav>
 
-  <!-- JS -->
-  <script src="{{ asset('methodist/js/bootstrap.min.js') }}"></script>
-  <script>
-    // --- Service worker registration ---
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register("{{ url('/service-worker.js') }}", { scope: '/' })
-        .then(reg => console.log('ServiceWorker registered:', reg.scope))
-        .catch(err => console.log('ServiceWorker registration failed:', err));
-    }
+    <!-- User Settings Modal -->
+    <div class="modal fade" id="userSettingsModal" tabindex="-1" aria-labelledby="userSettingsLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="userSettingsLabel">Settings</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form id="userSettingsForm">
+            <div class="mb-3">
+                <label for="circuitSelect" class="form-label">Select your Circuit</label>
+                <select class="form-select" id="circuitSelect" required>
+                <option value="">Choose...</option>
+                @foreach($circuits as $circuit)
+                    <option value="{{ $circuit->id }}">{{ $circuit->circuit }}</option>
+                @endforeach
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="userEmail" class="form-label">Email (optional)</label>
+                <input type="email" class="form-control" id="userEmail" placeholder="you@example.com">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Save Settings</button>
+            </form>
+        </div>
+        </div>
+    </div>
+    </div>
+    @stack('scripts')
+    <!-- JS -->
+    <script src="{{ asset('methodist/js/bootstrap.min.js') }}"></script>
+    <script>
+        // --- Service worker registration ---
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register("{{ url('/service-worker.js') }}", { scope: '/' })
+            .then(reg => console.log('ServiceWorker registered:', reg.scope))
+            .catch(err => console.log('ServiceWorker registration failed:', err));
+        }
 
-    // --- PWA install prompt ---
-    if (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-      let deferredPrompt;
-      const installBtn = document.getElementById("installPwaBtn");
+        // --- PWA install prompt ---
+        if (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+            let deferredPrompt;
+            const installBtn = document.getElementById("installPwaBtn");
 
-      window.addEventListener("beforeinstallprompt", (e) => {
-          e.preventDefault();
-          deferredPrompt = e;
-          installBtn.classList.remove("d-none");
-      });
+            window.addEventListener("beforeinstallprompt", (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                installBtn.classList.remove("d-none");
+            });
 
-      installBtn.addEventListener("click", async () => {
-          if (deferredPrompt) {
-              deferredPrompt.prompt();
-              const { outcome } = await deferredPrompt.userChoice;
-              console.log(`User response to install prompt: ${outcome}`);
-              deferredPrompt = null;
-              installBtn.classList.add("d-none");
-          }
-      });
+            installBtn.addEventListener("click", async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                    installBtn.classList.add("d-none");
+                }
+            });
 
-      window.addEventListener("appinstalled", () => {
-          console.log("PWA installed successfully");
-          installBtn.classList.add("d-none");
-      });
-    }
+            window.addEventListener("appinstalled", () => {
+                console.log("PWA installed successfully");
+                installBtn.classList.add("d-none");
+            });
+        }
 
-    // --- Simple back/home toolbar logic ---
-    document.addEventListener("DOMContentLoaded", () => {
-      const backBtn = document.getElementById('pwaBackBtn');
+        // --- Simple back/home toolbar logic ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const backBtn = document.getElementById('pwaBackBtn');
 
-      function updateBackButton() {
-        const isHome = window.location.pathname === '/' || window.location.pathname === '/index.html';
-        backBtn.disabled = isHome;
-      }
+            function updateBackButton() {
+            const isHome = window.location.pathname === '/' || window.location.pathname === '/index.html';
+            backBtn.disabled = isHome;
+            }
 
-      backBtn.addEventListener('click', () => {
-        window.history.back();
-      });
+            backBtn.addEventListener('click', () => {
+            window.history.back();
+            });
 
-      window.addEventListener('popstate', updateBackButton);
-      window.addEventListener('pushstate', updateBackButton);
-      window.addEventListener('replacestate', updateBackButton);
+            window.addEventListener('popstate', updateBackButton);
+            window.addEventListener('pushstate', updateBackButton);
+            window.addEventListener('replacestate', updateBackButton);
 
-      updateBackButton();
-    });
-  </script>
+            updateBackButton();
+        });
+    </script>
 </body>
 </html>
