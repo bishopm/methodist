@@ -98,9 +98,8 @@ class AdminPanelProvider extends PanelProvider
                     ->visible(fn (): bool => auth()->user()->isSuperAdmin())
                     ->icon('heroicon-o-cog-8-tooth'),      
                 MenuItem::make()
-                    ->label('Website')
+                    ->label('Back to app')
                     ->url('/')
-                    ->openUrlInNewTab()
                     ->icon('heroicon-o-globe-alt'),
             ]);
     }
