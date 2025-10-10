@@ -18,6 +18,7 @@ class MinistryIdeaForm extends Component
     public $description;
     public $image;
     public $tags = [];
+    public $ideas = [];
     public $tagInput = '';
     public $circuits;
     public $availableTags = [];
@@ -28,6 +29,7 @@ class MinistryIdeaForm extends Component
     {
         $this->circuits = Circuit::orderBy('circuit')->get();
         $this->availableTags = Tag::orderBy('name')->get();
+        $this->ideas = Idea::with('tags')->latest()->get();
         
         // Note: Cookie prefilling is handled by JavaScript on the client side
         // to ensure proper Livewire binding and reactivity
@@ -57,14 +59,11 @@ class MinistryIdeaForm extends Component
 
     public function updatedTagInput($value)
     {
-        \Log::info('updatedTagInput called', ['value' => $value]);
-        
         if (empty($value)) {
             $this->filteredTags = [];
             $this->showTagDropdown = false;
             return;
         }
-
         // Filter available tags based on input
         $filtered = collect($this->availableTags)->filter(function($tag) use ($value) {
             // Handle both objects and arrays
@@ -74,15 +73,8 @@ class MinistryIdeaForm extends Component
             // Normalize to array format
             return is_object($tag) ? ['id' => $tag->id, 'name' => $tag->name] : (is_array($tag) ? $tag : ['name' => $tag]);
         })->values()->toArray();
-
         $this->filteredTags = $filtered;
         $this->showTagDropdown = count($this->filteredTags) > 0;
-        
-        \Log::info('Filtered tags', [
-            'count' => count($this->filteredTags),
-            'tags' => $this->filteredTags,
-            'showDropdown' => $this->showTagDropdown
-        ]);
     }
 
     public function selectTag($tagName)
@@ -136,6 +128,7 @@ class MinistryIdeaForm extends Component
             } else {
                 $tag = Tag::firstOrCreate(
                     ['slug' => Str::slug($tagInput)],
+                    ['type' => 'idea'],
                     ['name' => $tagInput]
                 );
                 $tagIds[] = $tag->id;

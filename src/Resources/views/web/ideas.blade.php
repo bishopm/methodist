@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <p class="mb-4">
-                Share your ministry idea with the Connexion. Complete the form below!
+                Our people are doing amazing things around the Connexion, but often our most creative ideas don't get shared. We are collecting those ideas and would love to hear from you!
             </p>
             
             @livewire('ministry-idea-form')
