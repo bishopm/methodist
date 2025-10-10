@@ -14,7 +14,7 @@ use Bishopm\Methodist\Models\Midweek;
 use Bishopm\Methodist\Models\Plan;
 use Bishopm\Methodist\Models\Society;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class HomeController extends Controller
@@ -104,10 +104,9 @@ class HomeController extends Controller
         ]);
 
         // Handle image upload
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('ministry-ideas', 'public');
-        }
+        $imagePath = $request->hasFile('image') 
+            ? $request->file('image')->store('ministry-ideas', 'public') 
+            : null;
 
         // Create the idea (unpublished by default)
         $idea = Idea::create([
@@ -115,28 +114,33 @@ class HomeController extends Controller
             'description' => $validated['description'],
             'email' => $validated['email'],
             'image' => $imagePath,
-            'published' => false, // Unpublished until admin approval
+            'published' => false,
         ]);
 
-        // Process tags (handle both existing and new)
         $tagIds = [];
+
         foreach ($validated['tags'] as $tagInput) {
-            if (strpos($tagInput, 'new:') === 0) {
-                // This is a new tag, create it
-                $tagName = substr($tagInput, 4); // Remove 'new:' prefix
+            // Detect new tags prefixed with "new:"
+            if (str_starts_with($tagInput, 'new:')) {
+                $tagName = trim(substr($tagInput, 4));
+
+                // Create or find existing tag by slug
                 $tag = Tag::firstOrCreate(
-                    ['name' => $tagName],
-                    ['slug' => Str::slug($tagName)]
+                    ['slug' => Str::slug($tagName)],
+                    ['name' => $tagName]
                 );
+
                 $tagIds[] = $tag->id;
             } else {
-                // This is an existing tag ID
+                // Existing tag IDs from the select
                 $tagIds[] = $tagInput;
             }
         }
 
-        // Attach tags using the Taggable trait
-        $idea->tag($tagIds);
+        // Attach all tags to the idea via the taggables table
+        if (!empty($tagIds)) {
+            $idea->tags()->sync($tagIds);
+        }
 
         return redirect()
             ->route('ideas')

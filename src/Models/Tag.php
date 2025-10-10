@@ -12,4 +12,9 @@ class Tag extends Model
     public static function unslug($slug){
         return ucwords(str_replace('-', ' ', $slug));
     }
+
+    public function ideas()
+    {
+        return $this->morphedByMany(Idea::class, 'taggable');
+    }
 }

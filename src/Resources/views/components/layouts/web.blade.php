@@ -152,37 +152,86 @@
 
     <!-- User Settings Modal -->
     <div class="modal fade" id="userSettingsModal" tabindex="-1" aria-labelledby="userSettingsLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="userSettingsLabel">Settings</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <form id="userSettingsForm">
-            <div class="mb-3">
-                <label for="circuitSelect" class="form-label">Select your Circuit</label>
-                <select class="form-select" id="circuitSelect" required>
-                <option value="">Choose...</option>
-                @foreach($circuits as $circuit)
-                    <option value="{{ $circuit->id }}">{{ $circuit->circuit }}</option>
-                @endforeach
-                </select>
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userSettingsLabel">Settings</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="mb-3">
-                <label for="userEmail" class="form-label">Email (optional)</label>
-                <input type="email" class="form-control" id="userEmail" placeholder="you@example.com">
+            <div class="modal-body">
+                <form id="userSettingsForm">
+                <div class="mb-3">
+                    <label for="circuitSelect" class="form-label">Select your Circuit</label>
+                    <select class="form-select" id="circuitSelect" required>
+                    <option value="">Choose...</option>
+                    @foreach($circuits as $circuit)
+                        <option value="{{ $circuit->id }}">{{ $circuit->circuit }}</option>
+                    @endforeach
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="userEmail" class="form-label">Email (optional)</label>
+                    <input type="email" class="form-control" id="userEmail" placeholder="you@example.com">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Save Settings</button>
+                </form>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Save Settings</button>
-            </form>
+            </div>
         </div>
-        </div>
-    </div>
     </div>
     @stack('scripts')
     <!-- JS -->
     <script src="{{ asset('methodist/js/bootstrap.min.js') }}"></script>
     <script>
+        // --- Cookie helpers ---
+        function setCookie(name, value, days = 365) {
+            const expires = new Date(Date.now() + days * 864e5).toUTCString();
+            document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=/';
+        }
+
+        function getCookie(name) {
+            return document.cookie.split('; ').reduce((r, v) => {
+                const parts = v.split('=');
+                return parts[0] === name ? decodeURIComponent(parts[1]) : r;
+            }, '');
+        }
+
+        // --- Load existing settings ---
+        document.addEventListener('DOMContentLoaded', function () {
+            const circuitId = getCookie('user_circuit');
+            const userEmail = getCookie('user_email');
+
+            if (circuitId) {
+                const select = document.getElementById('circuitSelect');
+                if (select) select.value = circuitId;
+            }
+            if (userEmail) {
+                const email = document.getElementById('userEmail');
+                if (email) email.value = userEmail;
+            }
+
+            // If circuit not set, show modal automatically
+            if (!circuitId) {
+                const settingsModal = new bootstrap.Modal(document.getElementById('userSettingsModal'));
+                settingsModal.show();
+            }
+
+            // Handle form submission
+            document.getElementById('userSettingsForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const selectedCircuit = document.getElementById('circuitSelect').value;
+                const email = document.getElementById('userEmail').value;
+
+                if (selectedCircuit) {
+                setCookie('user_circuit', selectedCircuit);
+                setCookie('user_email', email);
+                bootstrap.Modal.getInstance(document.getElementById('userSettingsModal')).hide();
+                } else {
+                alert('Please select your circuit.');
+                }
+            });
+        });
+        
         // --- Service worker registration ---
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register("{{ url('/service-worker.js') }}", { scope: '/' })

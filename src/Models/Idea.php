@@ -16,9 +16,4 @@ class Idea extends Model
         'published' => 'boolean'
     ];  
 
-    public function tags(): BelongsToMany
-    {
-        return $this->belongsToMany(Tag::class);
-    }
-
 }
