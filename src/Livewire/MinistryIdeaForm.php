@@ -18,16 +18,19 @@ class MinistryIdeaForm extends Component
     public $description;
     public $image;
     public $tags = [];
-    public $tagInput;
+    public $tagInput = '';
     public $circuits;
+    public $availableTags = [];
+    public $filteredTags = [];
+    public $showTagDropdown = false;
 
     public function mount()
     {
         $this->circuits = Circuit::orderBy('circuit')->get();
-
-        // Prefill circuit and email from cookies
-        $this->circuit_id = request()->cookie('user_circuit');
-        $this->email = request()->cookie('user_email');
+        $this->availableTags = Tag::orderBy('name')->get();
+        
+        // Note: Cookie prefilling is handled by JavaScript on the client side
+        // to ensure proper Livewire binding and reactivity
     }
 
     protected $rules = [
@@ -39,6 +42,59 @@ class MinistryIdeaForm extends Component
         'tags.*' => 'string',
     ];
 
+    protected $messages = [
+        'circuit_id.required' => 'Please select a circuit.',
+        'circuit_id.exists' => 'The selected circuit is invalid.',
+        'email.required' => 'Please provide your email address.',
+        'email.email' => 'Please provide a valid email address.',
+        'description.required' => 'Please provide a description.',
+        'description.min' => 'The description must be at least 10 characters.',
+        'image.image' => 'The file must be an image.',
+        'image.max' => 'The image must not be larger than 2MB.',
+        'tags.required' => 'Please add at least one subject.',
+        'tags.min' => 'Please add at least one subject.',
+    ];
+
+    public function updatedTagInput($value)
+    {
+        \Log::info('updatedTagInput called', ['value' => $value]);
+        
+        if (empty($value)) {
+            $this->filteredTags = [];
+            $this->showTagDropdown = false;
+            return;
+        }
+
+        // Filter available tags based on input
+        $filtered = collect($this->availableTags)->filter(function($tag) use ($value) {
+            // Handle both objects and arrays
+            $tagName = is_object($tag) ? $tag->name : (is_array($tag) ? $tag['name'] : $tag);
+            return stripos($tagName, $value) !== false;
+        })->take(10)->map(function($tag) {
+            // Normalize to array format
+            return is_object($tag) ? ['id' => $tag->id, 'name' => $tag->name] : (is_array($tag) ? $tag : ['name' => $tag]);
+        })->values()->toArray();
+
+        $this->filteredTags = $filtered;
+        $this->showTagDropdown = count($this->filteredTags) > 0;
+        
+        \Log::info('Filtered tags', [
+            'count' => count($this->filteredTags),
+            'tags' => $this->filteredTags,
+            'showDropdown' => $this->showTagDropdown
+        ]);
+    }
+
+    public function selectTag($tagName)
+    {
+        if (!in_array($tagName, $this->tags)) {
+            $this->tags[] = $tagName;
+        }
+        $this->tagInput = '';
+        $this->showTagDropdown = false;
+        $this->filteredTags = [];
+    }
+
     public function addTag()
     {
         $tag = trim($this->tagInput);
@@ -46,6 +102,8 @@ class MinistryIdeaForm extends Component
             $this->tags[] = $tag;
         }
         $this->tagInput = '';
+        $this->showTagDropdown = false;
+        $this->filteredTags = [];
     }
 
     public function removeTag($index)
@@ -86,18 +144,26 @@ class MinistryIdeaForm extends Component
 
         $idea->tags()->sync($tagIds);
 
-        // Set cookies for circuit and email
-        cookie()->queue('user_circuit', $this->circuit_id, 525600); // 1 year
-        cookie()->queue('user_email', $this->email, 525600);
+        // Set cookies for circuit and email (1 year expiry = 525600 minutes)
+        // Using the correct Laravel cookie syntax
+        $circuitCookie = cookie('user_circuit', $this->circuit_id, 525600, '/');
+        $emailCookie = cookie('user_email', $this->email, 525600, '/');
+        
+        cookie()->queue($circuitCookie);
+        cookie()->queue($emailCookie);
 
-        // Reset form
-        $this->reset(['circuit_id', 'email', 'description', 'image', 'tags', 'tagInput']);
-
+        // Flash success message
         session()->flash('success', 'Thank you! Your ministry idea has been submitted and will be reviewed before publication.');
+
+        // Reset form except circuit_id and email
+        $this->reset(['description', 'image', 'tags', 'tagInput']);
     }
 
     public function render()
     {
-        return view('methodist::livewire.ministry-idea-form');
+        return view('methodist::livewire.ministry-idea-form', [
+            'circuits' => $this->circuits,
+            'availableTags' => $this->availableTags,
+        ]);
     }
 }

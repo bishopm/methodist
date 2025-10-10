@@ -75,9 +75,7 @@ class HomeController extends Controller
     }
 
     public function ideas(){
-        $data['circuits'] = Circuit::orderBy('circuit')->get();
-        $data['tags'] = Tag::orderBy('name')->get();
-        return view('methodist::web.ideas', $data);
+        return view('methodist::web.ideas');
     }
 
     public function storeidea(Request $request)
