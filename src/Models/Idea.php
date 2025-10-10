@@ -15,5 +15,5 @@ class Idea extends Model
     protected $casts = [
         'published' => 'boolean'
     ];  
-
+    public $timestamps = false;
 }
