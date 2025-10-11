@@ -25,14 +25,13 @@ class MinistryIdeaForm extends Component
     public $filteredTags = [];
     public $showTagDropdown = false;
 
-    public function mount()
+    public function mount($prefilledCircuit = null, $prefilledEmail = null)
     {
+        $this->circuit_id = $prefilledCircuit;
+        $this->email = $prefilledEmail;        
         $this->circuits = Circuit::orderBy('circuit')->get();
         $this->availableTags = Tag::orderBy('name')->get();
         $this->ideas = Idea::with('tags')->latest()->get();
-        
-        // Note: Cookie prefilling is handled by JavaScript on the client side
-        // to ensure proper Livewire binding and reactivity
     }
 
     protected $rules = [
