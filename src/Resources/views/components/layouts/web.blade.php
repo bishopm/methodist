@@ -97,12 +97,15 @@
 <body>
 
   <!-- Header -->
-  <header class="pwa-header">
-      <button class="menu-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
-          <i class="bi bi-list fs-3"></i>
-      </button>
-      <span class="navbar-title">{{ $pageName ?? 'Connexion' }}</span>
-  </header>
+  <header class="pwa-header position-relative d-flex align-items-center justify-content-start px-3">
+    <button class="menu-btn btn p-0 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
+        <i class="bi bi-list fs-3"></i>
+    </button>
+    <span class="navbar-title position-absolute start-50 translate-middle-x text-center fw-semibold">
+        {{ $pageName ?? 'Connexion' }}
+    </span>
+    </header>
+
 
   <!-- Offcanvas menu -->
   <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu">
