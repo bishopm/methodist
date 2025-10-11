@@ -34,34 +34,43 @@
 
     /* Header */
     .pwa-header {
-        width: 100vw;
-        height: 56px;
-        display: flex;
-        align-items: center;
-        position: sticky;
-        top: 0;
-        z-index: 1030;
-        background-color: #f8f9fa;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        padding: 0 1rem;
+    height: 56px; /* typical mobile header height */
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    position: relative;
     }
-    .pwa-header .menu-btn {
-        flex: 0 0 auto;
-        background: none;
-        border: none;
-        margin-right: 0.5rem;
-        color: #000;
-    }
+
+    /* Ensure title stays centered even if buttons differ in width */
     .pwa-header .navbar-title {
-        flex: 1 1 auto;
-        text-align: center;
-        font-weight: 600;
-        font-size: 1.1rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        padding: 0 0.5rem;
+    font-size: 1.2rem;
+    line-height: 1;
     }
+
+    /* Make buttons uniform */
+    .pwa-header .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    }
+
+    /* On small screens: slightly reduce size */
+    @media (max-width: 576px) {
+    .pwa-header {
+        height: 50px;
+    }
+
+    .pwa-header .navbar-title {
+        font-size: 1rem;
+    }
+
+    .pwa-header .btn {
+        width: 36px;
+        height: 36px;
+    }
+    }
+
 
     /* Bottom toolbar */
     .pwa-bottom-toolbar {
@@ -97,15 +106,19 @@
 <body>
 
   <!-- Header -->
-  <header class="pwa-header position-relative d-flex align-items-center justify-content-start px-3">
-    <button class="menu-btn btn p-0 me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
+  <header class="pwa-header d-flex align-items-center justify-content-between px-3 py-2">
+    <button class="menu-btn btn p-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
         <i class="bi bi-list fs-3"></i>
     </button>
-    <span class="navbar-title position-absolute start-50 translate-middle-x text-center fw-semibold">
-        {{ $pageName ?? 'Connexion' }}
-    </span>
-    </header>
 
+    <div class="flex-grow-1 text-center position-relative">
+        <span class="navbar-title fw-semibold">{{ $pageName ?? 'Connexion' }}</span>
+    </div>
+
+    <button class="action-btn btn p-0" type="button" onclick="new bootstrap.Modal(document.getElementById('userSettingsModal')).show()">
+        <i class="bi bi-person fs-3"></i>
+    </button>
+  </header>
 
   <!-- Offcanvas menu -->
   <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu">
@@ -119,11 +132,6 @@
               <li><a href="/lectionary" class="d-block py-2"><i class="bi bi-book me-2"></i> Lectionary</a></li>
               <li><a href="/ideas" class="d-block py-2"><i class="bi bi-lightbulb me-2"></i> Ministry ideas</a></li>
               <li><a href="/admin" class="d-block py-2"><i class="bi bi-lock me-2"></i> Login</a></li>
-              <li>
-                <button class="dropdown-item" onclick="new bootstrap.Modal(document.getElementById('userSettingsModal')).show()">
-                    <i class="bi bi-gear me-2"></i>Settings
-                </button>
-              </li>
           </ul>
       </div>
   </div>
