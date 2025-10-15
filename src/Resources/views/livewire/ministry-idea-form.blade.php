@@ -16,13 +16,13 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="list-tab" data-bs-toggle="tab" data-bs-target="#list"
                             type="button" role="tab" aria-controls="list" aria-selected="false">
-                            <i class="bi bi-collection me-1"></i> View Ideas
+                            <i class="bi bi-collection me-1"></i> Ministry ideas
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="add-tab" data-bs-toggle="tab" data-bs-target="#add"
                             type="button" role="tab" aria-controls="add" aria-selected="true">
-                            <i class="bi bi-plus-circle me-1"></i> Add Idea
+                            <i class="bi bi-plus-circle me-1"></i> Add an idea
                         </button>
                     </li>
                 </ul>

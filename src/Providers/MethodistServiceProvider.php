@@ -58,6 +58,7 @@ class MethodistServiceProvider extends ServiceProvider
         Config::set('filament-spatie-roles-permissions.generator.user_model', \Bishopm\Methodist\Models\User::class);
         Config::set('filament-spatie-roles-permissions.generator.policies_namespace','Bishopm\Methodist\Filament\Policies');
         Config::set('livewire.render_on_redirect',false);
+        putenv ("DEEPSEEK_API_KEY=" . setting('general.deepseek_api'));
         Livewire::component('preaching-plan', PreachingPlan::class); 
         Livewire::component('service-details', ServiceDetails::class);
         Livewire::component('ministry-idea-form', MinistryIdeaForm::class);
