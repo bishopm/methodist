@@ -1,4 +1,4 @@
-<x-methodist::layouts.web pageName="MCSA Districts">
+<x-methodist::layouts.web pageName="MCSA Connexion">
     <ul class="list-unstyled">
         @foreach ($districts as $district)
             @if ($district->active)
