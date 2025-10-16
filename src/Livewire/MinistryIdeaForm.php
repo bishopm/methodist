@@ -24,6 +24,9 @@ class MinistryIdeaForm extends Component
     public $availableTags = [];
     public $filteredTags = [];
     public $showTagDropdown = false;
+    public $aiTitle = null;
+    public $aiDescription = null;
+    public $generatingAI = false;
 
     public function mount($prefilledCircuit = null, $prefilledEmail = null)
     {
@@ -32,6 +35,58 @@ class MinistryIdeaForm extends Component
         $this->circuits = Circuit::orderBy('circuit')->get();
         $this->availableTags = Tag::orderBy('name')->get();
         $this->ideas = Idea::with('tags')->latest()->get();
+    }
+
+    public function generateAiSuggestions()
+    {
+        if (strlen($this->description) < 10) {
+            $this->aiTitle = null;
+            $this->aiDescription = null;
+            return;
+        }
+
+        $this->generatingAI = true;
+
+        try {
+            $prompt = "You are helping church members refine community project ideas.
+            Suggest a short, catchy title (max 8 words) and an improved version of this idea description.
+            Return your answer as JSON with fields 'title' and 'description'.
+            
+            Idea description: {$this->description}";
+
+            $response = DeepSeek::chat([
+                'model' => 'deepseek-chat',
+                'messages' => [
+                    ['role' => 'system', 'content' => 'You are an assistant that improves and titles ministry ideas.'],
+                    ['role' => 'user', 'content' => $prompt],
+                ],
+            ]);
+
+            $content = trim($response['choices'][0]['message']['content'] ?? '');
+
+            // Try to decode JSON from model output
+            $data = json_decode($content, true);
+            if (json_last_error() === JSON_ERROR_NONE && isset($data['title'])) {
+                $this->aiTitle = $data['title'];
+                $this->aiDescription = $data['description'] ?? null;
+            } else {
+                // Fallback if response wasn't JSON
+                $this->aiTitle = strtok($content, "\n");
+                $this->aiDescription = $content;
+            }
+        } catch (\Throwable $e) {
+            $this->aiTitle = null;
+            $this->aiDescription = null;
+        } finally {
+            $this->generatingAI = false;
+        }
+    }
+
+    public function updatedDescription($value)
+    {
+        // Wait for a moment before triggering AI
+        $this->reset(['aiTitle', 'aiDescription']);
+        $this->dispatchBrowserEvent('trigger-ai-generation');
     }
 
     protected $rules = [

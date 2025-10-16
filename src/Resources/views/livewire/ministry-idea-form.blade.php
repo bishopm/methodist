@@ -90,6 +90,39 @@
                                 @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
+                            <!-- Description -->
+                            <div class="mb-4">
+                                <label class="form-label">Description <span class="text-danger">*</span></label>
+                                <textarea wire:model.live.debounce.500ms="description" rows="8"
+                                    class="form-control @error('description') is-invalid @enderror"></textarea>
+                                @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            </div>
+
+                            @if ($generatingAI)
+                                <div class="alert alert-info">
+                                    <div class="spinner-border spinner-border-sm me-2"></div>Generating AI suggestions...
+                                </div>
+                            @endif
+
+                            @if ($aiTitle || $aiDescription)
+                                <div class="card border-secondary mb-4">
+                                    <div class="card-header bg-light"><i class="bi bi-stars me-1"></i>AI Suggestions</div>
+                                    <div class="card-body">
+                                        @if ($aiTitle)
+                                            <h5 class="fw-bold">{{ $aiTitle }}</h5>
+                                        @endif
+                                        @if ($aiDescription)
+                                            <p class="text-muted mb-0">{{ $aiDescription }}</p>
+                                        @endif
+                                        <small class="text-muted d-block mt-2">These are just suggestions — you can ignore or adjust them.</small>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <button type="button" wire:click="generateAiSuggestions" class="btn btn-outline-secondary btn-sm mb-3">
+                                <i class="bi bi-magic"></i> Refresh AI Suggestions
+                            </button>
+
                             <!-- Tags -->
                             <div class="mb-4">
                                 <label class="form-label">Subjects <span class="text-danger">*</span></label>
@@ -170,6 +203,15 @@
 @push('scripts')
 <script>
 document.addEventListener('livewire:load', function () {
+    let aiTimer = null;
+
+    window.addEventListener('trigger-ai-generation', () => {
+        clearTimeout(aiTimer);
+        aiTimer = setTimeout(() => {
+            Livewire.dispatch('callMethod', { method: 'generateAiSuggestions' });
+        }, 1500); // waits 1.5s after user stops typing
+    });
+
     setTimeout(prefillFromCookies, 500);
 
     document.addEventListener('click', function(e) {
