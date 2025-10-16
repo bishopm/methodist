@@ -90,31 +90,38 @@
                                 @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
                             </div>
 
-                            <!-- Description -->
-                            <div class="mb-4">
-                                <label class="form-label">Description <span class="text-danger">*</span></label>
-                                <textarea wire:model.live.debounce.500ms="description" rows="8"
-                                    class="form-control @error('description') is-invalid @enderror"></textarea>
-                                @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                            </div>
-
                             @if ($generatingAI)
-                                <div class="alert alert-info">
+                                <div class="alert alert-info py-2">
                                     <div class="spinner-border spinner-border-sm me-2"></div>Generating AI suggestions...
                                 </div>
                             @endif
 
                             @if ($aiTitle || $aiDescription)
                                 <div class="card border-secondary mb-4">
-                                    <div class="card-header bg-light"><i class="bi bi-stars me-1"></i>AI Suggestions</div>
+                                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                                        <span><i class="bi bi-stars me-1"></i>AI Suggestions</span>
+                                        <button type="button" wire:click="generateAiSuggestions" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                                        </button>
+                                    </div>
                                     <div class="card-body">
                                         @if ($aiTitle)
-                                            <h5 class="fw-bold">{{ $aiTitle }}</h5>
+                                            <h5 class="fw-bold mb-2">{{ $aiTitle }}</h5>
+                                            <button type="button" wire:click="$set('idea', '{{ addslashes($aiTitle) }}')" class="btn btn-sm btn-outline-primary mb-3">
+                                                <i class="bi bi-check2-circle"></i> Use this as title
+                                            </button>
                                         @endif
+
                                         @if ($aiDescription)
-                                            <p class="text-muted mb-0">{{ $aiDescription }}</p>
+                                            <p class="text-muted">{{ $aiDescription }}</p>
+                                            <button type="button" wire:click="$set('description', '{{ addslashes($aiDescription) }}')" class="btn btn-sm btn-outline-success">
+                                                <i class="bi bi-arrow-down-circle"></i> Replace my description
+                                            </button>
                                         @endif
-                                        <small class="text-muted d-block mt-2">These are just suggestions — you can ignore or adjust them.</small>
+
+                                        <small class="text-muted d-block mt-2">
+                                            You can edit your text after applying any suggestion.
+                                        </small>
                                     </div>
                                 </div>
                             @endif
@@ -208,8 +215,9 @@ document.addEventListener('livewire:load', function () {
     window.addEventListener('trigger-ai-generation', () => {
         clearTimeout(aiTimer);
         aiTimer = setTimeout(() => {
-            Livewire.dispatch('callMethod', { method: 'generateAiSuggestions' });
-        }, 1500); // waits 1.5s after user stops typing
+            Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'))
+                .call('generateAiSuggestions');
+        }, 1500); // wait 1.5 seconds after user stops typing
     });
 
     setTimeout(prefillFromCookies, 500);

@@ -15,6 +15,7 @@ class MinistryIdeaForm extends Component
 
     public $circuit_id;
     public $email;
+    public $idea;
     public $description;
     public $image;
     public $tags = [];
@@ -84,12 +85,14 @@ class MinistryIdeaForm extends Component
 
     public function updatedDescription($value)
     {
-        // Wait for a moment before triggering AI
+        // Reset AI fields whenever user edits their description
         $this->reset(['aiTitle', 'aiDescription']);
-        $this->dispatchBrowserEvent('trigger-ai-generation');
+        $this->dispatch('trigger-ai-generation');
     }
 
+
     protected $rules = [
+        'idea' => 'required|string|min:3',
         'circuit_id' => 'required|exists:circuits,id',
         'email' => 'required|email|max:199',
         'description' => 'required|string|min:10',
@@ -167,6 +170,7 @@ class MinistryIdeaForm extends Component
 
         // Create idea
         $idea = Idea::create([
+            'idea' => $this->idea,
             'circuit_id' => $this->circuit_id,
             'email' => $this->email,
             'description' => $this->description,
